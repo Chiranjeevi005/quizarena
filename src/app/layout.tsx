@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${hankenGrotesk.variable} h-full antialiased`}
+      className={`${hankenGrotesk.variable} h-full antialiased relative`}
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans relative">
         <Navbar />
         {children}
         <Footer />
