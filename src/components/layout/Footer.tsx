@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 
 export function Footer() {
@@ -38,11 +37,9 @@ export function Footer() {
           {/* Column 1: Brand Identity */}
           <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-6">
             <Link href="/" className="flex items-center mb-6 group w-fit">
-              <Image
+              <img
                 src="/logo-header.png"
                 alt="QuizArena"
-                width={200}
-                height={64}
                 className="h-14 sm:h-16 w-auto brightness-0 invert"
               />
             </Link>
