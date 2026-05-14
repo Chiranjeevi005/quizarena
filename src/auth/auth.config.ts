@@ -10,8 +10,8 @@ export const authConfig = {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
+          response_type: "code",
+        },
       },
       profile(profile) {
         return {
@@ -21,8 +21,8 @@ export const authConfig = {
           image: profile.picture,
           role: "USER", // Default role
           onboardingCompleted: false, // Default onboarding state
-        }
-      }
+        };
+      },
     }),
   ],
   pages: {

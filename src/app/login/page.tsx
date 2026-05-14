@@ -1,9 +1,7 @@
 import { signIn } from "@/auth/auth";
 import { AuthError } from "next-auth";
 
-export default async function LoginPage(props: {
-  searchParams: Promise<{ error?: string }>;
-}) {
+export default async function LoginPage(props: { searchParams: Promise<{ error?: string }> }) {
   const searchParams = await props.searchParams;
   const errorMessage = searchParams?.error;
 
@@ -63,16 +61,25 @@ export default async function LoginPage(props: {
               Sign in with Google
             </button>
           </div>
-          
+
           {errorMessage && (
             <div className="mt-4 text-center text-sm text-red-600">
               {errorMessage === "OAuthSignin" && "Error starting OAuth sign-in. Please try again."}
-              {errorMessage === "OAuthCallback" && "Error completing OAuth sign-in. Please try again."}
+              {errorMessage === "OAuthCallback" &&
+                "Error completing OAuth sign-in. Please try again."}
               {errorMessage === "OAuthCreateAccount" && "Could not create an account at this time."}
-              {errorMessage === "EmailCreateAccount" && "Could not create an account with this email."}
+              {errorMessage === "EmailCreateAccount" &&
+                "Could not create an account with this email."}
               {errorMessage === "Callback" && "Error during OAuth callback."}
               {errorMessage === "Default" && "An authentication error occurred. Please try again."}
-              {!["OAuthSignin", "OAuthCallback", "OAuthCreateAccount", "EmailCreateAccount", "Callback", "Default"].includes(errorMessage) && "Authentication error: " + errorMessage}
+              {![
+                "OAuthSignin",
+                "OAuthCallback",
+                "OAuthCreateAccount",
+                "EmailCreateAccount",
+                "Callback",
+                "Default",
+              ].includes(errorMessage) && "Authentication error: " + errorMessage}
             </div>
           )}
         </form>
