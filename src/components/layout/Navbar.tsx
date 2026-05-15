@@ -2,12 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Session } from "next-auth";
 
-export function Navbar() {
+import { usePathname } from "next/navigation";
+
+export function Navbar({ session }: { session?: Session | null }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isOnboarding = pathname?.startsWith("/onboarding");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +23,8 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (isOnboarding) return null;
 
   const navItems = ["Challenges", "Rankings", "Intelligence", "Pricing"];
 
@@ -53,9 +62,11 @@ export function Navbar() {
               }}
               className="flex items-center group z-50 cursor-pointer"
             >
-              <img
+              <Image
                 src="/logo-header.png"
                 alt="QuizArena"
+                width={180}
+                height={100}
                 className="h-16 sm:h-22 md:h-28 w-auto object-contain transition-all duration-500 group-hover:scale-105 drop-shadow-sm"
               />
             </Link>
@@ -82,30 +93,47 @@ export function Navbar() {
 
           {/* Right: Actions */}
           <div className="hidden md:flex items-center gap-5">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              <Link
-                href="/login"
-                className="text-sm font-bold text-navy/70 hover:text-navy transition-colors"
+            {session ? (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9, type: "spring" }}
               >
-                Login
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.9, type: "spring" }}
-            >
-              <Link
-                href="/signup"
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
-              >
-                Start Free
-              </Link>
-            </motion.div>
+                <Link
+                  href="/dashboard"
+                  className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
+                >
+                  Dashboard
+                </Link>
+              </motion.div>
+            ) : (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <Link
+                    href="/login"
+                    className="text-sm font-bold text-navy/70 hover:text-navy transition-colors"
+                  >
+                    Login
+                  </Link>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.9, type: "spring" }}
+                >
+                  <Link
+                    href="/signup"
+                    className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
+                  >
+                    Start Free
+                  </Link>
+                </motion.div>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -149,9 +177,11 @@ export function Navbar() {
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                  <img
+                  <Image
                     src="/logo.png"
                     alt="QuizArena Icon"
+                    width={64}
+                    height={64}
                     className="h-16 w-auto object-contain drop-shadow-sm scale-110 origin-left"
                   />
                 </Link>

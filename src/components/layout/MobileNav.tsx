@@ -12,8 +12,12 @@ import type { Session } from "next-auth";
  * Mobile Navigation Drawer — Authenticated State
  * Slide-out menu for mobile with session-aware links
  */
+import { usePathname } from "next/navigation";
+
 export function MobileNav({ session }: { session: Session | null }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isOnboarding = pathname?.startsWith("/onboarding");
 
   const NAV_ITEMS = [
     { label: "Dashboard", href: "/dashboard", icon: Layout },
@@ -53,6 +57,8 @@ export function MobileNav({ session }: { session: Session | null }) {
         .toUpperCase()
         .slice(0, 2)
     : "?";
+
+  if (isOnboarding) return null;
 
   return (
     <>

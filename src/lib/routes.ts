@@ -32,9 +32,6 @@ export const ROUTES = {
   // ─── ONBOARDING ──────────────────────────────────────────
   ONBOARDING: {
     ROOT: "/onboarding",
-    PROFILE_SETUP: "/onboarding/profile",
-    PREFERENCES: "/onboarding/preferences",
-    COMPLETE: "/onboarding/complete",
   },
 
   // ─── PUBLIC ROUTES ───────────────────────────────────────

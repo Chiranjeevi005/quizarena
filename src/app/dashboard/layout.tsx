@@ -1,13 +1,16 @@
 /**
- * QuizArena — Protected Dashboard Layout (Wrapper)
+ * QuizArena — Dashboard Layout with App Shell
  *
- * This wraps the dashboard in the ProtectedAppLayout.
- * All authenticated pages go inside /dashboard/(.) route group.
+ * Wraps all authenticated dashboard views with:
+ * - Session-verified sidebar navigation
+ * - Responsive mobile drawer
+ * - Consistent page structure
+ * - User identity display
  */
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
-import { ProtectedAppLayout } from "@/components/layout/ProtectedAppLayout";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -16,5 +19,5 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect(ROUTES.AUTH.SIGN_IN);
   }
 
-  return <ProtectedAppLayout session={session}>{children}</ProtectedAppLayout>;
+  return <DashboardShell>{children}</DashboardShell>;
 }

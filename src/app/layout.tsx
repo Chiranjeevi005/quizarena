@@ -5,6 +5,8 @@ import { Navbar } from "@/components/layout/Navbar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { getServerSession } from "@/lib/session-utils";
 
+import { Footer } from "@/components/layout/Footer";
+
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken" });
 
 export const metadata = {
@@ -19,30 +21,32 @@ export const metadata = {
  * and font configurations for the entire application.
  */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Fetch session on the server to prevent Navbar flicker
   const session = await getServerSession();
 
+  // We can't use usePathname in a server component easily without headers or a wrapper.
+  // However, we can use headers to detect the current path.
+  const { headers } = await import("next/headers");
+  const headersList = await headers();
+  const fullPath = headersList.get("x-invoke-path") || "";
+  const isOnboarding = fullPath.startsWith("/onboarding");
+  const isHomePage = fullPath === "/";
+
   return (
-<<<<<<< HEAD
     <html lang="en" className={hanken.variable}>
       <body className="antialiased min-h-screen bg-background font-sans text-navy flex flex-col">
         <SecureClientAuthProvider>
-          {/* Global Desktop Navbar */}
-          <Navbar session={session} />
+          {/* Global Desktop Navbar - Only visible on home page */}
+          {isHomePage && !isOnboarding && <Navbar session={session} />}
 
-          {/* Global Mobile Navigation Drawer */}
-          <MobileNav session={session} />
+          {/* Global Mobile Navigation Drawer - Only visible on home page */}
+          {isHomePage && !isOnboarding && <MobileNav session={session} />}
 
           {/* Main Application Content */}
-          <main className="flex-1 w-full">{children}</main>
+          <main className={!isOnboarding ? "flex-1 w-full" : "flex-1 w-full"}>{children}</main>
+
+          {/* Global Footer - Only visible on home page */}
+          {isHomePage && !isOnboarding && <Footer />}
         </SecureClientAuthProvider>
-=======
-    <html lang="en" className={`${hankenGrotesk.variable} h-full antialiased relative`}>
-      <body className="min-h-full flex flex-col font-sans relative">
-        <Navbar />
-        {children}
-        <Footer />
->>>>>>> wholesale-school
       </body>
     </html>
   );

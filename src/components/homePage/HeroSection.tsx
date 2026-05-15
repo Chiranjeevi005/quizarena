@@ -13,7 +13,6 @@ export function HeroSection() {
 
   const y1 = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -99,7 +98,7 @@ export function HeroSection() {
                 whileTap={{ scale: 0.98 }}
                 className="w-full sm:w-auto btn bg-navy text-white hover:bg-navy/90 btn-lg shadow-xl shadow-navy/20 group rounded-xl font-bold text-sm sm:text-base tracking-wide py-4 sm:py-3.5 cursor-pointer transition-all"
               >
-                Enter Today's Challenge
+                Enter Today&#39;s Challenge
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </motion.button>
               <motion.button

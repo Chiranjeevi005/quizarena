@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth/auth.config";
 import { ROUTES } from "@/lib/routes";
+
+const { auth } = NextAuth(authConfig);
 
 /**
  * QuizArena — Production-Grade Middleware
@@ -10,6 +13,7 @@ import { ROUTES } from "@/lib/routes";
  * - Redirect management (no loops)
  * - Auth callback pass-through
  * - Static asset bypass
+ * - Onboarding flow gating
  * - Standardized Next.js middleware implementation
  */
 
@@ -89,8 +93,9 @@ export async function proxy(request: NextRequest) {
   // Get session
   const session = await auth();
   const isAuthenticated = !!session?.user;
+  const isOnboardingCompleted = session?.user?.onboardingCompleted ?? false;
 
-  // Protected route guard
+  // Protected route guard (for unauthenticated users)
   if (isProtectedRoute(pathname) && !isAuthenticated) {
     const loginUrl = new URL(ROUTES.AUTH.SIGN_IN, request.url);
     const intendedDestination = pathname + request.nextUrl.search;
@@ -99,10 +104,38 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Auth-only redirect (logged-in users away from login/register)
-  if (isAuthOnlyRoute(pathname) && isAuthenticated) {
-    const redirectUrl = getSafeRedirectUrl(request, ROUTES.PROTECTED.DASHBOARD);
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  // Authenticated user logic
+  if (isAuthenticated) {
+    // Auth-only routes (login/register) -> redirect to dashboard
+    if (isAuthOnlyRoute(pathname)) {
+      const redirectUrl = getSafeRedirectUrl(request, ROUTES.PROTECTED.DASHBOARD);
+      return NextResponse.redirect(new URL(redirectUrl, request.url));
+    }
+
+    // Onboarding routes
+    const isOnboardingRoute = pathname.startsWith(ROUTES.ONBOARDING.ROOT);
+    if (isOnboardingRoute) {
+      // If onboarding is complete, redirect to dashboard
+      if (isOnboardingCompleted) {
+        const redirectUrl = getSafeRedirectUrl(request, ROUTES.PROTECTED.DASHBOARD);
+        return NextResponse.redirect(new URL(redirectUrl, request.url));
+      }
+      // Otherwise, allow access to onboarding flow
+      return NextResponse.next();
+    }
+
+    // For all other protected routes (dashboard, profile, etc.)
+    // Redirect to onboarding if not completed
+    if (isProtectedRoute(pathname) && !isOnboardingCompleted) {
+      const onboardingUrl = new URL(ROUTES.ONBOARDING.ROOT, request.url);
+      // Preserve the original intended destination as a callbackUrl for after onboarding
+      const intendedDestination = pathname + request.nextUrl.search;
+      onboardingUrl.searchParams.set(
+        "callbackUrl",
+        getSafeRedirectUrl(request, intendedDestination)
+      );
+      return NextResponse.redirect(onboardingUrl);
+    }
   }
 
   return NextResponse.next();

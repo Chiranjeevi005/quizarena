@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import Image from "next/image";
+import { motion, type Variants } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  const isOnboarding = pathname?.startsWith("/onboarding");
+
+  if (isOnboarding) return null;
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -37,9 +44,11 @@ export function Footer() {
           {/* Column 1: Brand Identity */}
           <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-6">
             <Link href="/" className="flex items-center mb-6 group w-fit">
-              <img
+              <Image
                 src="/logo-header.png"
                 alt="QuizArena"
+                width={120}
+                height={56}
                 className="h-14 sm:h-16 w-auto brightness-0 invert"
               />
             </Link>

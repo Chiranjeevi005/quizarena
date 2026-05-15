@@ -167,8 +167,9 @@ export function IntelligenceShowcaseSection() {
                 Micro-Analysis
               </h3>
               <p className="text-base sm:text-lg lg:text-xl text-navy/60 font-medium leading-relaxed mb-6 sm:mb-8">
-                The platform's intelligence engine dissects your performance, instantly identifying
-                specific topics where your speed or accuracy falls below the competitive benchmark.
+                The platform&#39;s intelligence engine dissects your performance, instantly
+                identifying specific topics where your speed or accuracy falls below the competitive
+                benchmark.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <motion.div

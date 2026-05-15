@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { signupRateLimiter } from "@/lib/rate-limiter";
-import { Prisma } from "@prisma/client";
 
 /**
  * Validate email format
@@ -85,8 +84,8 @@ export async function POST(request: NextRequest) {
         },
         { status: 201 }
       );
-    } catch (createError: any) {
-      if (createError.code === "P2002") {
+    } catch (createError) {
+      if (createError instanceof Error && "code" in createError && createError.code === "P2002") {
         // Handle duplicate email
         const existingUser = await prisma.user.findUnique({
           where: { email: normalizedEmail },
