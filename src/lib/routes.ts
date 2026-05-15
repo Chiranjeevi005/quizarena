@@ -27,6 +27,8 @@ export const ROUTES = {
     ANALYTICS: "/analytics",
     SUBSCRIPTION: "/subscription",
     ADMIN: "/admin",
+    CHALLENGE_ATTEMPT: (slug: string) => `/dashboard/challenges/${slug}`,
+    CHALLENGE_RESULT: (attemptId: string) => `/dashboard/results/${attemptId}`,
   },
 
   // ─── ONBOARDING ──────────────────────────────────────────

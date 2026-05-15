@@ -10,21 +10,22 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(cuid())
+  id                  String             @id @default(cuid())
   name                String?
-  username            String?   @unique
-  email               String?   @unique
+  username            String?            @unique
+  email               String?            @unique
   emailVerified       DateTime?
   image               String?
   password            String?
-  role                UserRole  @default(USER)
-  onboardingCompleted Boolean   @default(false)
+  role                UserRole           @default(USER)
+  onboardingCompleted Boolean            @default(false)
   examCategory        ExamCategory?
-  preparationLevel    PreparationLevel?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  preparationLevel   PreparationLevel?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
   accounts            Account[]
   sessions            Session[]
+  attempts            ChallengeAttempt[]
 
   @@index([email])
   @@index([username])
@@ -89,4 +90,101 @@ model VerificationToken {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum ChallengeDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Challenge {
+  id               String              @id @default(cuid())
+  title            String
+  slug             String              @unique
+  description      String?
+  examCategory     ExamCategory?
+  difficulty       ChallengeDifficulty @default(MEDIUM)
+  totalQuestions   Int
+  durationInMinutes Int
+  isPublished      Boolean             @default(false)
+  challengeDate    DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  questions        ChallengeQuestion[]
+  attempts        ChallengeAttempt[]
+
+  @@index([slug])
+  @@index([examCategory])
+  @@index([challengeDate])
+  @@index([isPublished])
+  @@map("challenges")
+}
+
+model Question {
+  id            String              @id @default(cuid())
+  question      String              @db.Text
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctOption String
+  explanation   String?             @db.Text
+  subject       String?
+  difficulty    ChallengeDifficulty @default(MEDIUM)
+  createdAt     DateTime            @default(now())
+  challenges    ChallengeQuestion[]
+
+  @@index([subject])
+  @@index([difficulty])
+  @@map("questions")
+}
+
+model ChallengeQuestion {
+  id          String    @id @default(cuid())
+  challengeId String
+  questionId  String
+  order       Int       @default(0)
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, questionId])
+  @@index([challengeId])
+  @@index([questionId])
+  @@map("challenge_questions")
+}
+
+model ChallengeAttempt {
+  id               String       @id @default(cuid())
+  userId           String
+  challengeId      String
+  score            Int          @default(0)
+  correctAnswers  Int          @default(0)
+  wrongAnswers    Int          @default(0)
+  unanswered       Int          @default(0)
+  startedAt        DateTime     @default(now())
+  submittedAt      DateTime?
+  timeTakenInSeconds Int?
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge        Challenge   @relation(fields: [challengeId], references: [id])
+  answers          UserAnswer[]
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([submittedAt])
+  @@map("challenge_attempts")
+}
+
+model UserAnswer {
+  id            String            @id @default(cuid())
+  attemptId     String
+  questionId    String
+  selectedOption String?
+  isCorrect     Boolean?
+  attempt       ChallengeAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([questionId])
+  @@map("user_answers")
 }

@@ -110,7 +110,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
               style={{
                 width: collapsed ? 28 : 140,
                 height: "auto",
-                objectFit: "contain"
+                objectFit: "contain",
               }}
               unoptimized
             />
@@ -118,7 +118,9 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </div>
 
         {/* USER SECTION */}
-        <div className={`p-4 border-b border-gray-100 shrink-0 ${collapsed ? "flex justify-center" : ""}`}>
+        <div
+          className={`p-4 border-b border-gray-100 shrink-0 ${collapsed ? "flex justify-center" : ""}`}
+        >
           {collapsed ? (
             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
               {getInitials(user?.name)}
