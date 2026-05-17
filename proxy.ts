@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import { authConfig } from "@/auth/auth.config";
 import { ROUTES } from "@/lib/routes";
 import { ROLE, toRole, type Role } from "@/auth/roles/role-types";
-import { hasMinimumRole, hasRole } from "@/auth/roles/role-hierarchy";
+import { hasMinimumRole } from "@/auth/roles/role-hierarchy";
 
 const { auth } = NextAuth(authConfig);
 
@@ -21,14 +21,7 @@ const { auth } = NextAuth(authConfig);
  * - Deny-by-default security
  */
 
-const PUBLIC_ROUTES = [
-  "/",
-  "/about",
-  "/contact",
-  "/login",
-  "/register",
-  "/forgot-password",
-];
+const PUBLIC_ROUTES = ["/", "/about", "/contact", "/login", "/register", "/forgot-password"];
 
 const AUTH_ONLY_ROUTES = ["/login", "/register"];
 
@@ -102,21 +95,15 @@ function isStaticAsset(pathname: string): boolean {
 }
 
 function isModeratorRoute(pathname: string): boolean {
-  return MODERATOR_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return MODERATOR_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 }
 
 function isAdminRoute(pathname: string): boolean {
-  return ADMIN_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return ADMIN_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 }
 
 function isSuperAdminRoute(pathname: string): boolean {
-  return SUPER_ADMIN_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return SUPER_ADMIN_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 }
 
 function getRequiredRoleForRoute(pathname: string): Role | null {
@@ -210,9 +197,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
 
 export default proxy;

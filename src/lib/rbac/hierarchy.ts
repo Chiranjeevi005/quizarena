@@ -44,6 +44,8 @@ export const isModerator = (role: Role | string): boolean => hasRole(role, ROLES
 export const isAdmin = (role: Role | string): boolean => hasRole(role, ROLES.ADMIN);
 export const isSuperAdmin = (role: Role | string): boolean => hasRole(role, ROLES.SUPER_ADMIN);
 
-export const isAtLeastModerator = (role: Role | string): boolean => hasMinimumRole(role, ROLES.MODERATOR);
+export const isAtLeastModerator = (role: Role | string): boolean =>
+  hasMinimumRole(role, ROLES.MODERATOR);
 export const isAtLeastAdmin = (role: Role | string): boolean => hasMinimumRole(role, ROLES.ADMIN);
-export const isAtLeastSuperAdmin = (role: Role | string): boolean => hasMinimumRole(role, ROLES.SUPER_ADMIN);
+export const isAtLeastSuperAdmin = (role: Role | string): boolean =>
+  hasMinimumRole(role, ROLES.SUPER_ADMIN);

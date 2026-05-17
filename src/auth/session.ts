@@ -103,17 +103,21 @@ export const hasMinimumRoleCheck = cache(async (minimumRole: Role): Promise<bool
   return hasMinimumRole(toRole(user?.role ?? "USER"), minimumRole);
 });
 
-export const checkRoleAccess = cache(async (requiredRole: Role): Promise<{
-  allowed: boolean;
-  user: User | null;
-}> => {
-  const user = await getCurrentUser();
-  if (!user) {
-    return { allowed: false, user: null };
+export const checkRoleAccess = cache(
+  async (
+    requiredRole: Role
+  ): Promise<{
+    allowed: boolean;
+    user: User | null;
+  }> => {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { allowed: false, user: null };
+    }
+    const allowed = hasMinimumRole(toRole(user?.role ?? "USER"), requiredRole);
+    return { allowed, user };
   }
-  const allowed = hasMinimumRole(toRole(user?.role ?? "USER"), requiredRole);
-  return { allowed, user };
-});
+);
 
 export const getSafeUserRole = (role: string | undefined | null): Role => {
   if (!role) return ROLE.USER;

@@ -1,12 +1,12 @@
-import { 
-  Shield, 
-  DollarSign, 
-  Settings2, 
-  Users, 
-  Key, 
-  Activity, 
+import {
+  Shield,
+  DollarSign,
+  Settings2,
+  Users,
+  Key,
+  Activity,
   Server,
-  AlertTriangle 
+  AlertTriangle,
 } from "lucide-react";
 
 export async function SuperAdminDashboardView() {
@@ -28,7 +28,9 @@ export async function SuperAdminDashboardView() {
         <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
         <div>
           <p className="font-semibold text-red-800">Restricted Access</p>
-          <p className="text-sm text-red-600">This dashboard provides system-level access. All actions are logged.</p>
+          <p className="text-sm text-red-600">
+            This dashboard provides system-level access. All actions are logged.
+          </p>
         </div>
       </div>
 

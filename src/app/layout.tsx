@@ -29,7 +29,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const headersList = await headers();
   const fullPath = headersList.get("x-invoke-path") || "";
   const isOnboarding = fullPath.startsWith("/onboarding");
-  const isHomePage = fullPath === "/";
   const isLoggedIn = !!session;
 
   return (

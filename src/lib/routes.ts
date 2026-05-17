@@ -27,8 +27,27 @@ export const ROUTES = {
     ANALYTICS: "/analytics",
     SUBSCRIPTION: "/subscription",
     ADMIN: "/admin",
+    SUPER_ADMIN: "/dashboard/super-admin",
     CHALLENGE_ATTEMPT: (slug: string) => `/dashboard/challenges/${slug}`,
     CHALLENGE_RESULT: (attemptId: string) => `/dashboard/results/${attemptId}`,
+  },
+
+  // ─── SUPER ADMIN ROUTES ─────────────────────────────────────
+  SUPER_ADMIN: {
+    ROOT: "/dashboard/super-admin",
+    HOME: "/dashboard/super-admin/home",
+    FINANCIAL: "/dashboard/financials",
+    PAYOUTS: "/dashboard/payouts",
+    REVENUE: "/dashboard/revenue",
+    SUBSCRIPTIONS: "/dashboard/subscriptions",
+    ROLES: "/dashboard/roles",
+    ADMIN_MANAGEMENT: "/dashboard/admin-management",
+    USER_ROLES: "/dashboard/user-roles",
+    INFRASTRUCTURE: "/dashboard/infrastructure",
+    PLATFORM_SETTINGS: "/dashboard/platform-settings",
+    FEATURE_FLAGS: "/dashboard/feature-flags",
+    PLATFORM_ANALYTICS: "/dashboard/platform/analytics",
+    PLATFORM_REPORTS: "/dashboard/platform/reports",
   },
 
   // ─── ONBOARDING ──────────────────────────────────────────

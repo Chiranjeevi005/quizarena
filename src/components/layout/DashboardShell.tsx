@@ -208,7 +208,9 @@ export function DashboardShell({ children }: DashboardShellProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-navy truncate">{user?.name || "User"}</p>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-gray-500 truncate">@{user?.username || "aspirant"}</span>
+                  <span className="text-xs text-gray-500 truncate">
+                    @{user?.username || "aspirant"}
+                  </span>
                   {role !== ROLES.USER && (
                     <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">
                       {getRoleLabel(role)}
@@ -265,7 +267,9 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   {isActive && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
                   )}
-                  <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-primary" : ""} ${role !== ROLES.USER && item.href.includes('dashboard') ? 'text-amber-500' : ''}`} />
+                  <Icon
+                    className={`w-5 h-5 shrink-0 ${isActive ? "text-primary" : ""} ${role !== ROLES.USER && item.href.includes("dashboard") ? "text-amber-500" : ""}`}
+                  />
                   {!collapsed && (
                     <span className={`text-sm font-medium ${isActive ? "text-primary" : ""}`}>
                       {item.label}

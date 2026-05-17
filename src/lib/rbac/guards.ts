@@ -1,6 +1,12 @@
 import { auth } from "@/auth";
 import { ROLES, type Role } from "./roles";
-import { hasMinimumRole, hasRole, isAtLeastAdmin, isAtLeastModerator, isAtLeastSuperAdmin } from "./hierarchy";
+import {
+  hasMinimumRole,
+  hasRole,
+  isAtLeastAdmin,
+  isAtLeastModerator,
+  isAtLeastSuperAdmin,
+} from "./hierarchy";
 import { hasPermission, type Permission, ROLE_PERMISSIONS } from "./permissions";
 import { redirect } from "next/navigation";
 
@@ -43,7 +49,7 @@ export const requireRole = async (
 ): Promise<AuthUser> => {
   const user = await requireAuth(redirectTo);
   const userRole = (user?.role as Role) ?? ROLES.USER;
-  
+
   if (!hasRole(userRole, requiredRole)) {
     redirect(redirectTo);
   }
@@ -56,7 +62,7 @@ export const requireMinimumRole = async (
 ): Promise<AuthUser> => {
   const user = await requireAuth(redirectTo);
   const userRole = (user?.role as Role) ?? ROLES.USER;
-  
+
   if (!hasMinimumRole(userRole, minimumRole)) {
     redirect(redirectTo);
   }
@@ -81,7 +87,7 @@ export const requirePermission = async (
 ): Promise<AuthUser> => {
   const user = await requireAuth(redirectTo);
   const userRole = (user?.role as Role) ?? ROLES.USER;
-  
+
   if (!hasPermission(userRole, permission)) {
     redirect(redirectTo);
   }
@@ -122,7 +128,9 @@ export const checkAuth = async (): Promise<{ authenticated: boolean; user: AuthU
   };
 };
 
-export const checkRole = async (requiredRole: Role): Promise<{ authorized: boolean; user: AuthUser }> => {
+export const checkRole = async (
+  requiredRole: Role
+): Promise<{ authorized: boolean; user: AuthUser }> => {
   const user = await getCurrentUserFromSession();
   if (!user) {
     return { authorized: false, user: null };
@@ -168,7 +176,7 @@ export const canAccessRoute = async (pathname: string): Promise<boolean> => {
 
   const userRole = (user?.role as Role) ?? ROLES.USER;
   const requiredRole = getRequiredRoleForRoute(pathname);
-  
+
   if (!requiredRole) return true;
   return hasMinimumRole(userRole, requiredRole);
 };
@@ -240,7 +248,9 @@ export const throwIfPermissionDenied = (userRole: Role | string, permission: Per
   }
 };
 
-export const safeGetCurrentUser = async (): Promise<{ success: true; user: AuthUser } | { success: false; error: string }> => {
+export const safeGetCurrentUser = async (): Promise<
+  { success: true; user: AuthUser } | { success: false; error: string }
+> => {
   try {
     const user = await getCurrentUserFromSession();
     if (!user) {

@@ -41,9 +41,7 @@ export const hasPermission = {
   },
 
   canModerateUsers: (role: Role | string): boolean => {
-    return (
-      hasMinimumRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN)
-    );
+    return hasMinimumRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN);
   },
 
   canManageModerators: (role: Role | string): boolean => {
@@ -63,15 +61,11 @@ export const hasPermission = {
   },
 
   canApproveContent: (role: Role | string): boolean => {
-    return (
-      hasRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN)
-    );
+    return hasRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN);
   },
 
   canReviewPerformance: (role: Role | string): boolean => {
-    return (
-      hasRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN)
-    );
+    return hasRole(role, ROLE.ADMIN) || hasRole(role, ROLE.SUPER_ADMIN);
   },
 
   canManageSettings: (role: Role | string): boolean => {
@@ -141,10 +135,7 @@ export const PERMISSION_GROUPS = {
 
 export type PermissionKey = keyof typeof PERMISSION_GROUPS.USER;
 
-export const checkPermission = (
-  role: Role,
-  permission: PermissionKey
-): boolean => {
+export const checkPermission = (role: Role, permission: PermissionKey): boolean => {
   const permissions = PERMISSION_GROUPS[role];
   if (!permissions) return false;
   return (permissions as Record<string, boolean>)[permission] ?? false;

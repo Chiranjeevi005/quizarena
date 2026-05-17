@@ -1,11 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser, getSession } from "../session";
 import { ROLE, type Role, toRole } from "../roles/role-types";
-import {
-  hasMinimumRole,
-  hasRole,
-  hasPermission,
-} from "../roles/role-hierarchy";
+import { hasMinimumRole, hasRole, hasPermission } from "../roles/role-hierarchy";
 
 export type AuthorizationResult =
   | { success: true; user: Awaited<ReturnType<typeof getCurrentUser>> }
@@ -98,7 +94,7 @@ export const authorizeAction = async (
       return { success: false, error: "Unauthorized" };
     }
     return await action();
-  } catch (error) {
+  } catch (_error) {
     return { success: false, error: "Authorization error" };
   }
 };
@@ -129,10 +125,7 @@ export class AuthorizationError extends Error {
   }
 }
 
-export const throwIfUnauthorized = (
-  userRole: string | undefined,
-  requiredRole: Role
-): void => {
+export const throwIfUnauthorized = (userRole: string | undefined, requiredRole: Role): void => {
   const role = getSafeUserRole(userRole);
   if (!hasMinimumRole(role, requiredRole)) {
     throw new AuthorizationError("Insufficient permissions");

@@ -16,7 +16,10 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className="block text-[13px] font-semibold text-slate-700 tracking-tight">
+          <label
+            htmlFor={inputId}
+            className="block text-[13px] font-semibold text-slate-700 tracking-tight"
+          >
             {label}
             {props.required && <span className="ml-1 text-primary">*</span>}
           </label>
@@ -45,8 +48,18 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             className="text-[12px] text-red-500 font-medium flex items-center gap-1.5 px-1 animate-in fade-in slide-in-from-top-1"
             role="alert"
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+              />
             </svg>
             {error}
           </p>

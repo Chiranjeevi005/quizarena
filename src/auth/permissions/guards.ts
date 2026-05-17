@@ -1,6 +1,6 @@
 import { getCurrentUser } from "../session";
 import { ROLE, type Role, toRole } from "../roles/role-types";
-import { hasMinimumRole, hasRole } from "../roles/role-hierarchy";
+import { hasMinimumRole } from "../roles/role-hierarchy";
 
 export const MODERATOR_ROUTES = [
   "/moderator",
@@ -28,29 +28,19 @@ export const SUPER_ADMIN_ROUTES = [
 ];
 
 export const isModeratorRoute = (pathname: string): boolean => {
-  return MODERATOR_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return MODERATOR_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 };
 
 export const isAdminRoute = (pathname: string): boolean => {
-  return ADMIN_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return ADMIN_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 };
 
 export const isSuperAdminRoute = (pathname: string): boolean => {
-  return SUPER_ADMIN_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  return SUPER_ADMIN_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 };
 
 export const isPrivilegedRoute = (pathname: string): boolean => {
-  return (
-    isModeratorRoute(pathname) ||
-    isAdminRoute(pathname) ||
-    isSuperAdminRoute(pathname)
-  );
+  return isModeratorRoute(pathname) || isAdminRoute(pathname) || isSuperAdminRoute(pathname);
 };
 
 export const getRequiredRoleForRoute = (pathname: string): Role | null => {
@@ -74,7 +64,7 @@ export const canAccessRoute = async (pathname: string): Promise<boolean> => {
 
 export const authorizeRouteAccess = async (
   pathname: string,
-  redirectTo: string = "/"
+  _redirectTo: string = "/"
 ): Promise<boolean> => {
   const canAccess = await canAccessRoute(pathname);
   if (!canAccess) {
@@ -94,7 +84,7 @@ export const validateRouteAccess = async (
   pathname: string
 ): Promise<{ allowed: boolean; role: Role }> => {
   const user = await getCurrentUser();
-  
+
   if (!user) {
     return { allowed: false, role: ROLE.USER };
   }

@@ -25,7 +25,10 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className="block text-[13px] font-semibold text-slate-700 tracking-tight">
+          <label
+            htmlFor={inputId}
+            className="block text-[13px] font-semibold text-slate-700 tracking-tight"
+          >
             {label}
             {props.required && <span className="ml-1 text-primary">*</span>}
           </label>
@@ -70,14 +73,27 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             className="text-[12px] text-red-500 font-medium flex items-center gap-1.5 px-1 animate-in fade-in slide-in-from-top-1"
             role="alert"
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+              />
             </svg>
             {error}
           </p>
         )}
         {showRequirements && !error && (props.value as string)?.length > 0 && (
-          <div id={`${inputId}-requirements`} className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 mt-2">
+          <div
+            id={`${inputId}-requirements`}
+            className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 mt-2"
+          >
             {requirements.map((req, i) => (
               <span
                 key={i}
@@ -89,7 +105,9 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
                 <span
                   className={clsx(
                     "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                    req.met ? "bg-green-500 scale-110 shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-slate-200"
+                    req.met
+                      ? "bg-green-500 scale-110 shadow-[0_0_8px_rgba(34,197,94,0.4)]"
+                      : "bg-slate-200"
                   )}
                 />
                 {req.text}

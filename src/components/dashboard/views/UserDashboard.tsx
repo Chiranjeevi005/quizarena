@@ -1,5 +1,6 @@
 import { EXAM_CATEGORY_LABELS, PREPARATION_LEVEL_LABELS } from "@/lib/onboarding";
 import { getLatestChallenge, getUserLatestAttempt } from "@/actions/challenge";
+import type { DefaultSession } from "next-auth";
 import Link from "next/link";
 import {
   Target,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 
 interface UserDashboardViewProps {
-  user: any;
+  user: DefaultSession["user"] & { examCategory?: string | null; preparationLevel?: string | null };
 }
 
 export async function UserDashboardView({ user }: UserDashboardViewProps) {

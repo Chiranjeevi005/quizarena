@@ -35,12 +35,7 @@ export const toRole = (role: string): Role => {
 };
 
 export const isPrismaUserRole = (role: string): role is PrismaUserRole => {
-  return (
-    role === "USER" ||
-    role === "MODERATOR" ||
-    role === "ADMIN" ||
-    role === "SUPER_ADMIN"
-  );
+  return role === "USER" || role === "MODERATOR" || role === "ADMIN" || role === "SUPER_ADMIN";
 };
 
 export type UserRole = PrismaUserRole;

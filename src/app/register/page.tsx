@@ -90,7 +90,7 @@ function RegisterForm() {
         setErrors((prev) => ({ ...prev, username: "Username is already taken" }));
       } else {
         setErrors((prev) => {
-          const { username, ...rest } = prev;
+          const { username: _username, ...rest } = prev;
           return rest;
         });
       }
@@ -212,7 +212,8 @@ function RegisterForm() {
           <div className="mb-10">
             <h2 className="text-3xl font-bold tracking-tight text-navy">Create your account</h2>
             <p className="mt-2.5 text-slate-500 leading-relaxed">
-              Start your structured exam preparation journey with India's most analytical platform.
+              Start your structured exam preparation journey with India&apos;s most analytical
+              platform.
             </p>
           </div>
 
@@ -247,7 +248,8 @@ function RegisterForm() {
                 disabled={loading}
                 error={errors.username}
                 className={clsx(
-                  usernameAvailable === true && "border-green-500/50 focus:border-green-500 focus:ring-green-500/10"
+                  usernameAvailable === true &&
+                    "border-green-500/50 focus:border-green-500 focus:ring-green-500/10"
                 )}
               />
             </div>
@@ -321,11 +323,17 @@ function RegisterForm() {
 
         {/* Trust microcopy */}
         <div className="mt-10 flex items-center gap-6 opacity-40 grayscale transition-all hover:grayscale-0 hover:opacity-100">
-          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Secure Infrastructure</p>
+          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+            Secure Infrastructure
+          </p>
           <div className="h-1 w-1 rounded-full bg-slate-300" />
-          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Privacy Protected</p>
+          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+            Privacy Protected
+          </p>
           <div className="h-1 w-1 rounded-full bg-slate-300" />
-          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">256-bit Encryption</p>
+          <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+            256-bit Encryption
+          </p>
         </div>
       </div>
     </div>

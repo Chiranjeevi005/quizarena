@@ -55,8 +55,8 @@ export default function BrandSection() {
               <span className="text-primary-light"> serious goals</span>
             </h1>
             <p className="text-lg text-white/70 leading-relaxed max-w-md">
-              A competitive practice platform designed for aspirants who understand
-              that daily discipline beats last-minute cramming.
+              A competitive practice platform designed for aspirants who understand that daily
+              discipline beats last-minute cramming.
             </p>
           </div>
         </div>
@@ -83,17 +83,17 @@ export default function BrandSection() {
         <div className="flex items-center gap-4">
           <div className="flex -space-x-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-6 w-6 rounded-full border-2 border-navy bg-navy-light flex items-center justify-center text-[10px] text-white/40">
+              <div
+                key={i}
+                className="h-6 w-6 rounded-full border-2 border-navy bg-navy-light flex items-center justify-center text-[10px] text-white/40"
+              >
                 U
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/40 font-medium">
-            Join 10,000+ serious aspirants today
-          </p>
+          <p className="text-xs text-white/40 font-medium">Join 10,000+ serious aspirants today</p>
         </div>
       </div>
     </div>
   );
 }
-

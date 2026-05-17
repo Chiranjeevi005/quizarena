@@ -20,12 +20,7 @@ export type Permission =
   | "admin.create";
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  USER: [
-    "quizzes.attempt",
-    "dashboard.access",
-    "profile.manage",
-    "analytics.access",
-  ],
+  USER: ["quizzes.attempt", "dashboard.access", "profile.manage", "analytics.access"],
   MODERATOR: [
     "quizzes.attempt",
     "dashboard.access",

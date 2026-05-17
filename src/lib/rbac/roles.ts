@@ -7,12 +7,7 @@ export const ROLES = {
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
-export const ROLE_VALUES = [
-  ROLES.USER,
-  ROLES.MODERATOR,
-  ROLES.ADMIN,
-  ROLES.SUPER_ADMIN,
-] as const;
+export const ROLE_VALUES = [ROLES.USER, ROLES.MODERATOR, ROLES.ADMIN, ROLES.SUPER_ADMIN] as const;
 
 export const ROLE_DEFAULT = ROLES.USER;
 

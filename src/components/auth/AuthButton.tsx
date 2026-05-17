@@ -36,7 +36,9 @@ const AuthButton = forwardRef<HTMLButtonElement, AuthButtonProps>(
         {loading && <Loader2 className="h-4.5 w-4.5 animate-spin" strokeWidth={2.5} />}
         <span className={loading ? "opacity-0" : "flex items-center gap-2"}>
           {children}
-          {!loading && <div className="w-1.5 h-1.5 rounded-full bg-white/20 transition-all group-hover:bg-white/40" />}
+          {!loading && (
+            <div className="w-1.5 h-1.5 rounded-full bg-white/20 transition-all group-hover:bg-white/40" />
+          )}
         </span>
       </button>
     );
