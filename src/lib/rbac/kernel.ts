@@ -10,7 +10,10 @@ import {
 import { redirect } from "next/navigation";
 
 export class RBACKernelError extends Error {
-  constructor(message: string, public readonly code: RBACKernelErrorCode) {
+  constructor(
+    message: string,
+    public readonly code: RBACKernelErrorCode
+  ) {
     super(message);
     this.name = "RBACKernelError";
   }
@@ -102,7 +105,10 @@ export const validateKernelRole = async (
   const context = await getKernelContext();
 
   if (!context) {
-    return { valid: false, context: { userId: "", role: ROLES.USER, permissions: [], dbVerified: false } };
+    return {
+      valid: false,
+      context: { userId: "", role: ROLES.USER, permissions: [], dbVerified: false },
+    };
   }
 
   const isValid = requireExactMatch
@@ -132,7 +138,10 @@ export const validateKernelPermission = async (
   const context = await getKernelContext();
 
   if (!context) {
-    return { valid: false, context: { userId: "", role: ROLES.USER, permissions: [], dbVerified: false } };
+    return {
+      valid: false,
+      context: { userId: "", role: ROLES.USER, permissions: [], dbVerified: false },
+    };
   }
 
   const hasPermission = context.permissions.includes(requiredPermission);
@@ -165,7 +174,9 @@ export const checkKernelAccess = async (): Promise<{
   }
 };
 
-export const kernelCanAccessRoute = async (pathname: string): Promise<{
+export const kernelCanAccessRoute = async (
+  pathname: string
+): Promise<{
   allowed: boolean;
   reason?: string;
 }> => {
@@ -209,19 +220,18 @@ export const sanitizeKernelRole = (payloadRole: unknown, fallbackRole: Role = RO
   }
 
   const validRoles = Object.values(ROLES) as readonly string[];
-  
+
   if (!validRoles.includes(payloadRole)) {
-    console.warn(`[KERNEL] Invalid role in payload: ${payloadRole}, falling back to ${fallbackRole}`);
+    console.warn(
+      `[KERNEL] Invalid role in payload: ${payloadRole}, falling back to ${fallbackRole}`
+    );
     return fallbackRole;
   }
 
   return payloadRole as Role;
 };
 
-export const preventKernelEscalation = (
-  actorRole: Role,
-  targetRole: Role
-): boolean => {
+export const preventKernelEscalation = (actorRole: Role, targetRole: Role): boolean => {
   const actorLevel = getRoleLevel(actorRole);
   const targetLevel = getRoleLevel(targetRole);
 

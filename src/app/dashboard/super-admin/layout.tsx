@@ -2,11 +2,7 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
 import { validateSuperAdminAccess } from "@/lib/rbac/super-admin";
 
-export default async function SuperAdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const validation = await validateSuperAdminAccess();
 
   if (!validation.authorized) {

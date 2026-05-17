@@ -1,0 +1,158 @@
+import { z } from "zod";
+
+export const QUESTION_DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
+
+export const QUESTION_STATUSES = ["DRAFT", "REVIEW", "APPROVED", "REJECTED", "ARCHIVED"] as const;
+
+export const COMMON_SUBJECTS = [
+  "Quantitative Aptitude",
+  "Reasoning Ability",
+  "English Language",
+  "General Awareness",
+  "General Science",
+  "Computer Knowledge",
+  "Current Affairs",
+] as const;
+
+export const createQuestionSchema = z
+  .object({
+    question: z
+      .string()
+      .min(10, "Question must be at least 10 characters")
+      .max(2000, "Question must not exceed 2000 characters"),
+    explanation: z.string().max(3000, "Explanation must not exceed 3000 characters").optional(),
+    subject: z
+      .string()
+      .min(1, "Subject is required")
+      .max(100, "Subject must not exceed 100 characters"),
+    topic: z.string().max(100, "Topic must not exceed 100 characters").optional(),
+    language: z.string().max(10).default("en"),
+    marks: z
+      .number()
+      .int("Marks must be a whole number")
+      .min(1, "At least 1 mark is required")
+      .max(10, "Cannot exceed 10 marks"),
+    negativeMarks: z
+      .number()
+      .min(0, "Negative marks cannot be negative")
+      .max(1, "Cannot exceed 100%"),
+    difficulty: z.enum(QUESTION_DIFFICULTIES).default("MEDIUM"),
+    status: z.enum(QUESTION_STATUSES).default("DRAFT"),
+    options: z
+      .array(
+        z.object({
+          optionText: z.string().min(1, "Option text is required").max(500, "Option too long"),
+          isCorrect: z.boolean(),
+          order: z.number().int(),
+        })
+      )
+      .min(2, "At least 2 options are required")
+      .max(6, "Cannot have more than 6 options"),
+  })
+  .refine((data) => data.options.filter((opt) => opt.isCorrect).length === 1, {
+    message: "Exactly one option must be marked as correct",
+  })
+  .refine(
+    (data) => {
+      const texts = data.options.map((opt) => opt.optionText.toLowerCase().trim());
+      return new Set(texts).size === texts.length;
+    },
+    { message: "Duplicate options are not allowed" }
+  );
+
+export const updateQuestionSchema = z
+  .object({
+    id: z.string().cuid("Invalid question ID"),
+    question: z
+      .string()
+      .min(10, "Question must be at least 10 characters")
+      .max(2000, "Question must not exceed 2000 characters")
+      .optional(),
+    explanation: z.string().max(3000, "Explanation must not exceed 3000 characters").optional(),
+    subject: z
+      .string()
+      .min(1, "Subject is required")
+      .max(100, "Subject must not exceed 100 characters")
+      .optional(),
+    topic: z.string().max(100, "Topic must not exceed 100 characters").optional(),
+    language: z.string().max(10).optional(),
+    marks: z
+      .number()
+      .int("Marks must be a whole number")
+      .min(1, "At least 1 mark is required")
+      .max(10, "Cannot exceed 10 marks")
+      .optional(),
+    negativeMarks: z
+      .number()
+      .min(0, "Negative marks cannot be negative")
+      .max(1, "Cannot exceed 100%")
+      .optional(),
+    difficulty: z.enum(QUESTION_DIFFICULTIES).optional(),
+    status: z.enum(QUESTION_STATUSES).optional(),
+    options: z
+      .array(
+        z.object({
+          optionText: z.string().min(1, "Option text is required").max(500, "Option too long"),
+          isCorrect: z.boolean(),
+          order: z.number().int(),
+        })
+      )
+      .min(2, "At least 2 options are required")
+      .max(6, "Cannot have more than 6 options")
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.options) {
+        const correctCount = data.options.filter((opt) => opt.isCorrect).length;
+        return correctCount === 1;
+      }
+      return true;
+    },
+    { message: "Exactly one option must be marked as correct" }
+  );
+
+export const questionIdSchema = z.object({
+  id: z.string().cuid("Invalid question ID"),
+});
+
+export const questionStatusTransitionSchema = z.object({
+  id: z.string().cuid("Invalid question ID"),
+  newStatus: z.enum(QUESTION_STATUSES),
+});
+
+export const questionFiltersSchema = z.object({
+  search: z.string().max(200).optional(),
+  subject: z.string().max(100).optional(),
+  topic: z.string().max(100).optional(),
+  difficulty: z.enum(QUESTION_DIFFICULTIES).optional(),
+  status: z.enum(QUESTION_STATUSES).optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
+});
+
+export const questionOptionSchema = z.object({
+  id: z.string().cuid().optional(),
+  optionText: z.string().min(1).max(500),
+  isCorrect: z.boolean(),
+  order: z.number().int(),
+});
+
+export type CreateQuestionInput = z.infer<typeof createQuestionSchema>;
+export type UpdateQuestionInput = z.infer<typeof updateQuestionSchema>;
+export type QuestionFilters = z.infer<typeof questionFiltersSchema>;
+export type QuestionStatusTransition = z.infer<typeof questionStatusTransitionSchema>;
+export type QuestionOption = z.infer<typeof questionOptionSchema>;
+
+const VALID_QUESTION_TRANSITIONS: Record<string, string[]> = {
+  DRAFT: ["REVIEW"],
+  REVIEW: ["DRAFT", "APPROVED", "REJECTED"],
+  APPROVED: ["ARCHIVED"],
+  REJECTED: ["DRAFT"],
+  ARCHIVED: ["DRAFT"],
+};
+
+export function isValidStatusTransition(current: string, target: string): boolean {
+  const allowed = VALID_QUESTION_TRANSITIONS[current] || [];
+  return allowed.includes(target);
+}

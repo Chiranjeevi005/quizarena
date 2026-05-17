@@ -32,6 +32,17 @@ export const ROUTES = {
     CHALLENGE_RESULT: (attemptId: string) => `/dashboard/results/${attemptId}`,
   },
 
+  // ─── MODERATOR ROUTES ────────────────────────────────────
+  MODERATOR: {
+    ROOT: "/dashboard/moderator",
+    CHALLENGES: "/dashboard/moderator/challenges",
+    CHALLENGE_CREATE: "/dashboard/moderator/challenges/create",
+    CHALLENGE_EDIT: (id: string) => `/dashboard/moderator/challenges/${id}/edit`,
+    QUESTIONS: "/dashboard/moderator/questions",
+    QUESTION_CREATE: "/dashboard/moderator/questions/create",
+    QUESTION_EDIT: (id: string) => `/dashboard/moderator/questions/${id}/edit`,
+  },
+
   // ─── SUPER ADMIN ROUTES ─────────────────────────────────────
   SUPER_ADMIN: {
     ROOT: "/dashboard/super-admin",

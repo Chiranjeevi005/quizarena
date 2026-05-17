@@ -26,6 +26,11 @@ model User {
   accounts            Account[]
   sessions            Session[]
   attempts            ChallengeAttempt[]
+  createdChallenges   Challenge[]
+  reviewedChallenges   Challenge[]        @relation("ChallengeReviewer")
+  publishedChallenges Challenge[]        @relation("ChallengePublisher")
+  createdQuestions    Question[]
+  reviewedQuestions  Question[]          @relation("QuestionReviewer")
 
   @@index([email])
   @@index([username])
@@ -100,46 +105,111 @@ enum ChallengeDifficulty {
   HARD
 }
 
+enum ChallengeStatus {
+  DRAFT
+  REVIEW
+  SCHEDULED
+  PUBLISHED
+  EXPIRED
+  ARCHIVED
+}
+
+enum QuestionStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
 model Challenge {
   id               String              @id @default(cuid())
   title            String
   slug             String              @unique
-  description      String?
+  description      String?             @db.Text
+  instructions     String?             @db.Text
   examCategory     ExamCategory?
   difficulty       ChallengeDifficulty @default(MEDIUM)
-  totalQuestions   Int
   durationInMinutes Int
-  isPublished      Boolean             @default(false)
-  challengeDate    DateTime?
+  totalQuestions   Int                 @default(0)
+  totalMarks       Int                 @default(0)
+  negativeMarking  Boolean             @default(false)
+  negativeMarkPercentage Float          @default(0.25)
+  status           ChallengeStatus     @default(DRAFT)
+  createdById      String?
+  createdBy        User?               @relation(fields: [createdById], references: [id])
+  reviewedById     String?
+  reviewedBy       User?               @relation("ChallengeReviewer", fields: [reviewedById], references: [id])
+  publishedById    String?
+  publishedBy      User?               @relation("ChallengePublisher", fields: [publishedById], references: [id])
+  reviewNotes      String?             @db.Text
+  rejectionReason String?             @db.Text
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
+  reviewedAt       DateTime?
+  scheduledPublishAt DateTime?
+  publishedAt      DateTime?
+  expiresAt        DateTime?
+  archivedAt        DateTime?
   questions        ChallengeQuestion[]
   attempts        ChallengeAttempt[]
 
   @@index([slug])
   @@index([examCategory])
-  @@index([challengeDate])
-  @@index([isPublished])
+  @@index([status])
+  @@index([difficulty])
+  @@index([scheduledPublishAt])
+  @@index([publishedAt])
+  @@index([expiresAt])
+  @@index([createdById])
+  @@index([reviewedById])
+  @@index([createdAt])
   @@map("challenges")
 }
 
 model Question {
   id            String              @id @default(cuid())
   question      String              @db.Text
-  optionA       String
-  optionB       String
-  optionC       String
-  optionD       String
-  correctOption String
   explanation   String?             @db.Text
   subject       String?
+  topic         String?
+  language      String              @default("en")
+  marks         Int                 @default(1)
+  negativeMarks Float               @default(0)
   difficulty    ChallengeDifficulty @default(MEDIUM)
+  status        QuestionStatus      @default(DRAFT)
+  createdById   String?
+  createdBy     User?               @relation(fields: [createdById], references: [id])
+  reviewedById  String?
+  reviewedBy    User?               @relation("QuestionReviewer", fields: [reviewedById], references: [id])
+  reviewNotes  String?             @db.Text
+  rejectionReason String?           @db.Text
   createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  reviewedAt    DateTime?
+  options       QuestionOption[]
   challenges    ChallengeQuestion[]
 
   @@index([subject])
+  @@index([topic])
   @@index([difficulty])
+  @@index([status])
+  @@index([createdById])
+  @@index([reviewedById])
+  @@index([createdAt])
   @@map("questions")
+}
+
+model QuestionOption {
+  id          String   @id @default(cuid())
+  questionId  String
+  optionText  String
+  isCorrect   Boolean  @default(false)
+  order       Int      @default(0)
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("question_options")
 }
 
 model ChallengeQuestion {
@@ -183,10 +253,65 @@ model UserAnswer {
   questionId    String
   selectedOption String?
   isCorrect     Boolean?
+  isSkipped     Boolean           @default(false)
+  timeSpentInSeconds Int?
   attempt       ChallengeAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
   @@unique([attemptId, questionId])
   @@index([attemptId])
   @@index([questionId])
   @@map("user_answers")
+}
+
+model QuestionAnalytics {
+  id                String   @id @default(cuid())
+  questionId        String   @unique
+  totalAttempts    Int      @default(0)
+  correctAttempts  Int      @default(0)
+  wrongAttempts    Int      @default(0)
+  skippedAttempts  Int      @default(0)
+  totalTimeSpent    Int      @default(0)
+  averageTimeSpent  Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([questionId])
+  @@map("question_analytics")
+}
+
+model ChallengeAnalytics {
+  id               String   @id @default(cuid())
+  challengeId      String   @unique
+  totalAttempts   Int      @default(0)
+  completedAttempts Int    @default(0)
+  totalScore      Float    @default(0)
+  averageScore    Float    @default(0)
+  highestScore    Int      @default(0)
+  lowestScore     Int      @default(0)
+  averageTimeSpent Float   @default(0)
+  averageAccuracy Float    @default(0)
+  completionRate   Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([challengeId])
+  @@map("challenge_analytics")
+}
+
+model DailyAnalytics {
+  id               String   @id @default(cuid())
+  date             DateTime @db.Date
+  totalAttempts   Int      @default(0)
+  completedAttempts Int    @default(0)
+  totalScore      Float    @default(0)
+  averageScore    Float    @default(0)
+  averageAccuracy Float    @default(0)
+  newUsers        Int      @default(0)
+  activeUsers     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([date])
+  @@index([date])
+  @@map("daily_analytics")
 }

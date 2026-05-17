@@ -29,18 +29,9 @@ interface ChallengeQuestionWithInclude {
 }
 
 export async function getActiveDailyChallenge() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
   const challenge = await prisma.challenge.findFirst({
     where: {
-      isPublished: true,
-      challengeDate: {
-        gte: today,
-        lt: tomorrow,
-      },
+      status: "PUBLISHED",
     },
     include: {
       questions: {
@@ -53,31 +44,9 @@ export async function getActiveDailyChallenge() {
       },
     },
     orderBy: {
-      challengeDate: "desc",
+      createdAt: "desc",
     },
   });
-
-  if (!challenge) {
-    const latestChallenge = await prisma.challenge.findFirst({
-      where: {
-        isPublished: true,
-      },
-      include: {
-        questions: {
-          include: {
-            question: true,
-          },
-          orderBy: {
-            order: "asc",
-          },
-        },
-      },
-      orderBy: {
-        challengeDate: "desc",
-      },
-    });
-    return latestChallenge;
-  }
 
   return challenge;
 }
@@ -85,7 +54,7 @@ export async function getActiveDailyChallenge() {
 export async function getLatestChallenge() {
   const challenge = await prisma.challenge.findFirst({
     where: {
-      isPublished: true,
+      status: "PUBLISHED",
     },
     include: {
       questions: {
@@ -131,12 +100,18 @@ export async function getChallengeForAttempt(
   const challenge = await prisma.challenge.findUnique({
     where: {
       slug,
-      isPublished: true,
+      status: "PUBLISHED",
     },
     include: {
       questions: {
         include: {
-          question: true,
+          question: {
+            include: {
+              options: {
+                orderBy: { order: "asc" },
+              },
+            },
+          },
         },
         orderBy: {
           order: "asc",
@@ -149,14 +124,14 @@ export async function getChallengeForAttempt(
 
   const sanitized = {
     ...challenge,
-    questions: challenge.questions.map((cq: ChallengeQuestionWithInclude) => ({
+    questions: challenge.questions.map((cq) => ({
       id: cq.id,
       questionId: cq.questionId,
       question: cq.question.question,
-      optionA: cq.question.optionA,
-      optionB: cq.question.optionB,
-      optionC: cq.question.optionC,
-      optionD: cq.question.optionD,
+      optionA: cq.question.options[0]?.optionText || "",
+      optionB: cq.question.options[1]?.optionText || "",
+      optionC: cq.question.options[2]?.optionText || "",
+      optionD: cq.question.options[3]?.optionText || "",
       order: cq.order,
     })),
   };
@@ -252,15 +227,18 @@ export async function saveAnswer(
     return { success: false, error: "Attempt not found or already submitted" };
   }
 
-  const question = await prisma.question.findUnique({
-    where: { id: questionId },
+  const correctOption = await prisma.questionOption.findFirst({
+    where: {
+      questionId,
+      isCorrect: true,
+    },
   });
 
-  if (!question) {
-    return { success: false, error: "Question not found" };
+  if (!correctOption) {
+    return { success: false, error: "Question has no correct option" };
   }
 
-  const isCorrect = selectedOption === question.correctOption;
+  const isCorrect = selectedOption === correctOption.optionText;
 
   const answer = await prisma.userAnswer.upsert({
     where: {
@@ -303,25 +281,22 @@ export async function saveMultipleAnswers(attemptId: string, answers: QuizAnswer
     return { success: false, error: "Attempt not found or already submitted" };
   }
 
-  const questions = await prisma.question.findMany({
+  const correctOptions = await prisma.questionOption.findMany({
     where: {
-      id: {
-        in: Object.keys(answers),
-      },
+      questionId: { in: Object.keys(answers) },
+      isCorrect: true,
     },
   });
 
-  const questionMap = new Map(
-    questions.map((q: { id: string; correctOption: string }) => [q.id, q])
-  );
+  const correctOptionMap = new Map(correctOptions.map((opt) => [opt.questionId, opt.optionText]));
 
   const answerData = Object.entries(answers).map(([questionId, selectedOption]) => {
-    const question = questionMap.get(questionId);
+    const correctOption = correctOptionMap.get(questionId);
     return {
       attemptId,
       questionId,
       selectedOption,
-      isCorrect: question ? selectedOption === question.correctOption : null,
+      isCorrect: correctOption ? selectedOption === correctOption : null,
     };
   });
 
@@ -375,9 +350,7 @@ export async function submitChallenge(attemptId: string): Promise<ChallengeSubmi
     return { success: false, error: "Attempt not found or already submitted" };
   }
 
-  const allQuestionIds = attempt.challenge.questions.map(
-    (cq: ChallengeQuestionWithInclude) => cq.questionId
-  );
+  const allQuestionIds = attempt.challenge.questions.map((cq) => cq.questionId);
   const answeredQuestionIds = attempt.answers.map((a: { questionId: string }) => a.questionId);
   const unansweredCount = allQuestionIds.filter(
     (id: string) => !answeredQuestionIds.includes(id)

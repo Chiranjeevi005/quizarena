@@ -2,7 +2,11 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ROLES, ROLE_VALUES, type Role } from "./roles";
 import { hasRole, hasMinimumRole, getRoleLevel, ROLE_HIERARCHY } from "./hierarchy";
-import { getRolePermissionsWithInheritance, getPermissionHierarchy, type Permission } from "./permission-map";
+import {
+  getRolePermissionsWithInheritance,
+  getPermissionHierarchy,
+  type Permission,
+} from "./permission-map";
 
 export interface RBACAuditResult {
   passed: boolean;
@@ -30,15 +34,15 @@ export const AUDIT_CATEGORIES = {
 export const runRBACAudit = async (): Promise<RBACAuditResult> => {
   const issues: RBACAuditIssue[] = [];
 
-  issues.push(...await auditRoleDefinitions());
+  issues.push(...(await auditRoleDefinitions()));
   issues.push(...auditPermissionMatrix());
   issues.push(...auditPrivilegeEscalationPaths());
-  issues.push(...await auditSessionSecurity());
+  issues.push(...(await auditSessionSecurity()));
   issues.push(...auditRouteProtectionDefinitions());
   issues.push(...auditDataIntegrity());
 
   return {
-    passed: issues.filter(i => i.severity === "critical" || i.severity === "high").length === 0,
+    passed: issues.filter((i) => i.severity === "critical" || i.severity === "high").length === 0,
     issues,
     timestamp: new Date(),
   };
@@ -89,20 +93,22 @@ const auditRoleDefinitions = async (): Promise<RBACAuditIssue[]> => {
 const auditPermissionMatrix = (): RBACAuditIssue[] => {
   const issues: RBACAuditIssue[] = [];
 
-  const rolePermissions = ROLE_VALUES.map(role => ({
+  const rolePermissions = ROLE_VALUES.map((role) => ({
     role,
     permissions: getRolePermissionsWithInheritance(role),
   }));
 
   rolePermissions.forEach(({ role, permissions }) => {
-    const higherRoles = ROLE_VALUES.filter(r => getRoleLevel(r) > getRoleLevel(role));
-    
-    higherRoles.forEach(higherRole => {
+    const higherRoles = ROLE_VALUES.filter((r) => getRoleLevel(r) > getRoleLevel(role));
+
+    higherRoles.forEach((higherRole) => {
       const higherPermissions = getRolePermissionsWithInheritance(higherRole);
-      const missingFromLower = higherPermissions.filter(p => !permissions.includes(p));
+      const missingFromLower = higherPermissions.filter((p) => !permissions.includes(p));
 
       if (missingFromLower.length === 0 && higherRole !== role) {
-        console.log(`[AUDIT] ${role} has same permissions as ${higherRole} (acceptable for SUPER_ADMIN)`);
+        console.log(
+          `[AUDIT] ${role} has same permissions as ${higherRole} (acceptable for SUPER_ADMIN)`
+        );
       }
     });
   });
@@ -198,7 +204,8 @@ const auditSessionSecurity = async (): Promise<RBACAuditIssue[]> => {
       issues.push({
         severity: "critical",
         category: AUDIT_CATEGORIES.SESSION_SECURITY,
-        description: "Session has higher privilege than database (privilege revocation not reflected)",
+        description:
+          "Session has higher privilege than database (privilege revocation not reflected)",
         location: "Current user session",
         recommendation: "Implement immediate session invalidation on privilege revocation",
       });
@@ -231,7 +238,7 @@ const auditRouteProtectionDefinitions = (): RBACAuditIssue[] => {
   ];
 
   protectedRoutePatterns.forEach(({ path }) => {
-    const hasRoute = existingPaths.some(p => path.startsWith(p));
+    const hasRoute = existingPaths.some((p) => path.startsWith(p));
     if (!hasRoute) {
       issues.push({
         severity: "low",
@@ -270,9 +277,9 @@ export const runQuickAudit = async (): Promise<{
   summary: string;
 }> => {
   const result = await runRBACAudit();
-  
-  const criticalIssues = result.issues.filter(i => i.severity === "critical");
-  const highIssues = result.issues.filter(i => i.severity === "high");
+
+  const criticalIssues = result.issues.filter((i) => i.severity === "critical");
+  const highIssues = result.issues.filter((i) => i.severity === "high");
 
   if (criticalIssues.length > 0) {
     return {

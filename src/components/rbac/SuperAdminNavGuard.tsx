@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export const SUPER_ADMIN_NAV_PATHS = [
@@ -33,15 +33,7 @@ interface SuperAdminNavGuardProps {
 
 export function SuperAdminNavGuard({ children, fallback = null }: SuperAdminNavGuardProps) {
   const pathname = usePathname();
-  const [isSuperAdminPathResult, setIsSuperAdminPathResult] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setIsSuperAdminPathResult(isSuperAdminPath(pathname));
-  }, [pathname]);
-
-  if (isSuperAdminPathResult === null) {
-    return null;
-  }
+  const isSuperAdminPathResult = useMemo(() => isSuperAdminPath(pathname), [pathname]);
 
   if (!isSuperAdminPathResult) {
     return <>{children}</>;

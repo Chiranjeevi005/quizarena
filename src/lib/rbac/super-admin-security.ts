@@ -110,10 +110,7 @@ export const auditInfrastructureAction = async (
   });
 };
 
-export const auditAdminCreation = async (
-  newAdminId: string,
-  assignedBy: string
-): Promise<void> => {
+export const auditAdminCreation = async (newAdminId: string, assignedBy: string): Promise<void> => {
   await createAuditEvent("ADMIN_CREATION", {
     newAdminId,
     assignedBy,
@@ -161,13 +158,13 @@ export const verifySuperAdminSession = async (
 ): Promise<{ valid: boolean; reason?: string }> => {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return { valid: false, reason: "No session found" };
     }
 
     const sessionRole = (session.user.role as Role) ?? ROLES.USER;
-    
+
     if (!hasRole(sessionRole, ROLES.SUPER_ADMIN)) {
       return { valid: false, reason: "Not a Super Admin" };
     }
@@ -183,7 +180,7 @@ export const verifySuperAdminSession = async (
       }
 
       const dbRole = dbUser.role as Role;
-      
+
       if (!hasRole(dbRole, ROLES.SUPER_ADMIN)) {
         return { valid: false, reason: "Super Admin role revoked" };
       }
@@ -215,7 +212,7 @@ export const checkPrivilegeRevocation = async (
     }
 
     const dbRole = dbUser.role as Role;
-    
+
     if (!hasRole(dbRole, ROLES.SUPER_ADMIN)) {
       return { revoked: true, newRole: dbRole };
     }
@@ -235,7 +232,7 @@ export const createSessionRevalidationGuard = () => {
       maxSessionAge: 3600 * 24,
       requireReauthForSensitive: false,
     });
-    
+
     return verification.valid;
   };
 };

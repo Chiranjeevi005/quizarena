@@ -16,7 +16,7 @@ function validateEmail(email: string): boolean {
  *
  * Secure user registration with:
  * - IP-based rate limiting
- * - Strong password enforcement (min 12 chars)
+ * - Strong password enforcement (min 8 chars)
  * - Atomic check-and-create (no TOCTOU)
  * - Conflict detection (OAuth vs Credentials)
  */
@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
     }
 
-    if (password.length < 12) {
+    if (password.length < 8) {
       return NextResponse.json(
-        { error: "Password must be at least 12 characters long" },
+        { error: "Password must be at least 8 characters long" },
         { status: 400 }
       );
     }

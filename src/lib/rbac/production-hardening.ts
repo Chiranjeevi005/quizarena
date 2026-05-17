@@ -346,10 +346,7 @@ export const validateSelfProtection = (
   return true;
 };
 
-export const validateNoRoleEscalation = (
-  currentRole: Role,
-  requestedRole: Role
-): boolean => {
+export const validateNoRoleEscalation = (currentRole: Role, requestedRole: Role): boolean => {
   const currentLevel = getRoleLevel(currentRole);
   const requestedLevel = getRoleLevel(requestedRole);
 

@@ -74,7 +74,7 @@ export const validateRouteAccess = async (
   }
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
-  let dbVerified = true;
+  const dbVerified = true;
 
   if (config.enableDBValidation !== false) {
     const dbUser = await prisma.user.findUnique({
@@ -88,7 +88,7 @@ export const validateRouteAccess = async (
     }
 
     const dbRole = dbUser.role as Role;
-    
+
     if (dbRole !== userRole) {
       console.warn("[ROUTE_GUARD] Session role mismatch with database");
       return { authorized: false, userRole: dbRole, dbVerified: false };
@@ -149,7 +149,7 @@ export const createServerGuard = (
       }
 
       const dbRole = dbUser.role as Role;
-      
+
       if (dbRole !== userRole) {
         console.warn("[SERVER_GUARD] Role mismatch - using DB role");
         userRole = dbRole;
@@ -196,7 +196,7 @@ export const createExactRoleGuard = (
       }
 
       const dbRole = dbUser.role as Role;
-      
+
       if (dbRole !== userRole) {
         console.warn("[EXACT_ROLE_GUARD] Role mismatch - using DB role");
         userRole = dbRole;
@@ -217,18 +217,20 @@ export const superAdminGuard = createServerGuard(ROLES.SUPER_ADMIN);
 
 export const superAdminOnlyGuard = createExactRoleGuard(ROLES.SUPER_ADMIN);
 
-export const verifyRouteSecurity = async (pathname: string): Promise<{
+export const verifyRouteSecurity = async (
+  pathname: string
+): Promise<{
   secure: boolean;
   requiredRole: Role | null;
   reason?: string;
 }> => {
   const requiredRole = getRoutePrivilegeLevel(pathname);
-  
+
   if (!requiredRole) {
     return { secure: true, requiredRole: null };
   }
 
-  const { authorized, userRole, dbVerified } = await validateRouteAccess(pathname, {
+  const { authorized, dbVerified } = await validateRouteAccess(pathname, {
     minimumRole: requiredRole,
     enableDBValidation: true,
   });

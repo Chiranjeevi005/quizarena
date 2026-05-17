@@ -4,12 +4,9 @@ import { auth } from "@/auth";
 export async function POST() {
   try {
     const session = await auth();
-    
+
     if (!session?.user) {
-      return NextResponse.json(
-        { role: null, authenticated: false },
-        { status: 401 }
-      );
+      return NextResponse.json({ role: null, authenticated: false }, { status: 401 });
     }
 
     return NextResponse.json({
@@ -18,9 +15,6 @@ export async function POST() {
     });
   } catch (error) {
     console.error("Role check error:", error);
-    return NextResponse.json(
-      { role: null, authenticated: false },
-      { status: 500 }
-    );
+    return NextResponse.json({ role: null, authenticated: false }, { status: 500 });
   }
 }

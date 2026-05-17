@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireModerator } from "@/lib/rbac/guards";
+import { ROUTES } from "@/lib/routes";
 
 export default async function ModeratorDashboardPage() {
   try {
@@ -8,5 +9,5 @@ export default async function ModeratorDashboardPage() {
     redirect("/dashboard");
   }
 
-  redirect("/dashboard/home");
+  redirect(ROUTES.MODERATOR.CHALLENGES);
 }

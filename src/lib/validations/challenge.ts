@@ -1,0 +1,120 @@
+import { z } from "zod";
+
+export const CHALLENGE_CATEGORIES = ["SSC", "BANKING", "RAILWAYS", "STATE_PSC"] as const;
+
+export const CHALLENGE_DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
+
+export const CHALLENGE_STATUSES = [
+  "DRAFT",
+  "REVIEW",
+  "SCHEDULED",
+  "PUBLISHED",
+  "EXPIRED",
+  "ARCHIVED",
+] as const;
+
+export const createChallengeSchema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(200, "Title must not exceed 200 characters")
+    .regex(
+      /^[a-zA-Z0-9\s\-_]+$/,
+      "Title can only contain letters, numbers, spaces, hyphens, and underscores"
+    ),
+  description: z.string().max(2000, "Description must not exceed 2000 characters").optional(),
+  instructions: z.string().max(2000, "Instructions must not exceed 2000 characters").optional(),
+  examCategory: z.enum(CHALLENGE_CATEGORIES).optional().describe("Exam category"),
+  difficulty: z.enum(CHALLENGE_DIFFICULTIES).default("MEDIUM").describe("Challenge difficulty"),
+  durationInMinutes: z
+    .number()
+    .int("Duration must be a whole number")
+    .min(5, "Duration must be at least 5 minutes")
+    .max(180, "Duration must not exceed 180 minutes"),
+  totalQuestions: z
+    .number()
+    .int("Total questions must be a whole number")
+    .min(1, "At least 1 question is required")
+    .max(200, "Cannot exceed 200 questions"),
+  totalMarks: z
+    .number()
+    .int("Total marks must be a whole number")
+    .min(1, "At least 1 mark is required")
+    .max(1000, "Cannot exceed 1000 marks"),
+  negativeMarking: z.boolean().default(false),
+  negativeMarkPercentage: z
+    .number()
+    .min(0, "Negative mark percentage cannot be negative")
+    .max(1, "Negative mark percentage cannot exceed 100%")
+    .default(0.25),
+});
+
+export const updateChallengeSchema = createChallengeSchema.partial().extend({
+  id: z.string().cuid("Invalid challenge ID"),
+});
+
+export const challengeIdSchema = z.object({
+  id: z.string().cuid("Invalid challenge ID"),
+});
+
+export const challengeSlugSchema = z.object({
+  slug: z
+    .string()
+    .min(3, "Invalid slug")
+    .max(200, "Slug too long")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase with hyphens"),
+});
+
+export const challengeStatusTransitionSchema = z.object({
+  id: z.string().cuid("Invalid challenge ID"),
+  newStatus: z.enum(CHALLENGE_STATUSES),
+});
+
+export const challengeFiltersSchema = z.object({
+  search: z.string().max(100).optional(),
+  status: z.enum(CHALLENGE_STATUSES).optional(),
+  difficulty: z.enum(CHALLENGE_DIFFICULTIES).optional(),
+  examCategory: z.enum(CHALLENGE_CATEGORIES).optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
+});
+
+export type CreateChallengeInput = z.infer<typeof createChallengeSchema>;
+export type UpdateChallengeInput = z.infer<typeof updateChallengeSchema>;
+export type ChallengeFilters = z.infer<typeof challengeFiltersSchema>;
+export type ChallengeStatusTransition = z.infer<typeof challengeStatusTransitionSchema>;
+
+export const scheduleChallengeSchema = z
+  .object({
+    id: z.string().cuid("Invalid challenge ID"),
+    scheduledPublishAt: z.string().datetime("Invalid publish date/time"),
+    expiresAt: z.string().datetime("Invalid expiry date/time").optional(),
+  })
+  .refine(
+    (data) => {
+      const publishDate = new Date(data.scheduledPublishAt);
+      const now = new Date();
+      return publishDate > now;
+    },
+    { message: "Scheduled publish time must be in the future" }
+  )
+  .refine(
+    (data) => {
+      if (!data.expiresAt) return true;
+      const publishDate = new Date(data.scheduledPublishAt);
+      const expiryDate = new Date(data.expiresAt);
+      return expiryDate > publishDate;
+    },
+    { message: "Expiry time must be after publish time" }
+  );
+
+export type ScheduleChallengeInput = z.infer<typeof scheduleChallengeSchema>;
+
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
