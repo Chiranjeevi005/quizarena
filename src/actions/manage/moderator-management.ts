@@ -133,7 +133,7 @@ export async function getModerators(params: ModeratorListParams): Promise<Modera
     where.updatedAt = { lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) };
   }
 
-  const [moderators, total] = await Promise.all([
+  const [moderators] = await Promise.all([
     prisma.user.findMany({
       where,
       skip,

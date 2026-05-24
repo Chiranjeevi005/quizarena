@@ -4,6 +4,7 @@ import { auth } from "@/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { hasMinimumRole } from "@/auth/roles/role-hierarchy";
 import { ROLE } from "@/auth/roles/role-types";
+import { logModerationAction } from "@/lib/audit";
 
 async function validateAdminAccess() {
   const session = await auth();
@@ -144,6 +145,10 @@ export async function getUsers(params: UserListParams): Promise<UserListResponse
         startedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
       },
     };
+  }
+
+  if (accountState) {
+    where.accountState = accountState;
   }
 
   const [users, total] = await Promise.all([
@@ -377,6 +382,14 @@ export async function performModerationAction(
       },
     });
   }
+
+  // Generate an immutable centralized audit log
+  await logModerationAction(
+    adminId,
+    input.userId,
+    input.action,
+    input.reason || "No reason provided"
+  );
 
   return { success: true };
 }

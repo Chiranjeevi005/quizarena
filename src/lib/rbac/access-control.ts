@@ -2,9 +2,6 @@ import { auth } from "@/auth";
 import { ROLES, type Role } from "./roles";
 import { hasMinimumRole, hasRole } from "./hierarchy";
 import {
-  hasPermission,
-  hasAnyPermission,
-  hasAllPermissions,
   getRolePermissionsWithInheritance,
   type Permission,
 } from "./permission-map";
@@ -34,7 +31,7 @@ export class AccessController {
   }
 
   can(permission: Permission): AccessDecision {
-    const hasAccess = hasPermission(this.context.userRole, permission);
+    const hasAccess = this.context.permissions.includes(permission);
 
     if (!hasAccess) {
       return {
@@ -47,7 +44,7 @@ export class AccessController {
   }
 
   canAny(permissions: Permission[]): AccessDecision {
-    const hasAccess = hasAnyPermission(this.context.userRole, permissions);
+    const hasAccess = permissions.some(p => this.context.permissions.includes(p));
 
     if (!hasAccess) {
       return {
@@ -60,7 +57,7 @@ export class AccessController {
   }
 
   canAll(permissions: Permission[]): AccessDecision {
-    const hasAccess = hasAllPermissions(this.context.userRole, permissions);
+    const hasAccess = permissions.every(p => this.context.permissions.includes(p));
 
     if (!hasAccess) {
       return {
@@ -73,19 +70,19 @@ export class AccessController {
   }
 
   canWithOwnership(permission: Permission): AccessDecision {
-    const hasAccess = hasPermission(this.context.userRole, permission);
+    const hasAccess = this.context.permissions.includes(permission);
 
     if (!hasAccess) {
       return { allowed: false, reason: `Missing permission: ${permission}` };
     }
 
     if (this.context.resourceOwnerId && this.context.resourceOwnerId !== this.context.userId) {
-      const isAdmin = hasAnyPermission(this.context.userRole, [
+      const isAdmin = [
         PERMISSIONS.USER.UPDATE,
         PERMISSIONS.USER.BAN,
         PERMISSIONS.ADMIN.OVERSEE,
         PERMISSIONS.MODERATOR.OVERSEE,
-      ]);
+      ].some(p => this.context.permissions.includes(p));
 
       if (!isAdmin) {
         return {
@@ -134,7 +131,7 @@ export const createAccessController = async (): Promise<AccessController> => {
   }
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
-  const permissions = getRolePermissionsWithInheritance(userRole);
+  const permissions = await getRolePermissionsWithInheritance(userRole);
 
   return new AccessController({
     userId: session.user.id,

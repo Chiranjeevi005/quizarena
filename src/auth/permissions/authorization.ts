@@ -94,7 +94,7 @@ export const authorizeAction = async (
       return { success: false, error: "Unauthorized" };
     }
     return await action();
-  } catch (_error) {
+  } catch {
     return { success: false, error: "Authorization error" };
   }
 };

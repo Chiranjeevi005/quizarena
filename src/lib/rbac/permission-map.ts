@@ -1,5 +1,7 @@
 import { ROLES, type Role } from "./roles";
 import { PERMISSIONS } from "./permission-constants";
+import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
 export type Permission = string;
 
@@ -96,24 +98,36 @@ export const getRolePermissions = (role: Role): readonly Permission[] => {
   return map?.permissions ?? [];
 };
 
-export const getRolePermissionsWithInheritance = (role: Role): Permission[] => {
-  const result: Permission[] = [];
-
-  const collectPermissions = (r: Role) => {
-    const map = ROLE_PERMISSION_MAP[r];
-    if (map) {
-      result.push(...map.permissions);
-      if (map.inheritedFrom) {
-        collectPermissions(map.inheritedFrom);
+export const getRolePermissionsWithInheritance = unstable_cache(
+  async (role: Role): Promise<Permission[]> => {
+    try {
+      const records = await prisma.rolePermission.findMany({
+        where: { role },
+        select: { permission: { select: { key: true } } },
+      });
+      if (records.length > 0) {
+        return records.map((r) => r.permission.key);
       }
+    } catch (e) {
+      console.error("[RBAC] DB fetch error, falling back to static map", e);
     }
-  };
 
-  collectPermissions(role);
-
-  const uniquePermissions = [...new Set(result)];
-  return uniquePermissions;
-};
+    const result: Permission[] = [];
+    const collectPermissions = (r: Role) => {
+      const map = ROLE_PERMISSION_MAP[r];
+      if (map) {
+        result.push(...map.permissions);
+        if (map.inheritedFrom) {
+          collectPermissions(map.inheritedFrom);
+        }
+      }
+    };
+    collectPermissions(role);
+    return [...new Set(result)];
+  },
+  ['role-permissions-db'],
+  { tags: ['rbac'], revalidate: 60 }
+);
 
 export const getPermissionHierarchy = (): Record<Role, Role[]> => {
   return {
@@ -143,11 +157,11 @@ export const compareRolePermissionLevel = (roleA: Role, roleB: Role): number => 
   return (roleLevel[roleA] ?? 0) - (roleLevel[roleB] ?? 0);
 };
 
-export const getHighestRoleWithPermission = (permission: Permission): Role | null => {
+export const getHighestRoleWithPermission = async (permission: Permission): Promise<Role | null> => {
   const roles = [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MODERATOR, ROLES.USER];
 
   for (const role of roles) {
-    const permissions = getRolePermissionsWithInheritance(role);
+    const permissions = await getRolePermissionsWithInheritance(role);
     if (permissions.includes(permission)) {
       return role;
     }
@@ -156,11 +170,11 @@ export const getHighestRoleWithPermission = (permission: Permission): Role | nul
   return null;
 };
 
-export const getRolesWithPermission = (permission: Permission): Role[] => {
+export const getRolesWithPermission = async (permission: Permission): Promise<Role[]> => {
   const roles: Role[] = [];
 
   for (const role of Object.values(ROLES)) {
-    const permissions = getRolePermissionsWithInheritance(role);
+    const permissions = await getRolePermissionsWithInheritance(role);
     if (permissions.includes(permission)) {
       roles.push(role);
     }
@@ -182,16 +196,17 @@ export const hasPermissionInMatrix = (role: Role, permission: Permission): boole
   return permissions.includes(permission as (typeof permissions)[number]);
 };
 
-export const hasPermission = (role: Role, permission: Permission): boolean => {
-  return getRolePermissionsWithInheritance(role).includes(permission);
+export const hasPermission = async (role: Role, permission: Permission): Promise<boolean> => {
+  const perms = await getRolePermissionsWithInheritance(role);
+  return perms.includes(permission);
 };
 
-export const hasAnyPermission = (role: Role, permissions: Permission[]): boolean => {
-  const userPermissions = getRolePermissionsWithInheritance(role);
+export const hasAnyPermission = async (role: Role, permissions: Permission[]): Promise<boolean> => {
+  const userPermissions = await getRolePermissionsWithInheritance(role);
   return permissions.some((p) => userPermissions.includes(p));
 };
 
-export const hasAllPermissions = (role: Role, permissions: Permission[]): boolean => {
-  const userPermissions = getRolePermissionsWithInheritance(role);
+export const hasAllPermissions = async (role: Role, permissions: Permission[]): Promise<boolean> => {
+  const userPermissions = await getRolePermissionsWithInheritance(role);
   return permissions.every((p) => userPermissions.includes(p));
 };

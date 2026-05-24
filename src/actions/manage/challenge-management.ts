@@ -470,7 +470,7 @@ export async function addQuestionToChallenge(
   questionId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const session = await validateModeratorAccess();
+    await validateModeratorAccess();
 
     const challenge = await prisma.challenge.findUnique({
       where: { id: challengeId },
@@ -634,7 +634,6 @@ async function updateChallengeQuestionCount(challengeId: string) {
 
   const totalMarks = questions.reduce((sum, cq) => {
     const marks = cq.question.marks;
-    const negativeMarks = cq.question.negativeMarks;
     return sum + marks;
   }, 0);
 
@@ -982,14 +981,6 @@ export async function processScheduledChallenges(): Promise<{
   expired: number;
 }> {
   const now = new Date();
-
-  const scheduledToPublish = await prisma.challenge.findMany({
-    where: {
-      status: "SCHEDULED",
-      scheduledPublishAt: { lte: now },
-    },
-    select: { id: true },
-  });
 
   const publishedCount = await prisma.challenge.updateMany({
     where: {

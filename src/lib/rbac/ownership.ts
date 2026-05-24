@@ -13,7 +13,6 @@ export interface OwnershipContext {
 export interface OwnershipCheckOptions {
   allowAdminOverride?: boolean;
   requireExactOwner?: boolean;
-  allowAssignedUsers?: boolean;
 }
 
 export interface OwnershipResult {
@@ -27,11 +26,7 @@ export const checkOwnership = (
   context: OwnershipContext,
   options: OwnershipCheckOptions = {}
 ): OwnershipResult => {
-  const {
-    allowAdminOverride = true,
-    requireExactOwner = false,
-    allowAssignedUsers = false,
-  } = options;
+  const { allowAdminOverride = true, requireExactOwner = false } = options;
 
   if (hasRole(userRole, ROLES.SUPER_ADMIN)) {
     return { authorized: true, reason: "Super admin has full access" };

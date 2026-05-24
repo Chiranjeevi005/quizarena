@@ -22,11 +22,11 @@ import {
   Users,
   Shield,
   Settings2,
-  DollarSign,
   ClipboardList,
   Activity,
   ShieldAlert,
 } from "lucide-react";
+
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { EXAM_CATEGORY_LABELS, PREPARATION_LEVEL_LABELS } from "@/lib/onboarding";
@@ -67,17 +67,11 @@ const adminNavItems = [
 ];
 
 const superAdminNavItems = [
-  { href: "/dashboard/home", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/super-admin/monitoring?tab=trends", label: "Revenue", icon: DollarSign },
-  { href: "/dashboard/super-admin/monitoring", label: "Platform", icon: Settings2 },
+  { href: "/dashboard/super-admin/home", label: "Command Center", icon: LayoutDashboard },
   { href: "/dashboard/super-admin/monitoring", label: "Monitoring", icon: Activity },
   { href: "/dashboard/super-admin/intelligence", label: "Intelligence", icon: BarChart3 },
-  { href: "/dashboard/admin/users", label: "Users", icon: Users },
-  { href: "/dashboard/admin/reports", label: "Reports", icon: ShieldAlert },
   { href: "/dashboard/super-admin/roles", label: "Role Management", icon: Shield },
   { href: "/dashboard/super-admin/settings", label: "Platform Settings", icon: Settings2 },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 function getNavItemsForRole(role: string | undefined) {
@@ -112,6 +106,11 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
   const isNotAdmin = user?.email !== adminEmail;
   const navItems = getNavItemsForRole(role);
+
+  // ── Super Admin Isolation flag ─────────────────────────────────────────
+  // Checked after all hooks to avoid Rules of Hooks violation.
+  const isSuperAdminRoute = pathname.startsWith("/dashboard/super-admin");
+  // ────────────────────────────────────────────────────────────────────────
 
   // Client-side hard safety redirect guard for unmatched path patterns
   useEffect(() => {
@@ -154,6 +153,11 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
+  }
+
+  // ── Super Admin Isolation: render bypass after all hooks ────────────────
+  if (isSuperAdminRoute) {
+    return <>{children}</>;
   }
 
   if (!session) {

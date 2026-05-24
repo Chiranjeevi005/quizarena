@@ -38,7 +38,6 @@ function RegisterForm() {
   }>({});
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
 
   const validateForm = () => {
@@ -81,7 +80,6 @@ function RegisterForm() {
       return;
     }
 
-    setCheckingUsername(true);
     try {
       const res = await fetch(`/api/user/check-username?username=${encodeURIComponent(username)}`);
       const data = await res.json();
@@ -90,14 +88,13 @@ function RegisterForm() {
         setErrors((prev) => ({ ...prev, username: "Username is already taken" }));
       } else {
         setErrors((prev) => {
-          const { username: _username, ...rest } = prev;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { username: _, ...rest } = prev;
           return rest;
         });
       }
     } catch {
       setUsernameAvailable(null);
-    } finally {
-      setCheckingUsername(false);
     }
   };
 

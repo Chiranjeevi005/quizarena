@@ -1,12 +1,8 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ROLES, ROLE_VALUES, type Role } from "./roles";
-import { hasRole, hasMinimumRole, getRoleLevel, ROLE_HIERARCHY } from "./hierarchy";
-import {
-  getRolePermissionsWithInheritance,
-  getPermissionHierarchy,
-  type Permission,
-} from "./permission-map";
+import { hasMinimumRole, getRoleLevel, ROLE_HIERARCHY } from "./hierarchy";
+import { getRolePermissionsWithInheritance, getPermissionHierarchy } from "./permission-map";
 
 export interface RBACAuditResult {
   passed: boolean;
@@ -35,7 +31,7 @@ export const runRBACAudit = async (): Promise<RBACAuditResult> => {
   const issues: RBACAuditIssue[] = [];
 
   issues.push(...(await auditRoleDefinitions()));
-  issues.push(...auditPermissionMatrix());
+  issues.push(...(await auditPermissionMatrix()));
   issues.push(...auditPrivilegeEscalationPaths());
   issues.push(...(await auditSessionSecurity()));
   issues.push(...auditRouteProtectionDefinitions());
@@ -90,19 +86,19 @@ const auditRoleDefinitions = async (): Promise<RBACAuditIssue[]> => {
   return issues;
 };
 
-const auditPermissionMatrix = (): RBACAuditIssue[] => {
+const auditPermissionMatrix = async (): Promise<RBACAuditIssue[]> => {
   const issues: RBACAuditIssue[] = [];
 
-  const rolePermissions = ROLE_VALUES.map((role) => ({
+  const rolePermissions = await Promise.all(ROLE_VALUES.map(async (role) => ({
     role,
-    permissions: getRolePermissionsWithInheritance(role),
-  }));
+    permissions: await getRolePermissionsWithInheritance(role),
+  })));
 
   rolePermissions.forEach(({ role, permissions }) => {
     const higherRoles = ROLE_VALUES.filter((r) => getRoleLevel(r) > getRoleLevel(role));
 
     higherRoles.forEach((higherRole) => {
-      const higherPermissions = getRolePermissionsWithInheritance(higherRole);
+      const higherPermissions = rolePermissions.find((rp) => rp.role === higherRole)?.permissions || [];
       const missingFromLower = higherPermissions.filter((p) => !permissions.includes(p));
 
       if (missingFromLower.length === 0 && higherRole !== role) {

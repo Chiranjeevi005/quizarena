@@ -9,7 +9,6 @@ import {
   Settings,
   Activity,
   ShieldAlert,
-  AlertTriangle,
 } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
 

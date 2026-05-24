@@ -2,11 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ROLES, type Role } from "./roles";
 import { hasRole, hasMinimumRole, getRoleLevel } from "./hierarchy";
-import {
-  getRolePermissionsWithInheritance,
-  getRolePermissions,
-  type Permission,
-} from "./permission-map";
+import { getRolePermissionsWithInheritance, type Permission } from "./permission-map";
 import { redirect } from "next/navigation";
 
 export class RBACKernelError extends Error {
@@ -76,7 +72,7 @@ export const getKernelContext = async (
     return {
       userId: session.user.id,
       role: dbRole,
-      permissions: getRolePermissionsWithInheritance(dbRole),
+      permissions: await getRolePermissionsWithInheritance(dbRole),
       dbVerified: true,
     };
   } catch (error) {

@@ -131,9 +131,6 @@ export function SimpleBarChart({ data, height = 200, horizontal = false }: BarCh
     );
   }
 
-  const barWidth = 40;
-  const gap = 10;
-
   return (
     <div className="relative" style={{ height }}>
       <div className="absolute bottom-6 left-0 right-0 flex items-end justify-center gap-2">

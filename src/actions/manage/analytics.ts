@@ -4,7 +4,6 @@ import { auth } from "@/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { hasMinimumRole } from "@/auth/roles/role-hierarchy";
 import { ROLE } from "@/auth/roles/role-types";
-import { revalidatePath } from "next/cache";
 import {
   challengeAnalyticsFilterSchema,
   questionAnalyticsFilterSchema,

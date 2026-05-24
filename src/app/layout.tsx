@@ -7,6 +7,9 @@ import { getServerSession } from "@/lib/session-utils";
 
 import { Footer } from "@/components/layout/Footer";
 
+import { MaintenanceFallback } from "@/components/maintenance-fallback";
+import { getPlatformState } from "@/lib/super-admin/infrastructure/platform-controls";
+
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken" });
 
 export const metadata = {
@@ -22,6 +25,21 @@ export const metadata = {
  */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession();
+
+  // Infrastructure: Server-authoritative maintenance check
+  const platformState = await getPlatformState();
+  const userRole = (session?.user?.role as string) || "USER";
+  const isSuperAdmin = userRole === "SUPER_ADMIN";
+
+  if (platformState.maintenanceMode.enabled && !isSuperAdmin) {
+    return (
+      <html lang="en" className={hanken.variable}>
+        <body className="antialiased min-h-screen bg-background font-sans text-navy flex flex-col">
+          <MaintenanceFallback message={platformState.maintenanceMode.message} />
+        </body>
+      </html>
+    );
+  }
 
   // We can't use usePathname in a server component easily without headers or a wrapper.
   // However, we can use headers to detect the current path.

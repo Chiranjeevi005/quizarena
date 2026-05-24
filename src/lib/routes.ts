@@ -55,24 +55,30 @@ export const ROUTES = {
     INTELLIGENCE: "/dashboard/admin/intelligence",
   },
 
-  // ─── SUPER ADMIN ROUTES ─────────────────────────────────────
+  // ─── SUPER ADMIN ROUTES ─────────────────────────────────────────
+  // ALL super-admin routes MUST live under /dashboard/super-admin/*
+  // Route isolation is SECURITY-CRITICAL.
   SUPER_ADMIN: {
     ROOT: "/dashboard/super-admin",
     HOME: "/dashboard/super-admin/home",
-    SETTINGS: "/dashboard/super-admin/settings",
-    FINANCIAL: "/dashboard/financials",
-    PAYOUTS: "/dashboard/payouts",
-    REVENUE: "/dashboard/revenue",
-    SUBSCRIPTIONS: "/dashboard/subscriptions",
-    ROLES: "/dashboard/roles",
-    ADMIN_MANAGEMENT: "/dashboard/admin-management",
-    USER_ROLES: "/dashboard/user-roles",
-    INFRASTRUCTURE: "/dashboard/infrastructure",
-    PLATFORM_SETTINGS: "/dashboard/platform-settings",
-    FEATURE_FLAGS: "/dashboard/feature-flags",
-    PLATFORM_ANALYTICS: "/dashboard/platform/analytics",
-    PLATFORM_REPORTS: "/dashboard/platform/reports",
+    COMMAND_CENTER: "/dashboard/super-admin/home",
+    // Financial Control
+    FINANCIAL: "/dashboard/super-admin/financial",
+    // Infrastructure
+    INFRASTRUCTURE: "/dashboard/super-admin/infrastructure",
+    // Security Center
+    SECURITY: "/dashboard/super-admin/security",
     MONITORING: "/dashboard/super-admin/monitoring",
+    // Governance
+    GOVERNANCE: "/dashboard/super-admin/governance",
+    ROLES: "/dashboard/super-admin/roles",
+    INTELLIGENCE: "/dashboard/super-admin/intelligence",
+    // Compliance
+    COMPLIANCE: "/dashboard/super-admin/compliance",
+    // Platform Controls
+    PLATFORM_CONTROLS: "/dashboard/super-admin/platform-controls",
+    // Settings
+    SETTINGS: "/dashboard/super-admin/settings",
   },
 
   // ─── ONBOARDING ──────────────────────────────────────────

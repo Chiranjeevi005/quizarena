@@ -1,10 +1,6 @@
 "use client";
 
-import type {
-  EngagementIntelligence,
-  ModeratorIntelligence,
-  ContentQualityMetrics,
-} from "@/lib/intelligence/types";
+import type { ModeratorIntelligence, ContentQualityMetrics } from "@/lib/intelligence/types";
 
 interface TrendChartsProps {
   moderator: ModeratorIntelligence;

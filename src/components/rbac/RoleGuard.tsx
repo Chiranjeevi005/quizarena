@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { ROLES, type Role } from "@/lib/rbac/roles";
 import { hasMinimumRole, hasRole } from "@/lib/rbac/hierarchy";
-import { canPerformAction, ACTION_VISIBILITY, type ActionKey } from "@/lib/rbac/ui-visibility";
+import { canPerformAction, type ActionKey } from "@/lib/rbac/ui-visibility";
 
 interface RoleGuardProps {
   children: React.ReactNode;

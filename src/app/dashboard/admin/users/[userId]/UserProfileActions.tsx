@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { performModerationAction } from "@/actions/manage/user-management";
-import { Ban, PlayCircle, AlertTriangle, Flag, XCircle, CheckCircle } from "lucide-react";
+import { Ban, PlayCircle, AlertTriangle, Flag, CheckCircle } from "lucide-react";
 
 interface UserProfileActionsProps {
   user: {
@@ -40,7 +40,6 @@ export function UserProfileActions({ user }: UserProfileActionsProps) {
     }
   };
 
-  const isBannedOrSuspended = user.accountState === "BANNED" || user.accountState === "SUSPENDED";
   const isUser = user.role === "USER";
 
   return (

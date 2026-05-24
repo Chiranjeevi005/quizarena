@@ -1,12 +1,6 @@
 import { auth } from "@/auth";
 import { ROLES, type Role } from "./roles";
-import {
-  hasMinimumRole,
-  hasRole,
-  isAtLeastAdmin,
-  isAtLeastModerator,
-  isAtLeastSuperAdmin,
-} from "./hierarchy";
+import { hasMinimumRole, hasRole } from "./hierarchy";
 import { hasPermission, type Permission, ROLE_PERMISSIONS } from "./permissions";
 import { redirect } from "next/navigation";
 
@@ -316,7 +310,7 @@ export const safeGetCurrentUser = async (): Promise<
       return { success: false, error: "Not authenticated" };
     }
     return { success: true, user };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Session error" };
   }
 };

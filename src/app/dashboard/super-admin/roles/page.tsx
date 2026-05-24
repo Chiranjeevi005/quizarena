@@ -5,15 +5,7 @@ import {
   getPromotableUsers,
   getRoleChangeHistory,
 } from "@/actions/super-admin/role-governance";
-import {
-  Crown,
-  Shield,
-  Users,
-  ArrowUpCircle,
-  ArrowDownCircle,
-  Clock,
-  ChevronRight,
-} from "lucide-react";
+import { Crown, Shield, Users, ArrowUpCircle, ArrowDownCircle, Clock } from "lucide-react";
 import { RoleChangeActions } from "./RoleChangeActions";
 
 export default async function SuperAdminRolesPage() {

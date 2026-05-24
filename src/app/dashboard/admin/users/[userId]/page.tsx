@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/rbac/guards";
-import {
-  getUserProfile,
-  performModerationAction,
-  addModerationNote,
-} from "@/actions/manage/user-management";
+import { getUserProfile, addModerationNote } from "@/actions/manage/user-management";
 import {
   ArrowLeft,
   User,
@@ -14,13 +10,9 @@ import {
   Calendar,
   Clock,
   CheckCircle,
-  XCircle,
-  Flag,
-  AlertTriangle,
-  Ban,
+  Activity,
   PlayCircle,
   MessageSquare,
-  Activity,
 } from "lucide-react";
 import { UserProfileActions } from "./UserProfileActions";
 

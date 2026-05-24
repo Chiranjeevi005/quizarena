@@ -73,7 +73,7 @@ export async function createQuestion(
 
 export async function updateQuestion(data: unknown): Promise<{ success: boolean; error?: string }> {
   try {
-    const session = await validateModeratorAccess();
+    await validateModeratorAccess();
 
     const parsed = updateQuestionSchema.parse(data);
     if (!parsed.id) {

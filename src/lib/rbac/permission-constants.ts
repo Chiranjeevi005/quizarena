@@ -1,5 +1,3 @@
-import { ROLES, type Role } from "./roles";
-
 export const PERMISSIONS = {
   CHALLENGE: {
     CREATE: "challenge:create",

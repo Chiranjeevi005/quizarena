@@ -14,15 +14,15 @@ export const hasPermission = (role: Role | string, permission: Permission): bool
   return hasPermissionInMatrix(safeRole, permission);
 };
 
-export const hasAnyPermission = (role: Role | string, permissions: Permission[]): boolean => {
+export const hasAnyPermission = async (role: Role | string, permissions: Permission[]): Promise<boolean> => {
   const safeRole = typeof role === "string" ? (role as Role) : role;
-  const userPermissions = getRolePermissionsWithInheritance(safeRole);
+  const userPermissions = await getRolePermissionsWithInheritance(safeRole);
   return permissions.some((p) => userPermissions.includes(p));
 };
 
-export const hasAllPermissions = (role: Role | string, permissions: Permission[]): boolean => {
+export const hasAllPermissions = async (role: Role | string, permissions: Permission[]): Promise<boolean> => {
   const safeRole = typeof role === "string" ? (role as Role) : role;
-  const userPermissions = getRolePermissionsWithInheritance(safeRole);
+  const userPermissions = await getRolePermissionsWithInheritance(safeRole);
   return permissions.every((p) => userPermissions.includes(p));
 };
 
@@ -57,7 +57,7 @@ export const requireAnyPermission = async (
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
 
-  if (!hasAnyPermission(userRole, permissions)) {
+  if (!(await hasAnyPermission(userRole, permissions))) {
     redirect(redirectTo);
   }
 
@@ -76,7 +76,7 @@ export const requireAllPermissions = async (
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
 
-  if (!hasAllPermissions(userRole, permissions)) {
+  if (!(await hasAllPermissions(userRole, permissions))) {
     redirect(redirectTo);
   }
 
@@ -102,7 +102,7 @@ export const checkAnyPermission = async (permissions: Permission[]): Promise<boo
   }
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
-  return hasAnyPermission(userRole, permissions);
+  return await hasAnyPermission(userRole, permissions);
 };
 
 export const checkAllPermissions = async (permissions: Permission[]): Promise<boolean> => {
@@ -113,7 +113,7 @@ export const checkAllPermissions = async (permissions: Permission[]): Promise<bo
   }
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
-  return hasAllPermissions(userRole, permissions);
+  return await hasAllPermissions(userRole, permissions);
 };
 
 export const assertPermission = (role: Role, permission: Permission): void => {
@@ -122,14 +122,14 @@ export const assertPermission = (role: Role, permission: Permission): void => {
   }
 };
 
-export const assertAnyPermission = (role: Role, permissions: Permission[]): void => {
-  if (!hasAnyPermission(role, permissions)) {
+export const assertAnyPermission = async (role: Role, permissions: Permission[]): Promise<void> => {
+  if (!(await hasAnyPermission(role, permissions))) {
     throw new PermissionDeniedError(permissions.join(" or "));
   }
 };
 
-export const assertAllPermissions = (role: Role, permissions: Permission[]): void => {
-  if (!hasAllPermissions(role, permissions)) {
+export const assertAllPermissions = async (role: Role, permissions: Permission[]): Promise<void> => {
+  if (!(await hasAllPermissions(role, permissions))) {
     throw new PermissionDeniedError(permissions.join(", "));
   }
 };
@@ -156,7 +156,7 @@ export const getUserPermissions = async (): Promise<Permission[]> => {
   }
 
   const userRole = (session.user.role as Role) ?? ROLES.USER;
-  return getRolePermissionsWithInheritance(userRole);
+  return await getRolePermissionsWithInheritance(userRole);
 };
 
 export const getUserDirectPermissions = async (): Promise<Permission[]> => {
@@ -189,7 +189,7 @@ export const canAccessResource = async (
   }
 
   if (ownerId && ownerId !== userId) {
-    const isAdmin = hasAnyPermission(userRole, [
+    const isAdmin = await hasAnyPermission(userRole, [
       PERMISSIONS.USER.UPDATE,
       PERMISSIONS.USER.BAN,
       PERMISSIONS.USER.DELETE,
@@ -203,11 +203,11 @@ export const canAccessResource = async (
   return { allowed: true };
 };
 
-export const validatePermissionChain = (
+export const validatePermissionChain = async (
   role: Role,
   requiredPermissions: Permission[]
-): { valid: boolean; missingPermissions: Permission[] } => {
-  const userPermissions = getRolePermissionsWithInheritance(role);
+): Promise<{ valid: boolean; missingPermissions: Permission[] }> => {
+  const userPermissions = await getRolePermissionsWithInheritance(role);
   const missing = requiredPermissions.filter((p) => !userPermissions.includes(p));
 
   return {
@@ -216,8 +216,8 @@ export const validatePermissionChain = (
   };
 };
 
-export const getPermissionGaps = (role: Role, desiredPermissions: Permission[]): Permission[] => {
-  const userPermissions = getRolePermissionsWithInheritance(role);
+export const getPermissionGaps = async (role: Role, desiredPermissions: Permission[]): Promise<Permission[]> => {
+  const userPermissions = await getRolePermissionsWithInheritance(role);
   return desiredPermissions.filter((p) => !userPermissions.includes(p));
 };
 

@@ -46,6 +46,10 @@ model User {
   reportNotes         ReportNote[]       @relation("ReportNoteAuthor")
   updatedSettings     PlatformSetting[]  @relation("SettingUpdater")
   settingAudits       SettingAudit[]     @relation("SettingAuditActor")
+  auditLogs           AuditLog[]         @relation("AuditActor")
+  targetedAudits      AuditLog[]         @relation("AuditTarget")
+  subscriptions       Subscription[]
+  transactions        Transaction[]
 
   @@index([email])
   @@index([username])
@@ -112,6 +116,168 @@ model RoleChangeAudit {
   @@index([changedById])
   @@index([changedAt])
   @@map("role_change_audit")
+}
+
+// ─── Global RBAC Governance ─────────────────────────────────────────────────
+
+model Permission {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  description String?  @db.Text
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  roles       RolePermission[]
+
+  @@index([category])
+  @@index([key])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  role         UserRole
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+// ─── Sovereign Audit & Governance ─────────────────────────────
+
+enum AuditSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AuditEntityType {
+  USER
+  CHALLENGE
+  QUESTION
+  REPORT
+  ROLE
+  AUTH
+  SYSTEM
+  MODERATION
+  SETTINGS
+  SECURITY
+  FINANCIAL
+}
+
+model AuditLog {
+  id           String          @id @default(cuid())
+
+  action       String
+  entityType   AuditEntityType
+  entityId     String?
+
+  actorId      String?
+  targetUserId String?
+
+  metadata     Json?
+
+  ipAddress    String?
+  userAgent    String?
+
+  severity     AuditSeverity   @default(LOW)
+
+  createdAt    DateTime        @default(now())
+
+  actor      User? @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  targetUser User? @relation("AuditTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([targetUserId])
+  @@index([entityType])
+  @@index([severity])
+  @@index([createdAt])
+
+  @@map("audit_logs")
+}
+
+// ─── Financial & Monetization ───────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  EXPIRED
+  TRIALING
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum TransactionType {
+  SUBSCRIPTION
+  ONE_TIME_PURCHASE
+  REFUND
+}
+
+enum PaymentProvider {
+  STRIPE
+  RAZORPAY
+  SYSTEM
+}
+
+model Subscription {
+  id           String             @id @default(cuid())
+  userId       String
+  plan         String
+  status       SubscriptionStatus @default(ACTIVE)
+  amount       Float
+  billingCycle String             @default("monthly")
+  startedAt    DateTime           @default(now())
+  expiresAt    DateTime?
+  canceledAt   DateTime?
+  
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model Transaction {
+  id           String            @id @default(cuid())
+  userId       String
+  type         TransactionType
+  amount       Float
+  status       TransactionStatus @default(PENDING)
+  provider     PaymentProvider   @default(SYSTEM)
+  providerId   String?
+  metadata     Json?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model RevenueSnapshot {
+  id                  String   @id @default(cuid())
+  totalRevenue        Float
+  monthlyRevenue      Float
+  activeSubscriptions Int
+  conversionRate      Float
+  recordedAt          DateTime @default(now())
+
+  @@index([recordedAt])
+  @@map("revenue_snapshots")
 }
 
 enum ExamCategory {

@@ -3,22 +3,8 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ROLES, type Role } from "@/lib/rbac/roles";
-import {
-  getDashboardFocus,
-  DASHBOARD_FOCUS,
-  type DashboardFocusKey,
-} from "@/lib/rbac/ui-visibility";
-import { hasMinimumRole } from "@/lib/rbac/hierarchy";
-import {
-  BarChart3,
-  Users,
-  FileText,
-  DollarSign,
-  Settings2,
-  Shield,
-  Trophy,
-  Target,
-} from "lucide-react";
+import { getDashboardFocus } from "@/lib/rbac/ui-visibility";
+import { FileText, DollarSign, Shield, Trophy, Target } from "lucide-react";
 
 interface RoleAwareDashboardHeaderProps {
   children?: React.ReactNode;

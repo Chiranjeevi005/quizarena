@@ -1,117 +1,93 @@
-import { redirect } from "next/navigation";
-import { ROUTES } from "@/lib/routes";
-import { validateSuperAdminAccess, requireSuperAdmin } from "@/lib/rbac/super-admin";
-import Link from "next/link";
+/**
+ * QuizArena — Super Admin Sovereign Dashboard
+ *
+ * The strategic platform command center.
+ * Access: SUPER_ADMIN ONLY.
+ */
 
-export default async function SuperAdminHomePage() {
-  await requireSuperAdmin(ROUTES.PROTECTED.DASHBOARD);
+import { redirect } from "next/navigation";
+import { validateSuperAdmin } from "@/lib/super-admin/governance";
+import { ROUTES } from "@/lib/routes";
+import { getSovereignDashboardData } from "@/lib/super-admin/dashboard";
+import { SovereignCommandHeader } from "@/components/super-admin/dashboard/SovereignCommandHeader";
+import { SovereignMetricCard } from "@/components/super-admin/dashboard/SovereignMetricCard";
+import { InfrastructureHealthGrid } from "@/components/super-admin/dashboard/InfrastructureHealthGrid";
+import { SecuritySnapshot } from "@/components/super-admin/dashboard/SecuritySnapshot";
+import { GovernancePanel } from "@/components/super-admin/dashboard/GovernancePanel";
+import { AlertCenter } from "@/components/super-admin/dashboard/AlertCenter";
+import { ActivityTimeline } from "@/components/super-admin/dashboard/ActivityTimeline";
+import { Users, Activity, Target } from "lucide-react";
+
+export const metadata = {
+  title: "Sovereign Dashboard — QuizArena Command Center",
+  description: "Executive strategic operational dashboard.",
+};
+
+export default async function SovereignDashboardPage() {
+  const result = await validateSuperAdmin();
+
+  if (!result.authorized || !result.context) {
+    redirect(ROUTES.PROTECTED.DASHBOARD);
+  }
+
+  const data = await getSovereignDashboardData();
+  const { overview } = data;
 
   return (
-    <div className="super-admin-dashboard">
-      <div className="page-header">
-        <h1>Super Admin Dashboard</h1>
-        <p className="subtitle">Platform Authority — Highest Privilege Level</p>
+    <div className="space-y-6 pb-12">
+      <SovereignCommandHeader email={result.context.email} />
+
+      {/* Primary Strategic Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <SovereignMetricCard
+          label="Total Users"
+          value={overview.totalUsers.toLocaleString()}
+          icon={Users}
+          trend={overview.engagementTrend}
+          description="Total registered users across the platform."
+        />
+        <SovereignMetricCard
+          label="Active Challenges"
+          value={overview.activeChallenges.toLocaleString()}
+          icon={Target}
+          severity={overview.infrastructureState}
+          description="Total published challenges available."
+        />
+        <SovereignMetricCard
+          label="Health Score"
+          value={`${overview.operationalHealthScore}/100`}
+          icon={Activity}
+          severity={
+            overview.infrastructureState === "CRITICAL"
+              ? "CRITICAL"
+              : overview.operationalHealthScore > 95
+                ? "HEALTHY"
+                : "WARNING"
+          }
+          description="Synthesized platform operational health."
+        />
       </div>
 
-      <div className="security-status">
-        <div className="status-badge active">
-          <span className="indicator"></span>
-          Session Verified
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left Column: Systems & Governance */}
+        <div className="xl:col-span-2 space-y-6">
+          <InfrastructureHealthGrid data={data.health} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SecuritySnapshot data={data.security} />
+            <GovernancePanel data={data.governance} />
+          </div>
         </div>
-        <div className="status-badge isolated">
-          <span className="indicator"></span>
-          Security Layer Active
+
+        {/* Right Column: Alerts & Timeline */}
+        <div className="space-y-6 flex flex-col h-full">
+          <div className="flex-1 min-h-[300px]">
+            <AlertCenter data={data.alerts} />
+          </div>
+          <div className="flex-1 min-h-[400px]">
+            <ActivityTimeline events={data.timeline} />
+          </div>
         </div>
-      </div>
-
-      <div className="dashboard-grid">
-        <section className="dashboard-card critical">
-          <div className="card-header">
-            <h2>Financial Systems</h2>
-            <span className="access-level">SUPER_ADMIN ONLY</span>
-          </div>
-          <div className="card-content">
-            <p>Access to revenue analytics, payouts, subscriptions, and payment operations.</p>
-            <div className="action-links">
-              <Link href="/dashboard/financials" className="action-link">
-                Revenue Analytics
-              </Link>
-              <Link href="/dashboard/payouts" className="action-link">
-                Payout Management
-              </Link>
-              <Link href="/dashboard/subscriptions" className="action-link">
-                Subscription Diagnostics
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="dashboard-card critical">
-          <div className="card-header">
-            <h2>Role Management</h2>
-            <span className="access-level">SUPER_ADMIN ONLY</span>
-          </div>
-          <div className="card-content">
-            <p>Promote, demote, and manage privileged roles across the platform.</p>
-            <div className="action-links">
-              <Link href="/dashboard/roles" className="action-link">
-                Role Administration
-              </Link>
-              <Link href="/dashboard/admin-management" className="action-link">
-                Admin Management
-              </Link>
-              <Link href="/dashboard/user-roles" className="action-link">
-                User Role Assignment
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="dashboard-card infrastructure">
-          <div className="card-header">
-            <h2>Infrastructure Control</h2>
-            <span className="access-level">SUPER_ADMIN ONLY</span>
-          </div>
-          <div className="card-content">
-            <p>Platform settings, feature flags, environment controls, and maintenance systems.</p>
-            <div className="action-links">
-              <Link href="/dashboard/platform-settings" className="action-link">
-                Platform Settings
-              </Link>
-              <Link href="/dashboard/feature-flags" className="action-link">
-                Feature Flags
-              </Link>
-              <Link href="/dashboard/infrastructure" className="action-link">
-                Infrastructure Overview
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="dashboard-card">
-          <div className="card-header">
-            <h2>Platform Analytics</h2>
-            <span className="access-level">SUPER_ADMIN ONLY</span>
-          </div>
-          <div className="card-content">
-            <p>Comprehensive platform-wide analytics and reporting.</p>
-            <div className="action-links">
-              <Link href="/dashboard/platform/analytics" className="action-link">
-                Platform Analytics
-              </Link>
-              <Link href="/dashboard/platform/reports" className="action-link">
-                Reports
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div className="security-notice-footer">
-        <p>
-          <strong>Security Notice:</strong> All actions on this dashboard are logged and audited.
-          Elevated actions may require additional verification.
-        </p>
       </div>
     </div>
   );

@@ -44,8 +44,7 @@ export const getProtectionLevel = (pathname: string): ApiProtectionLevel => {
 };
 
 export const validateApiAccess = async (
-  pathname: string,
-  method: string
+  pathname: string
 ): Promise<{ authorized: boolean; userRole: Role }> => {
   const session = await auth();
   if (!session?.user) {
@@ -125,10 +124,6 @@ export const withApiAuth = (
 };
 
 export const validateApiPermission = (userRole: Role, requiredPermission: string): boolean => {
-  const permissionKey = requiredPermission.replace(
-    ".",
-    "_"
-  ) as keyof typeof import("./permissions").ROLE_PERMISSIONS;
   return hasPermission(userRole, requiredPermission as never);
 };
 

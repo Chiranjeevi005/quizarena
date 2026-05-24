@@ -62,10 +62,7 @@ export const canAccessRoute = async (pathname: string): Promise<boolean> => {
   return hasMinimumRole(userRole, requiredRole);
 };
 
-export const authorizeRouteAccess = async (
-  pathname: string,
-  _redirectTo: string = "/"
-): Promise<boolean> => {
+export const authorizeRouteAccess = async (pathname: string): Promise<boolean> => {
   const canAccess = await canAccessRoute(pathname);
   if (!canAccess) {
     return false;

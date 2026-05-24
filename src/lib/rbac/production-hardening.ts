@@ -151,7 +151,7 @@ export const validateServerAuth = async (
         authorized: true,
         userId: session.user.id,
         role: dbRole,
-        permissions: getRolePermissionsWithInheritance(dbRole),
+        permissions: await getRolePermissionsWithInheritance(dbRole),
         context,
       };
     }
@@ -160,7 +160,7 @@ export const validateServerAuth = async (
       authorized: true,
       userId: session.user.id,
       role: sessionRole,
-      permissions: getRolePermissionsWithInheritance(sessionRole),
+      permissions: await getRolePermissionsWithInheritance(sessionRole),
       context,
     };
   } catch (error) {

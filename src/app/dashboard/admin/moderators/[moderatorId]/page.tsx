@@ -2,18 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/rbac/guards";
 import { getModeratorProfile, addModeratorNote } from "@/actions/manage/moderator-management";
-import {
-  ArrowLeft,
-  Shield,
-  Calendar,
-  Clock,
-  CheckCircle,
-  XCircle,
-  PlayCircle,
-  MessageSquare,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { ArrowLeft, Calendar, PlayCircle, MessageSquare, TrendingUp, Users } from "lucide-react";
 import { ModeratorProfileActions } from "./ModeratorProfileActions";
 
 export default async function AdminModeratorProfilePage({

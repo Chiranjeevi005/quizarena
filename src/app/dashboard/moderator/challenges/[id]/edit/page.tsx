@@ -14,7 +14,6 @@ import {
 } from "@/actions/manage/challenge-management";
 import { requireMinimumRole } from "@/lib/rbac/guards";
 import { ROLES } from "@/lib/rbac/roles";
-import { COMMON_SUBJECTS } from "@/lib/validations/question";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES = {
@@ -209,7 +208,7 @@ async function ChallengeEditContent({
                     key={cq.id}
                     className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200"
                   >
-                    <span className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
+                    <span className="shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
                       {index + 1}
                     </span>
                     <div className="flex-1 min-w-0">

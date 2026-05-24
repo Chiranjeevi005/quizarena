@@ -390,7 +390,7 @@ export const simulateRole = DEBUG_RBAC
       console.log(`[RBAC DEBUG] Simulating role: ${role}`);
       return role;
     }
-  : (_role: Role) => {
+  : () => {
       throw new Error("Role simulation only available in development");
     };
 

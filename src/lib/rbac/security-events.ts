@@ -1,7 +1,4 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { ROLES, type Role } from "./roles";
-
+import { type Role } from "./roles";
 export type SecurityEventType =
   | "PRIVILEGED_ACCESS"
   | "ROLE_CHANGE"
@@ -130,6 +127,7 @@ export const logRoleChange = async (
 
 export const getRecentSecurityEvents = async (
   _userId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _limit: number = 50
 ): Promise<SecurityEvent[]> => {
   return [];

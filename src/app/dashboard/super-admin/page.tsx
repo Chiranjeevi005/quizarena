@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
-import { requireSuperAdmin } from "@/lib/rbac/super-admin";
+import { validateSuperAdmin } from "@/lib/super-admin/governance";
 import { ROUTES } from "@/lib/routes";
 
 export default async function SuperAdminDashboardPage() {
-  try {
-    await requireSuperAdmin(ROUTES.PROTECTED.DASHBOARD);
-  } catch {
+  const result = await validateSuperAdmin();
+
+  if (!result.authorized) {
     redirect(ROUTES.PROTECTED.DASHBOARD);
   }
 
-  redirect("/dashboard/home");
+  redirect(ROUTES.SUPER_ADMIN.HOME);
 }

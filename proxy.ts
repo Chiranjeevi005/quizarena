@@ -48,6 +48,7 @@ const ADMIN_ROUTES = [
 
 const SUPER_ADMIN_ROUTES = [
   "/super-admin",
+  "/dashboard/super-admin",
   "/dashboard/platform",
   "/dashboard/settings",
   "/dashboard/financials",

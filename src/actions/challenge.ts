@@ -12,22 +12,6 @@ import type {
   QuizAnswerState,
 } from "@/types/challenge";
 
-interface ChallengeQuestionWithInclude {
-  id: string;
-  challengeId: string;
-  questionId: string;
-  order: number;
-  question: {
-    id: string;
-    question: string;
-    optionA: string;
-    optionB: string;
-    optionC: string;
-    optionD: string;
-    correctOption: string;
-  };
-}
-
 export async function getActiveDailyChallenge() {
   const challenge = await prisma.challenge.findFirst({
     where: {

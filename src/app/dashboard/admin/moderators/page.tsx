@@ -1,18 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/rbac/guards";
 import { getModerators, getModeratorStats } from "@/actions/manage/moderator-management";
-import {
-  Users,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Ban,
-  Activity,
-  TrendingUp,
-} from "lucide-react";
+import { Users, Search, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 
 interface SearchParams {
   page?: string;

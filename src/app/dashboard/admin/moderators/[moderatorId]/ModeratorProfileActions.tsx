@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { performModeratorAction } from "@/actions/manage/moderator-management";
-import { AlertTriangle, Ban, PlayCircle, ShieldOff, ArrowDownCircle } from "lucide-react";
+import { AlertTriangle, PlayCircle, ShieldOff, ArrowDownCircle } from "lucide-react";
 
 interface ModeratorProfileActionsProps {
   moderator: {
