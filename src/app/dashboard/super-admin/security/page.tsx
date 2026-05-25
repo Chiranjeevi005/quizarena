@@ -1,134 +1,151 @@
-/**
- * QuizArena — Security Center Hub
- *
- * Threat monitoring, security events, access anomalies.
- * Access: SUPER_ADMIN ONLY.
- *
- * Phase 7.1: Foundation stub.
- */
-
 import { redirect } from "next/navigation";
-import { validateSuperAdmin } from "@/lib/super-admin/governance";
-import { logSuperAdminAudit } from "@/lib/super-admin/audit";
-import { ROUTES } from "@/lib/routes";
-import { ShieldAlert, AlertTriangle, Eye, Zap, ArrowRight, Lock, Shield } from "lucide-react";
+import { validateSuperAdmin, logSuperAdminAudit } from "@/lib/super-admin";
+import { getSOCPageData } from "@/lib/super-admin/security";
+import { SuperAdminShell } from "@/components/super-admin/SuperAdminShell";
+import { SecurityOverviewCards } from "@/components/super-admin/security/SecurityOverviewCards";
+import { SecurityAlertCenter } from "@/components/super-admin/security/SecurityAlertCenter";
+import { AuthForensicsPanel } from "@/components/super-admin/security/AuthForensicsPanel";
+import { PrivilegeEscalationPanel } from "@/components/super-admin/security/PrivilegeEscalationPanel";
+import { ThreatTimelinePanel } from "@/components/super-admin/security/ThreatTimelinePanel";
+import { SuspiciousActivityPanel } from "@/components/super-admin/security/SuspiciousActivityPanel";
+import { SessionGovernancePanel } from "@/components/super-admin/security/SessionGovernancePanel";
 
-export const metadata = {
-  title: "Security Center — QuizArena Sovereign",
-  description: "Threat monitoring and security intelligence for Super Admin.",
-};
+// Real-time security dashboard — do not cache
+export const dynamic = "force-dynamic";
 
-export default async function SuperAdminSecurityPage() {
+function SectionHeader({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="mb-4">
+      <h2 className="text-sm font-bold tracking-widest text-slate-300 uppercase">{title}</h2>
+      <p className="text-xs text-slate-500 mt-1">{description}</p>
+    </div>
+  );
+}
+
+export default async function SecurityOperationsCenterPage() {
   const result = await validateSuperAdmin();
-
   if (!result.authorized || !result.context) {
-    redirect(ROUTES.PROTECTED.DASHBOARD);
+    redirect("/dashboard");
   }
+  const ctx = result.context;
 
+  // Log sovereign access to the SOC
   await logSuperAdminAudit({
-    actorId: result.context.userId,
-    actorRole: result.context.role,
-    actorEmail: result.context.email,
-    action: "SECURITY_CENTER_ACCESS",
+    actorId: ctx.userId,
+    actorRole: ctx.role,
+    actorEmail: ctx.email,
+    action: "SECURITY_SOC_ACCESS",
     category: "SECURITY",
-    riskSeverity: "MEDIUM",
-    infrastructureImpact: "Security center accessed — monitoring only",
+    riskSeverity: "LOW",
+    infrastructureImpact: "Security Operations Center accessed — read-only view",
     timestamp: new Date(),
   });
 
-  const features = [
-    {
-      icon: Eye,
-      label: "Threat Monitoring",
-      description: "Real-time threat detection, anomaly alerts, and security event feeds.",
-      color: "text-red-400",
-      bg: "bg-red-950/40",
-      border: "border-red-900/30",
-    },
-    {
-      icon: AlertTriangle,
-      label: "Access Anomalies",
-      description:
-        "Unauthorized access attempts, privilege escalation events, and session anomalies.",
-      color: "text-amber-400",
-      bg: "bg-amber-950/40",
-      border: "border-amber-900/30",
-    },
-    {
-      icon: Zap,
-      label: "Incident Response",
-      description: "Security incident logging, response workflows, and remediation tracking.",
-      color: "text-purple-400",
-      bg: "bg-purple-950/40",
-      border: "border-purple-900/30",
-    },
-    {
-      icon: Shield,
-      label: "RBAC Audit",
-      description: "Role-based access control integrity verification and escalation detection.",
-      color: "text-blue-400",
-      bg: "bg-blue-950/40",
-      border: "border-blue-900/30",
-    },
-  ];
+  // Fetch all pre-computed SOC data in parallel
+  const data = await getSOCPageData();
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-1">
+    <div className="space-y-10">
+      {/* ── PAGE HEADER ────────────────────────────────────────────────────── */}
+      <div>
         <div className="flex items-center gap-2 mb-3">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-950/40 border border-red-800/40 rounded-full">
-            <Lock className="w-3 h-3 text-red-400" />
             <span className="text-[10px] font-bold text-red-400 tracking-widest uppercase">
-              Security Center
+              Sovereign Security
             </span>
           </div>
         </div>
-        <h1 className="text-3xl font-bold text-slate-100 tracking-tight">Security Center</h1>
-        <p className="text-slate-500 text-sm">
-          Threat monitoring, security intelligence, and incident response.
-        </p>
-      </div>
 
-      {/* Foundation Notice */}
-      <div className="flex items-start gap-3 p-5 bg-blue-950/20 border border-blue-800/30 rounded-xl">
-        <ShieldAlert className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-bold text-blue-300">Phase 7.1 — Foundation Architecture</p>
-          <p className="text-xs text-blue-600 mt-1 leading-relaxed">
-            Security Center boundary is established. Full threat monitoring, anomaly detection, and
-            incident response systems will be built in Phase 7.x Security Intelligence.
-          </p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-100 tracking-tight">
+              Security Operations Center
+            </h1>
+            <p className="text-slate-500 text-sm mt-1.5 max-w-xl">
+              Sovereign cyber-security, threat-detection, and platform-defense layer.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Features Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {features.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.label}
-              className={`p-5 rounded-xl bg-slate-900/60 border ${item.border} opacity-75`}
-            >
-              <div className="flex items-start gap-4">
-                <div className={`p-2.5 rounded-lg shrink-0 ${item.bg}`}>
-                  <Icon className={`w-5 h-5 ${item.color}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-slate-200 mb-1">{item.label}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-2.5">
-                    {item.description}
-                  </p>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-800 rounded-full px-2.5 py-1">
-                    <ArrowRight className="w-3 h-3" />
-                    Coming Phase 7.x
-                  </span>
-                </div>
-              </div>
+      <div className="space-y-12 pb-12">
+        {/* 1. Overview KPIs */}
+        <section>
+          <SectionHeader
+            title="Platform Posture & KPIs"
+            description="Real-time security metrics and global threat indicators."
+          />
+          <SecurityOverviewCards overview={data.overview} />
+        </section>
+
+        {/* 2. Alert Center */}
+        <section>
+          <SectionHeader
+            title="Security Alert Center"
+            description="Actionable intelligence derived from multi-vector threat signals."
+          />
+          <SecurityAlertCenter alerts={data.alerts} />
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 3. Auth Forensics */}
+          <section className="space-y-4">
+            <SectionHeader
+              title="Authentication Forensics"
+              description="Login failures, brute-force patterns, and credential threats."
+            />
+            <AuthForensicsPanel data={data.authForensics} />
+          </section>
+
+          {/* 4. Privilege Escalation */}
+          <section className="space-y-4">
+            <SectionHeader
+              title="Privilege Escalation & RBAC"
+              description="Role change forensics and authorization bypass attempts."
+            />
+            <PrivilegeEscalationPanel data={data.privilegeEscalation} />
+          </section>
+        </div>
+
+        {/* 5. Suspicious Activity Intelligence */}
+        <section>
+          <SectionHeader
+            title="Suspicious Activity Intelligence"
+            description="Anomaly-detection engine for operational threat vectors."
+          />
+          <SuspiciousActivityPanel data={data.suspiciousActivity} />
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 6. Threat Timeline */}
+          <section className="space-y-4">
+            <SectionHeader
+              title="Threat Event Timeline"
+              description="Chronological reconstruction of security incidents."
+            />
+            <div className="rounded-xl bg-slate-900/60 border border-slate-800/60 overflow-hidden h-[600px] overflow-y-auto custom-scrollbar">
+              <ThreatTimelinePanel timeline={data.threatTimeline} />
             </div>
-          );
-        })}
+          </section>
+
+          {/* 7. Session Governance */}
+          <section className="space-y-4">
+            <SectionHeader
+              title="Session Governance"
+              description="Risk-scoring and monitoring for active privileged sessions."
+            />
+            <SessionGovernancePanel data={data.sessionGovernance} />
+          </section>
+        </div>
+
+        {/* Footer info */}
+        <div className="pt-8 border-t border-slate-800/60 text-center">
+          <p className="text-[10px] text-slate-600 font-mono">
+            SOC INTELLIGENCE LAST COMPUTED: {new Date(data.lastAggregatedISO).toLocaleString()} UTC
+            <br />
+            INFRASTRUCTURE: SERVER-SIDE ONLY · HYDRATION SAFE
+          </p>
+        </div>
       </div>
     </div>
   );

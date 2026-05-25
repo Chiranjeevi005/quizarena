@@ -61,6 +61,18 @@ export {
   type HighRiskValidationResult,
 } from "./high-risk";
 
+// ── Feature Rollouts (Platform Sovereignty) ──────────────────────────────────
+export {
+  evaluateRollout,
+  isFeatureEnabled,
+  createFeatureRollout,
+  enableFeature,
+  disableFeature,
+  rollbackFeature,
+  updateRollout,
+  getFeatureRolloutsData,
+} from "./feature-rollouts";
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 export {
   SUPER_ADMIN_PATHS,

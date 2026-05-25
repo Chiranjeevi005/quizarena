@@ -24,6 +24,9 @@ import {
   Lock,
   Eye,
   Key,
+  Rocket,
+  LifeBuoy,
+  BrainCircuit,
 } from "lucide-react";
 import { SUPER_ADMIN_PATHS, SUPER_ADMIN_NAV_SECTIONS } from "@/lib/super-admin/routes";
 
@@ -38,6 +41,9 @@ const NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   ClipboardCheck,
   Sliders,
   Key,
+  Rocket,
+  LifeBuoy,
+  BrainCircuit,
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

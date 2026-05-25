@@ -1,10 +1,7 @@
 import { auth } from "@/auth";
 import { ROLES, type Role } from "./roles";
 import { hasMinimumRole, hasRole } from "./hierarchy";
-import {
-  getRolePermissionsWithInheritance,
-  type Permission,
-} from "./permission-map";
+import { getRolePermissionsWithInheritance, type Permission } from "./permission-map";
 import { PERMISSIONS } from "./permission-constants";
 import { redirect } from "next/navigation";
 
@@ -44,7 +41,7 @@ export class AccessController {
   }
 
   canAny(permissions: Permission[]): AccessDecision {
-    const hasAccess = permissions.some(p => this.context.permissions.includes(p));
+    const hasAccess = permissions.some((p) => this.context.permissions.includes(p));
 
     if (!hasAccess) {
       return {
@@ -57,7 +54,7 @@ export class AccessController {
   }
 
   canAll(permissions: Permission[]): AccessDecision {
-    const hasAccess = permissions.every(p => this.context.permissions.includes(p));
+    const hasAccess = permissions.every((p) => this.context.permissions.includes(p));
 
     if (!hasAccess) {
       return {
@@ -82,7 +79,7 @@ export class AccessController {
         PERMISSIONS.USER.BAN,
         PERMISSIONS.ADMIN.OVERSEE,
         PERMISSIONS.MODERATOR.OVERSEE,
-      ].some(p => this.context.permissions.includes(p));
+      ].some((p) => this.context.permissions.includes(p));
 
       if (!isAdmin) {
         return {

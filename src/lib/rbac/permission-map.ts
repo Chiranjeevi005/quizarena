@@ -125,8 +125,8 @@ export const getRolePermissionsWithInheritance = unstable_cache(
     collectPermissions(role);
     return [...new Set(result)];
   },
-  ['role-permissions-db'],
-  { tags: ['rbac'], revalidate: 60 }
+  ["role-permissions-db"],
+  { tags: ["rbac"], revalidate: 60 }
 );
 
 export const getPermissionHierarchy = (): Record<Role, Role[]> => {
@@ -157,7 +157,9 @@ export const compareRolePermissionLevel = (roleA: Role, roleB: Role): number => 
   return (roleLevel[roleA] ?? 0) - (roleLevel[roleB] ?? 0);
 };
 
-export const getHighestRoleWithPermission = async (permission: Permission): Promise<Role | null> => {
+export const getHighestRoleWithPermission = async (
+  permission: Permission
+): Promise<Role | null> => {
   const roles = [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MODERATOR, ROLES.USER];
 
   for (const role of roles) {
@@ -206,7 +208,10 @@ export const hasAnyPermission = async (role: Role, permissions: Permission[]): P
   return permissions.some((p) => userPermissions.includes(p));
 };
 
-export const hasAllPermissions = async (role: Role, permissions: Permission[]): Promise<boolean> => {
+export const hasAllPermissions = async (
+  role: Role,
+  permissions: Permission[]
+): Promise<boolean> => {
   const userPermissions = await getRolePermissionsWithInheritance(role);
   return permissions.every((p) => userPermissions.includes(p));
 };

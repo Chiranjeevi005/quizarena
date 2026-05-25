@@ -42,9 +42,7 @@ export function PermissionMatrix({
       }
       reason = input.trim();
     } else {
-      const input = window.prompt(
-        `Provide an audit reason for this permission change on ${role}:`
-      );
+      const input = window.prompt(`Provide an audit reason for this permission change on ${role}:`);
       if (!input || input.trim().length < 5) {
         alert("A valid audit reason (min 5 chars) is required.");
         return;
@@ -160,7 +158,9 @@ export function PermissionMatrix({
                               : `Toggle ${perm.key} for ${role}`
                           }
                         >
-                          <span className="sr-only">Toggle {perm.key} for {role}</span>
+                          <span className="sr-only">
+                            Toggle {perm.key} for {role}
+                          </span>
                           {isLoading ? (
                             <Loader2 className="w-3 h-3 text-white animate-spin absolute" />
                           ) : (

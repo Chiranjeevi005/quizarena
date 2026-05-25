@@ -89,16 +89,19 @@ const auditRoleDefinitions = async (): Promise<RBACAuditIssue[]> => {
 const auditPermissionMatrix = async (): Promise<RBACAuditIssue[]> => {
   const issues: RBACAuditIssue[] = [];
 
-  const rolePermissions = await Promise.all(ROLE_VALUES.map(async (role) => ({
-    role,
-    permissions: await getRolePermissionsWithInheritance(role),
-  })));
+  const rolePermissions = await Promise.all(
+    ROLE_VALUES.map(async (role) => ({
+      role,
+      permissions: await getRolePermissionsWithInheritance(role),
+    }))
+  );
 
   rolePermissions.forEach(({ role, permissions }) => {
     const higherRoles = ROLE_VALUES.filter((r) => getRoleLevel(r) > getRoleLevel(role));
 
     higherRoles.forEach((higherRole) => {
-      const higherPermissions = rolePermissions.find((rp) => rp.role === higherRole)?.permissions || [];
+      const higherPermissions =
+        rolePermissions.find((rp) => rp.role === higherRole)?.permissions || [];
       const missingFromLower = higherPermissions.filter((p) => !permissions.includes(p));
 
       if (missingFromLower.length === 0 && higherRole !== role) {

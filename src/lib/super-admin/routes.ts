@@ -30,6 +30,7 @@ export const SUPER_ADMIN_PATHS = {
   GOVERNANCE: "/dashboard/super-admin/governance",
   RBAC: "/dashboard/super-admin/rbac",
   ROLES: "/dashboard/super-admin/roles",
+  STRATEGIC_INTELLIGENCE: "/dashboard/super-admin/strategic-intelligence",
   INTELLIGENCE: "/dashboard/super-admin/intelligence",
 
   // ── Compliance (Audit Systems) ─────────────────────────────
@@ -37,6 +38,10 @@ export const SUPER_ADMIN_PATHS = {
 
   // ── Platform Controls (Feature Sovereignty) ────────────────
   PLATFORM_CONTROLS: "/dashboard/super-admin/platform-controls",
+  FEATURE_ROLLOUTS: "/dashboard/super-admin/feature-rollouts",
+
+  // ── Disaster Recovery (Fail-Safe Controls) ─────────────────
+  DISASTER_RECOVERY: "/dashboard/super-admin/disaster-recovery",
 
   // ── Settings ───────────────────────────────────────────────
   SETTINGS: "/dashboard/super-admin/settings",
@@ -96,6 +101,27 @@ export const SUPER_ADMIN_NAV_SECTIONS = [
     description: "Feature sovereignty & platform overrides",
     href: SUPER_ADMIN_PATHS.PLATFORM_CONTROLS,
     icon: "Sliders",
+  },
+  {
+    id: "feature-rollouts",
+    label: "Feature Rollouts",
+    description: "Release governance & staging",
+    href: SUPER_ADMIN_PATHS.FEATURE_ROLLOUTS,
+    icon: "Rocket",
+  },
+  {
+    id: "disaster-recovery",
+    label: "Disaster Recovery",
+    description: "Fail-safe controls & platform survivability",
+    href: SUPER_ADMIN_PATHS.DISASTER_RECOVERY,
+    icon: "LifeBuoy",
+  },
+  {
+    id: "strategic-intelligence",
+    label: "Strategic Command",
+    description: "Executive business & growth oversight",
+    href: SUPER_ADMIN_PATHS.STRATEGIC_INTELLIGENCE,
+    icon: "BrainCircuit",
   },
 ] as const;
 

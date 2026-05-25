@@ -13,7 +13,7 @@ export async function toggleRolePermission(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const authResult = await requireServerAuth("server-action");
-    
+
     if (authResult.role !== ROLES.SUPER_ADMIN) {
       return { success: false, error: "Only Super Admin can modify global permissions" };
     }
@@ -46,17 +46,19 @@ export async function toggleRolePermission(
           },
         });
       } else {
-        await tx.rolePermission.delete({
-          where: {
-            role_permissionId: {
-              role,
-              permissionId: permission.id,
+        await tx.rolePermission
+          .delete({
+            where: {
+              role_permissionId: {
+                role,
+                permissionId: permission.id,
+              },
             },
-          },
-        }).catch((e) => {
-          // Ignore if it doesn't exist
-          if (e.code !== 'P2025') throw e;
-        });
+          })
+          .catch((e) => {
+            // Ignore if it doesn't exist
+            if (e.code !== "P2025") throw e;
+          });
       }
 
       await tx.auditLog.create({

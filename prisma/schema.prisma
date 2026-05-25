@@ -50,6 +50,8 @@ model User {
   targetedAudits      AuditLog[]         @relation("AuditTarget")
   subscriptions       Subscription[]
   transactions        Transaction[]
+  createdFeatures    FeatureFlag[]      @relation("FeatureCreatedBy")
+  updatedFeatures    FeatureFlag[]      @relation("FeatureUpdatedBy")
 
   @@index([email])
   @@index([username])
@@ -670,4 +672,42 @@ model SettingAudit {
   @@index([changedById])
   @@index([changedAt])
   @@map("setting_audits")
+}
+
+// ─── Sovereign Feature Rollout Systems ───────────────────────
+
+enum RolloutType {
+  GLOBAL
+  PERCENTAGE
+  ROLE_BASED
+  USER_BASED
+  ENVIRONMENT
+}
+
+model FeatureFlag {
+  id            String   @id @default(cuid())
+
+  key           String   @unique
+  name          String
+  description   String?  @db.Text
+
+  enabled       Boolean  @default(false)
+
+  rolloutType   RolloutType
+  rolloutValue  Int?
+
+  environments  Json?
+
+  createdById   String?
+  updatedById   String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  createdBy User? @relation("FeatureCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy User? @relation("FeatureUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([key])
+  @@index([enabled])
+  @@map("feature_flags")
 }

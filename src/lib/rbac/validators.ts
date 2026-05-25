@@ -14,13 +14,19 @@ export const hasPermission = (role: Role | string, permission: Permission): bool
   return hasPermissionInMatrix(safeRole, permission);
 };
 
-export const hasAnyPermission = async (role: Role | string, permissions: Permission[]): Promise<boolean> => {
+export const hasAnyPermission = async (
+  role: Role | string,
+  permissions: Permission[]
+): Promise<boolean> => {
   const safeRole = typeof role === "string" ? (role as Role) : role;
   const userPermissions = await getRolePermissionsWithInheritance(safeRole);
   return permissions.some((p) => userPermissions.includes(p));
 };
 
-export const hasAllPermissions = async (role: Role | string, permissions: Permission[]): Promise<boolean> => {
+export const hasAllPermissions = async (
+  role: Role | string,
+  permissions: Permission[]
+): Promise<boolean> => {
   const safeRole = typeof role === "string" ? (role as Role) : role;
   const userPermissions = await getRolePermissionsWithInheritance(safeRole);
   return permissions.every((p) => userPermissions.includes(p));
@@ -128,7 +134,10 @@ export const assertAnyPermission = async (role: Role, permissions: Permission[])
   }
 };
 
-export const assertAllPermissions = async (role: Role, permissions: Permission[]): Promise<void> => {
+export const assertAllPermissions = async (
+  role: Role,
+  permissions: Permission[]
+): Promise<void> => {
   if (!(await hasAllPermissions(role, permissions))) {
     throw new PermissionDeniedError(permissions.join(", "));
   }
@@ -216,7 +225,10 @@ export const validatePermissionChain = async (
   };
 };
 
-export const getPermissionGaps = async (role: Role, desiredPermissions: Permission[]): Promise<Permission[]> => {
+export const getPermissionGaps = async (
+  role: Role,
+  desiredPermissions: Permission[]
+): Promise<Permission[]> => {
   const userPermissions = await getRolePermissionsWithInheritance(role);
   return desiredPermissions.filter((p) => !userPermissions.includes(p));
 };

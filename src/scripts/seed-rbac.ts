@@ -1,7 +1,10 @@
 import { prisma } from "../lib/prisma";
-import { PERMISSIONS, PERMISSION_LABELS, PERMISSION_CATEGORIES } from "../lib/rbac/permission-constants";
+import {
+  PERMISSIONS,
+  PERMISSION_LABELS,
+  PERMISSION_CATEGORIES,
+} from "../lib/rbac/permission-constants";
 import { ROLE_PERMISSION_MAP } from "../lib/rbac/permission-map";
-
 
 async function main() {
   console.log("Seeding RBAC system...");
@@ -11,7 +14,7 @@ async function main() {
 
   for (const key of allPermissionKeys) {
     const label = PERMISSION_LABELS[key as keyof typeof PERMISSION_LABELS] || key;
-    
+
     // Find category
     let category = "OTHER";
     for (const [cat, keys] of Object.entries(PERMISSION_CATEGORIES)) {

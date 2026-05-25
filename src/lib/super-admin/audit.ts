@@ -24,7 +24,8 @@ export type SuperAdminAuditCategory =
   | "PLATFORM_CONTROLS"
   | "SESSION_MANAGEMENT"
   | "HIGH_RISK_ACTION"
-  | "DATA_ACCESS";
+  | "DATA_ACCESS"
+  | "FEATURE_ROLLOUT";
 
 export type RiskSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
@@ -71,6 +72,7 @@ export const SUPER_ADMIN_AUDIT_CATEGORIES: Record<SuperAdminAuditCategory, strin
   SESSION_MANAGEMENT: "Session validation / hardening",
   HIGH_RISK_ACTION: "High-risk operational action",
   DATA_ACCESS: "Sensitive data access",
+  FEATURE_ROLLOUT: "Feature rollout / governance action",
 } as const;
 
 // ─── Risk Severity Labels ────────────────────────────────────────────────────
