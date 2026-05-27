@@ -56,10 +56,10 @@ export const validateSuperAdmin = async (): Promise<SuperAdminValidationResult> 
       return { authorized: false, reason: "NOT_AUTHENTICATED" };
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL ?? "quizarenadev@gmail.com";
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
 
     // Email-level sovereignty check
-    if (session.user.email !== adminEmail) {
+    if (!superAdminEmail || session.user.email !== superAdminEmail) {
       return {
         authorized: false,
         reason: "EMAIL_MISMATCH",
@@ -103,7 +103,7 @@ export const validateSuperAdmin = async (): Promise<SuperAdminValidationResult> 
       context: {
         userId: session.user.id,
         role: dbRole,
-        email: dbUser.email ?? session.user.email ?? adminEmail,
+        email: dbUser.email ?? session.user.email ?? superAdminEmail,
         sessionVerified: true,
         dbVerified: true,
       },

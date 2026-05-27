@@ -20,7 +20,7 @@ export default async function ChallengesPage() {
   }
 
   const user = session.user;
-  const category = user.category as keyof typeof EXAM_CATEGORY_LABELS | undefined;
+  const category = user.examCategory as keyof typeof EXAM_CATEGORY_LABELS | undefined;
   const challenge = await getLatestChallenge();
 
   const getDifficultyColor = (difficulty: string) => {

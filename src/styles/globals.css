@@ -122,3 +122,106 @@
     padding-top: env(safe-area-inset-top);
   }
 }
+
+/* ─── Exam Interface Animations ─────────────────────────────── */
+
+/* Timer warning pulse */
+.exam-timer-warning {
+  animation: timer-pulse 2s ease-in-out infinite;
+}
+
+/* Timer danger pulse (more aggressive) */
+.exam-timer-danger {
+  animation: timer-danger 1s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes timer-danger {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+}
+
+/* Mobile palette drawer slide-up */
+.exam-drawer-slide {
+  animation: drawer-slide-up 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.exam-drawer-backdrop {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+@keyframes drawer-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Warning toast slide-in */
+.exam-toast-slide {
+  animation: toast-slide-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Submit modal scale-in */
+.exam-modal {
+  animation: modal-scale-in 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes modal-scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Option hover effect */
+.exam-option {
+  will-change: transform;
+}
+
+.exam-option:active {
+  transform: scale(0.99);
+}

@@ -134,3 +134,55 @@ export interface LeaderboardResponse {
   userRank?: number;
   isFrozen: boolean;
 }
+
+// ─── Evaluation & Result Types ─────────────────────────────────
+
+export interface EvaluationResult {
+  attemptId: string;
+  challengeId: string;
+  challengeTitle: string;
+  challengeSlug: string;
+  challengeStatus: string;
+
+  // Scoring
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  unansweredCount: number;
+  accuracy: number;
+
+  // Timing
+  timeTakenInSeconds: number;
+
+  // Ranking
+  rank: number | null;
+  totalParticipants: number;
+  isRankFrozen: boolean;
+
+  // Question details
+  questions: QuestionResultDetail[];
+}
+
+export interface QuestionResultDetail {
+  questionId: string;
+  questionText: string;
+  selectedOptionId: string | null;
+  selectedOptionText: string | null;
+  correctOptionId: string;
+  correctOptionText: string;
+  isCorrect: boolean;
+  isUnanswered: boolean;
+  explanation: string | null;
+}
+
+export interface CategoryRankingEntry {
+  rank: number;
+  userId: string;
+  username: string | null;
+  name: string | null;
+  image: string | null;
+  totalScore: number;
+  averageAccuracy: number;
+  challengesCompleted: number;
+}

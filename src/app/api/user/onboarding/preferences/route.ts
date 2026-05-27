@@ -34,7 +34,7 @@ export async function PATCH(request: NextRequest) {
     const updatedUser = await prisma.user.update({
       where: { email: userEmail },
       data: {
-        category: category || typedUser.category,
+        examCategory: category || typedUser.examCategory,
         preparationLevel: preparationLevel || typedUser.preparationLevel,
       },
     });
@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest) {
       success: true,
       user: {
         id: updatedUser.id,
-        category: updatedUser.category,
+        category: updatedUser.examCategory,
         preparationLevel: updatedUser.preparationLevel,
       },
     });

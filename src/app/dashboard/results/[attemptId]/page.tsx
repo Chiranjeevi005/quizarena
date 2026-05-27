@@ -1,13 +1,19 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { getAttemptById } from "@/actions/challenge";
-import { getUserChallengeRank } from "@/actions/leaderboard";
-import type { QuestionResult } from "@/types/challenge";
+/**
+ * Results Page — Server Component
+ *
+ * Competitive result display powered by getEvaluationResult().
+ * Shows: score hero, stats grid, rank card, question review, and action CTAs.
+ */
+import { auth } from "@/auth/auth";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
+import { getEvaluationResult } from "@/actions/evaluation";
+import Link from "next/link";
 import {
   Trophy,
   CheckCircle2,
   XCircle,
+  MinusCircle,
   Clock,
   Target,
   BarChart3,
@@ -15,6 +21,12 @@ import {
   RotateCcw,
   Medal,
   Lock,
+  Crown,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,314 +34,303 @@ interface ResultPageProps {
   params: Promise<{ attemptId: string }>;
 }
 
-export default function ResultPage({ params }: ResultPageProps) {
-  const [attempt, setAttempt] = useState<{
-    id: string;
-    challengeId: string;
-    challenge: {
-      title: string;
-      totalQuestions: number;
-      status: string;
-      questions: {
-        questionId: string;
-        question: {
-          options: { id: string; optionText: string; isCorrect: boolean }[];
-          explanation: string | null;
-        };
-      }[];
-    };
-    correctAnswers: number;
-    wrongAnswers: number;
-    unanswered: number;
-    score: number;
-    timeTakenInSeconds: number | null;
-    answers: {
-      questionId: string;
-      selectedOptionId: string | null;
-      selectedOption: string | null;
-      isCorrect: boolean | null;
-    }[];
-  } | null>(null);
-  const [rankData, setRankData] = useState<{
-    rank: number;
-    totalParticipants: number;
-  } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
-
-  useEffect(() => {
-    const loadResult = async () => {
-      const { attemptId } = await params;
-
-      const result = (await getAttemptById(attemptId)) as any;
-
-      if (!result) {
-        setError("Result not found");
-      } else {
-        setAttempt(result);
-
-        // Load rank data if challenge has ended
-        if (result.challenge.status === "ENDED" || result.challenge.status === "ARCHIVED") {
-          const rank = await getUserChallengeRank(result.challengeId);
-          setRankData(rank);
-        }
-      }
-
-      setIsLoading(false);
-    };
-
-    loadResult();
-  }, [params]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Loading results...</p>
-        </div>
-      </div>
-    );
+export default async function ResultPage({ params }: ResultPageProps) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect(ROUTES.AUTH.SIGN_IN);
   }
 
-  if (error || !attempt) {
+  const { attemptId } = await params;
+  const result = await getEvaluationResult(attemptId);
+
+  if (!result) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md p-6">
+      <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="text-center max-w-md p-8 bg-white rounded-2xl border border-gray-100 shadow-sm">
           <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-navy mb-2">Result Not Found</h2>
-          <p className="text-gray-500 mb-4">We couldn&apos;t find this result.</p>
-          <button
-            onClick={() => (window.location.href = "/challenges")}
-            className="px-4 py-2 bg-primary text-white rounded-lg font-medium"
+          <p className="text-gray-500 mb-6">
+            We couldn&apos;t find this result. It may not exist or you may not have access.
+          </p>
+          <Link
+            href="/challenges"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
           >
             Back to Challenges
-          </button>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const accuracy =
-    attempt.challenge.totalQuestions > 0
-      ? Math.round((attempt.correctAnswers / attempt.challenge.totalQuestions) * 100)
-      : 0;
-
-  const timeTaken = attempt.timeTakenInSeconds || 0;
+  const accuracy = Math.round(result.accuracy);
+  const timeTaken = result.timeTakenInSeconds;
   const minutes = Math.floor(timeTaken / 60);
   const seconds = timeTaken % 60;
 
-  const getPerformanceMessage = () => {
-    if (accuracy >= 80) return "Outstanding Performance";
-    if (accuracy >= 60) return "Strong Performance";
-    if (accuracy >= 40) return "Moderate Performance";
-    return "Keep Practicing";
+  const getPerformanceTier = () => {
+    if (accuracy >= 90)
+      return {
+        label: "Outstanding Performance",
+        color: "text-emerald-600",
+        bg: "from-emerald-500/10 to-emerald-500/5",
+        icon: <Sparkles className="w-8 h-8 text-emerald-500" />,
+      };
+    if (accuracy >= 70)
+      return {
+        label: "Strong Performance",
+        color: "text-blue-600",
+        bg: "from-blue-500/10 to-blue-500/5",
+        icon: <TrendingUp className="w-8 h-8 text-blue-500" />,
+      };
+    if (accuracy >= 50)
+      return {
+        label: "Moderate Performance",
+        color: "text-amber-600",
+        bg: "from-amber-500/10 to-amber-500/5",
+        icon: <Zap className="w-8 h-8 text-amber-500" />,
+      };
+    return {
+      label: "Keep Practicing",
+      color: "text-gray-600",
+      bg: "from-gray-500/10 to-gray-500/5",
+      icon: <Target className="w-8 h-8 text-gray-400" />,
+    };
   };
 
-  const questions: QuestionResult[] = attempt.challenge.questions.map((cq) => {
-    const answer = attempt.answers.find((a) => a.questionId === cq.questionId);
-    const correctOption = cq.question.options.find((o) => o.isCorrect);
-    return {
-      questionId: cq.questionId,
-      selectedOption: answer?.selectedOption || null,
-      correctOption: correctOption?.optionText || "",
-      isCorrect: answer?.isCorrect || false,
-    };
-  });
-
+  const performance = getPerformanceTier();
   const challengeEnded =
-    attempt.challenge.status === "ENDED" || attempt.challenge.status === "ARCHIVED";
+    result.challengeStatus === "ENDED" || result.challengeStatus === "ARCHIVED";
+
+  const getPercentile = () => {
+    if (!result.rank || result.totalParticipants <= 0) return null;
+    return Math.round(((result.totalParticipants - result.rank) / result.totalParticipants) * 100);
+  };
+
+  const percentile = getPercentile();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="py-6 sm:py-8 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
-        {/* ─── Score Card ──────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Trophy className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-navy mb-2">
-              {getPerformanceMessage()}
-            </h1>
-            <p className="text-gray-500">{attempt.challenge.title}</p>
-          </div>
+        {/* ─── HERO SCORE CARD ──────────────────────────────── */}
+        <div
+          className={cn(
+            "relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8"
+          )}
+        >
+          {/* Performance gradient accent */}
+          <div
+            className={cn(
+              "absolute inset-0 bg-linear-to-br opacity-40 pointer-events-none",
+              performance.bg
+            )}
+          />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-3xl font-bold text-navy">{attempt.score}</p>
-              <p className="text-xs text-gray-500 mt-1">Score</p>
+          <div className="relative z-10">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
+                {performance.icon}
+              </div>
+              <h1 className={cn("text-2xl sm:text-3xl font-bold mb-2", performance.color)}>
+                {performance.label}
+              </h1>
+              <p className="text-gray-500">{result.challengeTitle}</p>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-xl">
-              <p className="text-3xl font-bold text-green-600">{attempt.correctAnswers}</p>
-              <p className="text-xs text-green-600 mt-1">Correct</p>
-            </div>
-            <div className="text-center p-4 bg-red-50 rounded-xl">
-              <p className="text-3xl font-bold text-red-600">{attempt.wrongAnswers}</p>
-              <p className="text-xs text-red-600 mt-1">Wrong</p>
-            </div>
-            <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-3xl font-bold text-navy">{accuracy}%</p>
-              <p className="text-xs text-gray-500 mt-1">Accuracy</p>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-              <Clock className="w-5 h-5 text-gray-400" />
-              <div>
-                <p className="text-sm text-gray-500">Time Taken</p>
-                <p className="font-bold text-navy">
-                  {minutes}m {seconds}s
-                </p>
+            {/* Score Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+              <div className="text-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <p className="text-3xl font-bold text-navy">{result.score}</p>
+                <p className="text-xs font-medium text-gray-500 mt-1">Score</p>
+              </div>
+              <div className="text-center p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                <p className="text-3xl font-bold text-emerald-600">{result.correctAnswers}</p>
+                <p className="text-xs font-medium text-emerald-600 mt-1">Correct</p>
+              </div>
+              <div className="text-center p-4 bg-red-50 rounded-xl border border-red-100">
+                <p className="text-3xl font-bold text-red-600">{result.wrongAnswers}</p>
+                <p className="text-xs font-medium text-red-600 mt-1">Wrong</p>
+              </div>
+              <div className="text-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <p className="text-3xl font-bold text-navy">{accuracy}%</p>
+                <p className="text-xs font-medium text-gray-500 mt-1">Accuracy</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-              <Target className="w-5 h-5 text-gray-400" />
-              <div>
-                <p className="text-sm text-gray-500">Questions</p>
-                <p className="font-bold text-navy">{attempt.challenge.totalQuestions} total</p>
+
+            {/* Secondary Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100">
+                <Clock className="w-4.5 h-4.5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500">Time Taken</p>
+                  <p className="font-bold text-navy text-sm">
+                    {minutes}m {seconds}s
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100">
+                <Target className="w-4.5 h-4.5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500">Total Questions</p>
+                  <p className="font-bold text-navy text-sm">{result.totalQuestions}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100">
+                <MinusCircle className="w-4.5 h-4.5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500">Unanswered</p>
+                  <p className="font-bold text-navy text-sm">{result.unansweredCount}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ─── Leaderboard Rank Card ───────────────────────── */}
+        {/* ─── RANK CARD ───────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center gap-2 mb-4">
             <Medal className="w-5 h-5 text-amber-500" />
             <h2 className="text-lg font-bold text-navy">Your Ranking</h2>
           </div>
 
-          {challengeEnded ? (
-            rankData ? (
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-amber-700">#{rankData.rank}</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-navy">
-                      Rank {rankData.rank} of {rankData.totalParticipants}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {rankData.rank <= 3
-                        ? "🏆 Top performer!"
-                        : rankData.rank <= Math.ceil(rankData.totalParticipants * 0.1)
-                          ? "Top 10% — Great job!"
-                          : rankData.rank <= Math.ceil(rankData.totalParticipants * 0.25)
-                            ? "Top 25% — Well done!"
-                            : "Keep practicing to improve your rank"}
-                    </p>
-                  </div>
-                </div>
-                <a
-                  href={`/leaderboard?challenge=${attempt.challengeId}`}
-                  className="text-primary font-medium text-sm hover:underline"
+          {result.rank !== null ? (
+            <div
+              className={cn(
+                "flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-xl border gap-4",
+                result.isRankFrozen
+                  ? "bg-linear-to-r from-amber-50 to-orange-50 border-amber-200"
+                  : "bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200"
+              )}
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className={cn(
+                    "w-14 h-14 rounded-xl flex items-center justify-center",
+                    result.rank <= 3 ? "bg-amber-100" : "bg-white border border-gray-200"
+                  )}
                 >
-                  View Full Leaderboard
-                </a>
+                  {result.rank === 1 ? (
+                    <Crown className="w-7 h-7 text-amber-500" />
+                  ) : (
+                    <span className="text-2xl font-bold text-navy">#{result.rank}</span>
+                  )}
+                </div>
+                <div>
+                  <p className="font-bold text-navy">
+                    Rank {result.rank} of {result.totalParticipants}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {result.rank <= 3
+                      ? "🏆 Top performer!"
+                      : percentile !== null && percentile >= 90
+                        ? `Top ${100 - percentile}% — Excellent!`
+                        : percentile !== null && percentile >= 75
+                          ? `Top ${100 - percentile}% — Great job!`
+                          : percentile !== null && percentile >= 50
+                            ? `Top ${100 - percentile}% — Well done!`
+                            : "Keep practicing to improve your rank"}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="text-center py-4 text-gray-500 text-sm">
-                Leaderboard data not available for this challenge.
+              <div className="flex items-center gap-3">
+                {result.isRankFrozen ? (
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> Finalized
+                  </span>
+                ) : (
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    Live Ranking
+                  </span>
+                )}
+                {challengeEnded && (
+                  <Link
+                    href={`/leaderboard/${result.challengeSlug}`}
+                    className="text-primary font-medium text-sm hover:underline flex items-center gap-1"
+                  >
+                    Full Leaderboard <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
               </div>
-            )
-          ) : (
+            </div>
+          ) : !challengeEnded ? (
             <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
-              <Lock className="w-5 h-5 text-blue-500" />
+              <Lock className="w-5 h-5 text-blue-500 shrink-0" />
               <div>
-                <p className="font-medium text-navy">
-                  Rankings will be revealed when the challenge ends
-                </p>
+                <p className="font-medium text-navy">Rankings will update as others submit</p>
                 <p className="text-sm text-gray-500">
-                  Your score has been recorded. Check back after the challenge window closes.
+                  Your score has been recorded. Check back for live ranking updates.
                 </p>
               </div>
+            </div>
+          ) : (
+            <div className="text-center py-4 text-gray-500 text-sm">
+              Leaderboard data not available for this challenge.
             </div>
           )}
         </div>
 
-        {/* ─── Attempt Summary ─────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-navy" />
-            <h2 className="text-lg font-bold text-navy">Attempt Summary</h2>
-          </div>
+        {/* ─── QUESTION-BY-QUESTION REVIEW ──────────────────── */}
+        <QuestionReview questions={result.questions} />
 
-          <div className="grid grid-cols-1 gap-2">
-            {questions.map((q, idx) => (
-              <button
-                key={q.questionId}
-                onClick={() => setSelectedQuestion(selectedQuestion === idx ? null : idx)}
-                className={cn(
-                  "flex items-center justify-between p-3 rounded-lg border transition-colors text-left",
-                  selectedQuestion === idx
-                    ? "border-primary bg-primary/5"
-                    : "border-gray-100 hover:border-gray-200"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={cn(
-                      "w-6 h-6 rounded flex items-center justify-center",
-                      q.isCorrect
-                        ? "bg-green-100 text-green-600"
-                        : q.selectedOption
-                          ? "bg-red-100 text-red-600"
-                          : "bg-gray-100 text-gray-400"
-                    )}
-                  >
-                    {q.isCorrect ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : q.selectedOption ? (
-                      <XCircle className="w-4 h-4" />
-                    ) : (
-                      <span className="text-xs">—</span>
-                    )}
-                  </span>
-                  <span className="text-sm text-navy font-medium">Question {idx + 1}</span>
-                </div>
-                <span
-                  className={cn(
-                    "text-xs font-medium",
-                    q.isCorrect
-                      ? "text-green-600"
-                      : q.selectedOption
-                        ? "text-red-600"
-                        : "text-gray-400"
-                  )}
-                >
-                  {q.isCorrect
-                    ? "Correct"
-                    : q.selectedOption
-                      ? `Your answer: ${q.selectedOption}`
-                      : "Unanswered"}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ─── Actions ─────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
+        {/* ─── ACTIONS ─────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <Link
             href="/challenges"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm hover:shadow-md hover:shadow-primary/20"
           >
             <RotateCcw className="w-4 h-4" />
             Attempt Another Challenge
-          </a>
-          <a
+          </Link>
+          {challengeEnded && (
+            <Link
+              href={`/leaderboard/${result.challengeSlug}`}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-navy font-bold rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              <Trophy className="w-4 h-4" />
+              View Leaderboard
+            </Link>
+          )}
+          <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-navy font-bold rounded-xl hover:bg-gray-50 transition-colors"
           >
             Back to Dashboard
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── Question Review Sub-Component (Client) ─────────────────────
+
+import type { QuestionResultDetail } from "@/types/challenge";
+import { QuestionReviewClient } from "./QuestionReviewClient";
+
+function QuestionReview({ questions }: { questions: QuestionResultDetail[] }) {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-navy" />
+          <h2 className="text-lg font-bold text-navy">Question Review</h2>
+        </div>
+        <div className="flex items-center gap-3 text-xs font-medium">
+          <span className="flex items-center gap-1 text-emerald-600">
+            <CheckCircle2 className="w-3.5 h-3.5" /> Correct
+          </span>
+          <span className="flex items-center gap-1 text-red-600">
+            <XCircle className="w-3.5 h-3.5" /> Wrong
+          </span>
+          <span className="flex items-center gap-1 text-gray-400">
+            <MinusCircle className="w-3.5 h-3.5" /> Skipped
+          </span>
+        </div>
+      </div>
+
+      <QuestionReviewClient questions={questions} />
     </div>
   );
 }

@@ -80,7 +80,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             image: typedUser.image,
             role: typedUser.role,
             onboardingCompleted: typedUser.onboardingCompleted,
-            category: typedUser.category as ExamCategory | null,
+            examCategory: typedUser.examCategory as ExamCategory | null,
             preparationLevel: typedUser.preparationLevel as PreparationLevel | null,
             username: typedUser.username,
           };

@@ -1,5 +1,7 @@
 import { EXAM_CATEGORY_LABELS, PREPARATION_LEVEL_LABELS } from "@/lib/onboarding";
 import { getLatestChallenge, getUserLatestAttempt } from "@/actions/challenge";
+import { getPerformanceOverview, detectWeakAreas } from "@/actions/performance";
+import { getCompetitiveFeed } from "@/actions/engagement";
 import type { DefaultSession } from "next-auth";
 import Link from "next/link";
 import {
@@ -21,15 +23,18 @@ import {
 } from "lucide-react";
 
 interface UserDashboardViewProps {
-  user: DefaultSession["user"] & { category?: string | null; preparationLevel?: string | null };
+  user: DefaultSession["user"] & { examCategory?: string | null; preparationLevel?: string | null };
 }
 
 export async function UserDashboardView({ user }: UserDashboardViewProps) {
-  const category = user.category as keyof typeof EXAM_CATEGORY_LABELS | undefined;
+  const category = user.examCategory as keyof typeof EXAM_CATEGORY_LABELS | undefined;
   const prepLevel = user.preparationLevel as keyof typeof PREPARATION_LEVEL_LABELS | undefined;
 
   const challenge = await getLatestChallenge();
   const latestAttempt = user.id ? await getUserLatestAttempt(user.id) : null;
+  const performance = user.id ? await getPerformanceOverview(user.id) : null;
+  const weakAreas = user.id ? await detectWeakAreas(user.id) : [];
+  const feed = user.id ? await getCompetitiveFeed(user.id, 5) : [];
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -51,10 +56,13 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
     }
   };
 
+  const streakActive = performance && performance.currentStreak > 0;
+  const hasHistory = performance && performance.totalAttempts > 0;
+
   return (
     <div className="space-y-8">
       {/* TODAY'S PREPARATION COMMAND CENTER - Hero Section */}
-      <div className="relative overflow-hidden bg-linear-to-br from-navy via-navy to-navy/90 rounded-2xl p-5 sm:p-6 text-white">
+      <div className="relative overflow-hidden bg-linear-to-br from-navy via-navy to-navy/90 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
@@ -95,7 +103,8 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
               )}
 
               <p className="text-sm text-white/50 max-w-md">
-                Your preparation dashboard. Complete daily challenges to build momentum.
+                Your performance command center. Complete daily challenges to build discipline and
+                momentum.
               </p>
             </div>
 
@@ -157,13 +166,13 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
         {challenge ? (
           <Link
             href={`/dashboard/challenges/${challenge.slug}`}
-            className="block w-full bg-white hover:bg-gray-50 rounded-xl p-4 border border-gray-100 transition-all duration-200 group"
+            className="block w-full bg-white hover:bg-gray-50 rounded-xl p-4 border border-gray-100 transition-all duration-200 group shadow-sm hover:shadow"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-navy mb-1">{challenge.title}</p>
                 <p className="text-sm text-gray-500">
-                  {challenge.description || `Test your ${category || "competitive"} knowledge now`}
+                  {challenge.description || `Test your competitive knowledge now`}
                 </p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
@@ -189,79 +198,103 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
       {/* LEVEL 2 — PERFORMANCE STATUS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Discipline Streak */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/10 transition-all duration-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center">
-              <Flame className="w-4.5 h-4.5 text-orange-500" />
+        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-200 relative overflow-hidden">
+          {streakActive && (
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-orange-100 rounded-full blur-2xl opacity-50"></div>
+          )}
+          <div className="flex items-center justify-between mb-3 relative z-10">
+            <div
+              className={`w-9 h-9 rounded-lg flex items-center justify-center ${streakActive ? "bg-orange-100" : "bg-gray-50"}`}
+            >
+              <Flame
+                className={`w-4.5 h-4.5 ${streakActive ? "text-orange-500" : "text-gray-400"}`}
+              />
             </div>
-            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
-              Active
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${streakActive ? "text-orange-700 bg-orange-100" : "text-gray-500 bg-gray-100"}`}
+            >
+              {streakActive ? "Active" : "Lost"}
             </span>
           </div>
-          <p className="text-xs font-medium text-gray-500 mb-1">Discipline Streak</p>
-          <p className="text-xl font-bold text-navy">
-            {latestAttempt ? "1" : "0"}{" "}
+          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Discipline Streak</p>
+          <p className="text-xl font-bold text-navy relative z-10">
+            {performance?.currentStreak || 0}{" "}
             <span className="text-sm font-medium text-gray-400">days</span>
           </p>
-          <p className="text-xs text-gray-400 mt-1">Start your streak today</p>
+          <p className="text-xs text-gray-400 mt-1 relative z-10">
+            {streakActive
+              ? `Longest: ${performance.longestStreak} days`
+              : "Start your streak today"}
+          </p>
         </div>
 
         {/* Accuracy */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/10 transition-all duration-200">
-          <div className="flex items-center justify-between mb-3">
+        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 relative overflow-hidden">
+          {hasHistory && (
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50"></div>
+          )}
+          <div className="flex items-center justify-between mb-3 relative z-10">
             <div className="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
               <TrendingUp className="w-4.5 h-4.5 text-purple-500" />
             </div>
-            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-              {latestAttempt ? "Ready" : "Pending"}
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasHistory ? "text-purple-700 bg-purple-100" : "text-gray-500 bg-gray-100"}`}
+            >
+              {hasHistory ? "Tracked" : "Pending"}
             </span>
           </div>
-          <p className="text-xs font-medium text-gray-500 mb-1">Overall Accuracy</p>
-          {latestAttempt ? (
-            <p className="text-xl font-bold text-navy">
-              {Math.round(
-                (latestAttempt.correctAnswers / (latestAttempt.totalAnswered || 1)) * 100
-              ) || 0}
-              %
-            </p>
-          ) : (
-            <p className="text-xl font-bold text-navy">—%</p>
-          )}
-          <p className="text-xs text-gray-400 mt-1">
-            {latestAttempt
-              ? `${latestAttempt.correctAnswers}/${latestAttempt.totalAnswered} correct`
+          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Overall Accuracy</p>
+          <p className="text-xl font-bold text-navy relative z-10">
+            {hasHistory ? `${Math.round(performance.averageAccuracy)}%` : "—%"}
+          </p>
+          <p className="text-xs text-gray-400 mt-1 relative z-10">
+            {hasHistory
+              ? `Across ${performance.totalAnswered} questions`
               : "Track after first attempt"}
           </p>
         </div>
 
         {/* Total Attempts */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/10 transition-all duration-200">
+        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all duration-200">
           <div className="flex items-center justify-between mb-3">
             <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
               <Target className="w-4.5 h-4.5 text-green-600" />
             </div>
-            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-              {latestAttempt ? "Active" : "None"}
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasHistory ? "text-green-700 bg-green-100" : "text-gray-500 bg-gray-100"}`}
+            >
+              {hasHistory ? "Active" : "None"}
             </span>
           </div>
           <p className="text-xs font-medium text-gray-500 mb-1">Total Attempts</p>
-          <p className="text-xl font-bold text-navy">{latestAttempt ? "1" : "0"}</p>
-          <p className="text-xs text-gray-400 mt-1">Complete more to track</p>
+          <p className="text-xl font-bold text-navy">{performance?.totalAttempts || 0}</p>
+          <p className="text-xs text-gray-400 mt-1">
+            {hasHistory ? `${performance!.completedAttempts} completed` : "Complete more to track"}
+          </p>
         </div>
 
-        {/* Preparation Momentum */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/10 transition-all duration-200">
-          <div className="flex items-center justify-between mb-3">
+        {/* Preparation Momentum (Rank) */}
+        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 relative overflow-hidden">
+          {performance?.rank && (
+            <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-100 rounded-full blur-2xl opacity-50"></div>
+          )}
+          <div className="flex items-center justify-between mb-3 relative z-10">
             <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
               <Activity className="w-4.5 h-4.5 text-blue-600" />
             </div>
-            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">
-              Pending
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${performance?.rank ? "text-blue-700 bg-blue-100" : "text-gray-500 bg-gray-100"}`}
+            >
+              {performance?.rank ? "Ranked" : "Pending"}
             </span>
           </div>
-          <p className="text-xs font-medium text-gray-500 mb-1">Preparation Momentum</p>
-          <p className="text-xl font-bold text-navy">—</p>
-          <p className="text-xs text-gray-400 mt-1">Build with consistent practice</p>
+          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Best Rank Achieved</p>
+          <p className="text-xl font-bold text-navy relative z-10">
+            {performance?.rank ? `#${performance.rank}` : "—"}
+          </p>
+          <p className="text-xs text-gray-400 mt-1 relative z-10">
+            {performance?.rank ? "Top competitor" : "Build with consistent practice"}
+          </p>
         </div>
       </div>
 
@@ -269,22 +302,44 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Weakness Detection */}
         <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-navy">Weakness Detection</h3>
-              <p className="text-xs text-gray-500">AI-powered topic analysis</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-amber-500" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-navy">Weakness Detection</h3>
+                <p className="text-xs text-gray-500">Deterministic topic analysis</p>
+              </div>
             </div>
           </div>
 
-          {latestAttempt ? (
+          {weakAreas.length > 0 ? (
+            <div className="space-y-3">
+              {weakAreas.map((weak, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3 bg-red-50/50 rounded-xl border border-red-100"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                    <span className="font-semibold text-navy text-sm">{weak.category}</span>
+                  </div>
+                  <span className="text-red-600 font-bold text-sm">{weak.accuracy}% Accuracy</span>
+                </div>
+              ))}
+              <p className="text-xs text-gray-400 mt-2">
+                Categories with accuracy below 60%. Focus your practice here.
+              </p>
+            </div>
+          ) : hasHistory ? (
             <div className="flex flex-col items-center justify-center py-6 text-center">
-              <Brain className="w-10 h-10 text-gray-300 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">Coming soon</p>
-              <p className="text-xs text-gray-400 max-w-xs">
-                Your weak-topic analysis will be available in the next update.
+              <Brain className="w-10 h-10 text-green-300 mb-3" />
+              <p className="text-sm font-medium text-green-700 mb-1">
+                No critical weaknesses detected
+              </p>
+              <p className="text-xs text-gray-500 max-w-xs">
+                Your accuracy is holding strong across attempted categories. Keep up the momentum!
               </p>
             </div>
           ) : (
@@ -292,8 +347,8 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
               <Brain className="w-10 h-10 text-gray-200 mb-3" />
               <p className="text-sm font-medium text-navy mb-1">Analysis pending</p>
               <p className="text-xs text-gray-400 max-w-xs">
-                Your weak-topic analysis, error patterns, and revision priority recommendations will
-                appear after your first challenge.
+                Your weak-topic analysis will appear after attempting at least 3 challenges in a
+                category.
               </p>
             </div>
           )}
@@ -311,21 +366,41 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
             </div>
           </div>
 
-          {latestAttempt ? (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <TrendingDown className="w-10 h-10 text-gray-300 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">Coming soon</p>
-              <p className="text-xs text-gray-400 max-w-xs">
-                Your subject vulnerability insights will be available in the next update.
+          {weakAreas.length > 0 ? (
+            <div className="flex flex-col items-center justify-center py-4 text-center">
+              <TrendingDown className="w-10 h-10 text-blue-400 mb-3" />
+              <p className="text-sm font-medium text-navy mb-1">Target: {weakAreas[0].category}</p>
+              <p className="text-xs text-gray-500 max-w-xs mb-4">
+                Prioritize practicing {weakAreas[0].category} challenges to pull up your overall
+                accuracy.
               </p>
+              <Link
+                href={`/challenges?category=${weakAreas[0].category}`}
+                className="text-primary text-sm font-bold hover:underline"
+              >
+                Find {weakAreas[0].category} Challenges
+              </Link>
+            </div>
+          ) : hasHistory && performance?.strongestCategory ? (
+            <div className="flex flex-col items-center justify-center py-4 text-center">
+              <TrendingUp className="w-10 h-10 text-blue-400 mb-3" />
+              <p className="text-sm font-medium text-navy mb-1">
+                Maintain Lead: {performance.strongestCategory}
+              </p>
+              <p className="text-xs text-gray-500 max-w-xs mb-4">
+                You excel at {performance.strongestCategory}. Reinforce it by taking advanced
+                challenges.
+              </p>
+              <Link href="/challenges" className="text-primary text-sm font-bold hover:underline">
+                Browse Hardcore Challenges
+              </Link>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <TrendingDown className="w-10 h-10 text-gray-200 mb-3" />
               <p className="text-sm font-medium text-navy mb-1">Focus area pending</p>
               <p className="text-xs text-gray-400 max-w-xs">
-                Your subject vulnerability insights, improvement signals, and targeted practice
-                recommendations will appear after completing challenges.
+                Targeted practice recommendations will appear after your analytics are established.
               </p>
             </div>
           )}
@@ -345,12 +420,12 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
             </div>
           </div>
           <Link href="/analytics" className="text-xs font-medium text-primary hover:underline">
-            View all
+            View all insights
           </Link>
         </div>
 
         {latestAttempt ? (
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-xs hover:border-primary/20 transition-all">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
                 <CheckCircle2 className="w-6 h-6 text-green-600" />
@@ -360,7 +435,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
                 <p className="text-sm text-gray-500">
                   {latestAttempt.correctAnswers} correct •{" "}
                   {Math.round(
-                    (latestAttempt.correctAnswers / latestAttempt.challenge.totalQuestions) * 100
+                    (latestAttempt.correctAnswers / (latestAttempt.totalAnswered || 1)) * 100
                   )}
                   % accuracy
                 </p>
@@ -368,7 +443,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
             </div>
             <Link
               href={`/dashboard/results/${latestAttempt.id}`}
-              className="text-primary font-medium text-sm hover:underline"
+              className="text-primary font-medium text-sm hover:underline px-4 py-2 bg-white rounded-lg border border-gray-200 hover:border-primary/50 transition-colors"
             >
               View Details
             </Link>
@@ -379,7 +454,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
               <History className="w-7 h-7 text-gray-300" />
             </div>
             <p className="text-sm font-medium text-navy mb-1">No challenges attempted yet</p>
-            <p className="text-xs text-gray-400 max-sm mb-4">
+            <p className="text-xs text-gray-400 max-w-sm mb-4">
               Complete your first challenge to unlock performance diagnostics.
             </p>
             <Link
@@ -391,6 +466,43 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
           </div>
         )}
       </div>
+
+      {/* LEVEL 5 — COMPETITIVE ACTIVITY FEED */}
+      {feed.length > 0 && (
+        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+              <Activity className="w-5 h-5 text-indigo-500" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-navy">Competitive Feed</h3>
+              <p className="text-xs text-gray-500">Your recent milestones and activities</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {feed.map((act) => (
+              <div
+                key={act.id}
+                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
+              >
+                <div className="w-2 h-2 mt-2 rounded-full bg-indigo-400 shrink-0" />
+                <div>
+                  <p className="text-sm text-navy font-medium">{act.content}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(act.createdAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

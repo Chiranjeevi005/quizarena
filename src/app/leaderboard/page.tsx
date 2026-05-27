@@ -1,7 +1,7 @@
 /**
  * Leaderboard — Category-based competitive rankings
  *
- * Shows per-challenge leaderboards for ENDED challenges.
+ * Shows per-challenge leaderboards for LIVE and ENDED challenges.
  * Protected route — requires authentication.
  */
 import { auth } from "@/auth/auth";
@@ -10,7 +10,50 @@ import { ROUTES } from "@/lib/routes";
 import { prisma } from "@/lib/prisma";
 import { EXAM_CATEGORY_LABELS } from "@/lib/onboarding";
 import Link from "next/link";
-import { Trophy, Medal, Clock, Target, ChevronRight, Crown, Award } from "lucide-react";
+import { Trophy, Medal, Clock, Target, ChevronRight, Crown, Award, Zap } from "lucide-react";
+
+// ─── Types for queried data ────────────────────────────────────
+
+interface LeaderboardUserEntry {
+  id: string;
+  rank: number;
+  score: number;
+  accuracy: number;
+  timeTakenInSeconds: number;
+  user: {
+    id: string;
+    username: string | null;
+    name: string | null;
+    image: string | null;
+  };
+}
+
+interface ChallengeWithLeaderboard {
+  id: string;
+  title: string;
+  slug: string;
+  category: string | null;
+  totalQuestions: number;
+  durationInMinutes: number;
+  status: string;
+  leaderboardFrozen: boolean;
+  leaderboard: LeaderboardUserEntry[];
+  _count: { attempts: number };
+}
+
+interface UserLeaderboardEntry {
+  id: string;
+  rank: number;
+  score: number;
+  accuracy: number;
+  challenge: {
+    id: string;
+    title: string;
+    slug: string;
+    category: string | null;
+    leaderboardFrozen: boolean;
+  };
+}
 
 export default async function LeaderboardPage() {
   const session = await auth();
@@ -19,10 +62,10 @@ export default async function LeaderboardPage() {
     redirect(ROUTES.AUTH.SIGN_IN);
   }
 
-  // Get all ENDED challenges with leaderboard data
-  const challenges = await prisma.challenge.findMany({
+  // Get challenges with leaderboard data (LIVE for live rankings, ENDED/ARCHIVED for frozen)
+  const rawChallenges = await prisma.challenge.findMany({
     where: {
-      status: { in: ["ENDED", "ARCHIVED"] },
+      status: { in: ["LIVE", "ENDED", "ARCHIVED"] },
     },
     include: {
       leaderboard: {
@@ -51,18 +94,28 @@ export default async function LeaderboardPage() {
     take: 10,
   });
 
+  const challenges = rawChallenges as unknown as ChallengeWithLeaderboard[];
+
   // Get user's ranks across challenges
-  const userEntries = session.user.id
+  const rawUserEntries = session.user.id
     ? await prisma.leaderboardEntry.findMany({
         where: { userId: session.user.id },
         include: {
           challenge: {
-            select: { id: true, title: true, slug: true, category: true },
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              category: true,
+              leaderboardFrozen: true,
+            },
           },
         },
         orderBy: { frozenAt: "desc" },
       })
     : [];
+
+  const userEntries = rawUserEntries as unknown as UserLeaderboardEntry[];
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="w-5 h-5 text-amber-500" />;
@@ -88,25 +141,32 @@ export default async function LeaderboardPage() {
 
       {/* Your Rankings Summary */}
       {userEntries.length > 0 && (
-        <div className="bg-gradient-to-br from-navy via-navy to-navy/90 rounded-2xl p-6 text-white">
+        <div className="bg-linear-to-br from-navy via-navy to-navy/90 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-2 mb-4">
             <Trophy className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-bold">Your Rankings</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {userEntries.slice(0, 6).map((entry: any) => (
+            {userEntries.slice(0, 6).map((entry) => (
               <div key={entry.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-2xl font-bold text-primary">#{entry.rank}</span>
-                  {entry.challenge.category && (
-                    <span className="text-xs px-2 py-0.5 bg-white/10 rounded-full">
-                      {
-                        EXAM_CATEGORY_LABELS[
-                          entry.challenge.category as keyof typeof EXAM_CATEGORY_LABELS
-                        ]
-                      }
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {entry.challenge.category && (
+                      <span className="text-xs px-2 py-0.5 bg-white/10 rounded-full">
+                        {
+                          EXAM_CATEGORY_LABELS[
+                            entry.challenge.category as keyof typeof EXAM_CATEGORY_LABELS
+                          ]
+                        }
+                      </span>
+                    )}
+                    {!entry.challenge.leaderboardFrozen && (
+                      <span className="text-[10px] px-1.5 py-0.5 bg-blue-500/30 text-blue-200 rounded-full flex items-center gap-0.5">
+                        <Zap className="w-2.5 h-2.5" /> Live
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <p className="text-sm font-medium text-white/90 truncate">
                   {entry.challenge.title}
@@ -132,7 +192,14 @@ export default async function LeaderboardPage() {
               <div className="p-5 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-navy">{challenge.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-navy">{challenge.title}</h3>
+                      {!challenge.leaderboardFrozen && challenge.status === "LIVE" && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full flex items-center gap-0.5">
+                          <Zap className="w-2.5 h-2.5" /> Live Rankings
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
                         <Target className="w-3.5 h-3.5" />
@@ -144,7 +211,7 @@ export default async function LeaderboardPage() {
                       </span>
                       <span className="flex items-center gap-1">
                         <Trophy className="w-3.5 h-3.5" />
-                        {(challenge as any)._count.attempts} participants
+                        {challenge._count.attempts} participants
                       </span>
                     </div>
                   </div>
@@ -161,10 +228,10 @@ export default async function LeaderboardPage() {
               </div>
 
               {/* Top 3 */}
-              {(challenge as any).leaderboard.length > 0 ? (
+              {challenge.leaderboard.length > 0 ? (
                 <div className="p-4">
                   <div className="space-y-2">
-                    {(challenge as any).leaderboard.map((entry: any) => (
+                    {challenge.leaderboard.map((entry) => (
                       <div
                         key={entry.id}
                         className={`flex items-center justify-between p-3 rounded-xl border ${getRankBg(entry.rank)}`}
@@ -194,12 +261,12 @@ export default async function LeaderboardPage() {
                     ))}
                   </div>
 
-                  {(challenge as any)._count.attempts > 3 && (
+                  {challenge._count.attempts > 3 && (
                     <Link
                       href={`/leaderboard/${challenge.slug}`}
                       className="mt-3 flex items-center justify-center gap-1.5 text-primary font-medium text-sm hover:underline py-2"
                     >
-                      View all {(challenge as any)._count.attempts} participants
+                      View all {challenge._count.attempts} participants
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   )}

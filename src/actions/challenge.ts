@@ -12,6 +12,8 @@ import type {
   QuizAnswerState,
   ShuffledOption,
 } from "@/types/challenge";
+import { updatePerformanceAggregations } from "./performance";
+import { processEngagementPostAttempt } from "./engagement";
 
 // ─── Helpers ─────────────────────────────────────────────────────
 
@@ -54,59 +56,69 @@ function getRemainingSeconds(startedAt: Date, durationInMinutes: number): number
   return Math.max(0, remaining);
 }
 
+import { unstable_cache } from "next/cache";
+
 // ─── Challenge Queries ───────────────────────────────────────────
 
-export async function getActiveChallenges() {
-  // On-access lifecycle enforcement: transition SCHEDULED→LIVE and LIVE→ENDED
-  await enforceLifecycleTransitions();
+export const getActiveChallenges = unstable_cache(
+  async () => {
+    // On-access lifecycle enforcement: transition SCHEDULED→LIVE and LIVE→ENDED
+    await enforceLifecycleTransitions();
 
-  const challenges = await prisma.challenge.findMany({
-    where: {
-      status: "LIVE",
-    },
-    include: {
-      questions: {
-        include: {
-          question: true,
-        },
-        orderBy: {
-          order: "asc",
+    const challenges = await prisma.challenge.findMany({
+      where: {
+        status: "LIVE",
+      },
+      include: {
+        questions: {
+          include: {
+            question: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  return challenges;
-}
+    return challenges;
+  },
+  ["active-challenges"],
+  { revalidate: 60, tags: ["challenges"] }
+);
 
-export async function getLatestChallenge() {
-  // On-access lifecycle enforcement
-  await enforceLifecycleTransitions();
+export const getLatestChallenge = unstable_cache(
+  async () => {
+    // On-access lifecycle enforcement
+    await enforceLifecycleTransitions();
 
-  const challenge = await prisma.challenge.findFirst({
-    where: {
-      status: "LIVE",
-    },
-    include: {
-      questions: {
-        include: {
-          question: true,
-        },
-        orderBy: {
-          order: "asc",
+    const challenge = await prisma.challenge.findFirst({
+      where: {
+        status: "LIVE",
+      },
+      include: {
+        questions: {
+          include: {
+            question: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  return challenge;
-}
+    return challenge;
+  },
+  ["latest-challenge"],
+  { revalidate: 60, tags: ["challenges"] }
+);
 
 export async function getChallengeBySlug(slug: string) {
   const challenge = await prisma.challenge.findUnique({
@@ -543,13 +555,37 @@ async function autoSubmitAttempt(attemptId: string): Promise<ChallengeSubmitResu
 
 /**
  * Core evaluation logic — server-authoritative scoring.
- * Runs in a single transaction for atomicity.
+ * Runs in a single Prisma transaction for atomicity.
+ * Creates a leaderboard entry immediately (enables live ranking).
  */
 async function evaluateAndFinalizeAttempt(
   attemptId: string,
   userId: string,
   isAutoSubmitted: boolean
 ): Promise<ChallengeSubmitResult> {
+  // Pre-check: guard against duplicate submissions
+  const preCheck = await prisma.attempt.findFirst({
+    where: { id: attemptId, userId },
+    select: { status: true },
+  });
+
+  if (!preCheck) {
+    return { success: false, error: "Attempt not found" };
+  }
+
+  // Idempotent: if already evaluated, return existing result
+  if (preCheck.status === "EVALUATED" || preCheck.status === "SUBMITTED") {
+    const existing = await prisma.attempt.findUnique({
+      where: { id: attemptId },
+      include: { challenge: true, answers: true },
+    });
+    return { success: true, attempt: existing as AttemptWithDetails };
+  }
+
+  if (preCheck.status !== "IN_PROGRESS") {
+    return { success: false, error: "Attempt is not in progress" };
+  }
+
   const attempt = await prisma.attempt.findFirst({
     where: {
       id: attemptId,
@@ -596,7 +632,7 @@ async function evaluateAndFinalizeAttempt(
     );
 
     if (!attemptAnswer || !attemptAnswer.selectedOptionId) {
-      // Unanswered — 0 points
+      // Unanswered — 0 points (no negative marking)
       continue;
     }
 
@@ -609,30 +645,80 @@ async function evaluateAndFinalizeAttempt(
     }
   }
 
-  // ─── Finalize attempt in a single transaction ──────────────
+  // ─── Atomic finalization in a single transaction ───────────
   const submittedAt = new Date();
   const timeTakenInSeconds = Math.floor(
     (submittedAt.getTime() - attempt.startedAt.getTime()) / 1000
   );
+  const totalQuestions = attempt.challenge.totalQuestions || allQuestionIds.length;
+  const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
 
-  const updatedAttempt = await prisma.attempt.update({
-    where: { id: attemptId },
-    data: {
-      status: "EVALUATED",
-      score: totalScore,
-      correctAnswers,
-      totalAnswered: answeredQuestionIds.length,
-      submittedAt,
-      timeTakenInSeconds,
-      isAutoSubmitted,
-    },
-    include: {
-      challenge: true,
-      answers: true,
-    },
+  const updatedAttempt = await prisma.$transaction(async (tx) => {
+    // 1. Finalize the attempt
+    const result = await tx.attempt.update({
+      where: { id: attemptId },
+      data: {
+        status: "EVALUATED",
+        score: totalScore,
+        correctAnswers,
+        wrongAnswers,
+        unansweredCount,
+        totalAnswered: answeredQuestionIds.length,
+        submittedAt,
+        timeTakenInSeconds,
+        isAutoSubmitted,
+      },
+      include: {
+        challenge: true,
+        answers: true,
+      },
+    });
+
+    // 2. Create/update leaderboard entry (enables live ranking)
+    await tx.leaderboardEntry.upsert({
+      where: {
+        challengeId_userId: {
+          challengeId: attempt.challengeId,
+          userId,
+        },
+      },
+      update: {
+        score: totalScore,
+        accuracy,
+        timeTakenInSeconds,
+        correctAnswers,
+        totalQuestions,
+        submittedAt,
+        rank: 0, // Temporary rank — recomputed below
+      },
+      create: {
+        challengeId: attempt.challengeId,
+        userId,
+        attemptId,
+        rank: 0, // Temporary rank — recomputed below
+        score: totalScore,
+        accuracy,
+        timeTakenInSeconds,
+        correctAnswers,
+        totalQuestions,
+        category: attempt.challenge.category || null,
+        submittedAt,
+      },
+    });
+
+    return result;
   });
 
-  // ─── Update analytics (non-blocking) ──────────────────────
+  // 3. Recompute ranks for this challenge (outside transaction for performance)
+  await recomputeLiveRanks(attempt.challengeId);
+
+  // 4. Update performance aggregations (streaks, analytics)
+  await updatePerformanceAggregations(userId, attemptId);
+
+  // 5. Trigger engagement and milestones
+  processEngagementPostAttempt(userId, attemptId).catch(console.error);
+
+  // 6. Update analytics (non-blocking)
   updateAnalyticsOnEvaluation(attempt.challengeId, attempt.challenge.questions, attempt.answers, {
     score: totalScore,
     correctAnswers,
@@ -644,6 +730,31 @@ async function evaluateAndFinalizeAttempt(
     success: true,
     attempt: updatedAttempt as AttemptWithDetails,
   };
+}
+
+/**
+ * Recompute live ranks for all leaderboard entries in a challenge.
+ * Called after each submission. Lightweight: only updates rank values.
+ */
+async function recomputeLiveRanks(challengeId: string) {
+  const entries = await prisma.leaderboardEntry.findMany({
+    where: { challengeId },
+    orderBy: [
+      { score: "desc" },
+      { accuracy: "desc" },
+      { timeTakenInSeconds: "asc" },
+      { submittedAt: "asc" },
+    ],
+    select: { id: true },
+  });
+
+  // Batch update ranks
+  for (let i = 0; i < entries.length; i++) {
+    await prisma.leaderboardEntry.update({
+      where: { id: entries[i].id },
+      data: { rank: i + 1 },
+    });
+  }
 }
 
 // ─── Analytics Updates ───────────────────────────────────────────
@@ -747,7 +858,7 @@ async function enforceLifecycleTransitions() {
 
 /**
  * End a challenge: transition LIVE→ENDED, auto-submit all active attempts,
- * and compute the leaderboard.
+ * and freeze the leaderboard with final ranks.
  */
 async function endChallenge(challengeId: string) {
   const now = new Date();
@@ -764,31 +875,38 @@ async function endChallenge(challengeId: string) {
     await autoSubmitAttempt(attempt.id);
   }
 
-  // Transition challenge to ENDED
+  // Transition challenge to ENDED + freeze leaderboard
   await prisma.challenge.update({
     where: { id: challengeId },
     data: {
       status: "ENDED",
       endsAt: now,
+      leaderboardFrozen: true,
     },
   });
 
-  // Compute and freeze leaderboard
-  await computeLeaderboard(challengeId);
+  // Freeze leaderboard: final rank computation + timestamp
+  await freezeLeaderboard(challengeId);
 }
 
 /**
- * Compute the leaderboard for a challenge.
- * Ranks all EVALUATED attempts by: score DESC, accuracy DESC, time ASC, submittedAt ASC.
+ * Freeze leaderboard for a challenge — final, immutable rank computation.
+ * Recomputes ranks from existing leaderboard entries (created during live submissions)
+ * and stamps frozenAt. After this, rankings are historically trustworthy.
+ *
+ * Tie-breaker order: score DESC → accuracy DESC → time ASC → submittedAt ASC
  */
-async function computeLeaderboard(challengeId: string) {
+async function freezeLeaderboard(challengeId: string) {
   const challenge = await prisma.challenge.findUnique({
     where: { id: challengeId },
-    select: { totalQuestions: true },
+    select: { totalQuestions: true, category: true },
   });
 
   if (!challenge) return;
 
+  const now = new Date();
+
+  // Get all evaluated attempts (source of truth)
   const attempts = await prisma.attempt.findMany({
     where: {
       challengeId,
@@ -802,12 +920,11 @@ async function computeLeaderboard(challengeId: string) {
     ],
   });
 
-  // Delete any existing leaderboard entries (idempotent recomputation)
+  // Clear existing entries and recreate with final frozen ranks
   await prisma.leaderboardEntry.deleteMany({
     where: { challengeId },
   });
 
-  // Create ranked entries
   const entries = attempts.map((attempt, index) => ({
     challengeId,
     userId: attempt.userId,
@@ -817,6 +934,11 @@ async function computeLeaderboard(challengeId: string) {
     accuracy:
       challenge.totalQuestions > 0 ? (attempt.correctAnswers / challenge.totalQuestions) * 100 : 0,
     timeTakenInSeconds: attempt.timeTakenInSeconds || 0,
+    correctAnswers: attempt.correctAnswers,
+    totalQuestions: challenge.totalQuestions,
+    category: challenge.category || null,
+    submittedAt: attempt.submittedAt,
+    frozenAt: now,
   }));
 
   if (entries.length > 0) {

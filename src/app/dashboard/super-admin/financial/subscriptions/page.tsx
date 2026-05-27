@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { requireSuperAdmin } from "@/lib/super-admin/governance";
 import { getSubscriptionMetrics } from "@/lib/super-admin/financial";
 import { Users, Activity, XCircle, AlertTriangle } from "lucide-react";

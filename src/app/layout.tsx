@@ -12,9 +12,32 @@ import { getPlatformState } from "@/lib/super-admin/infrastructure/platform-cont
 
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken" });
 
-export const metadata = {
-  title: "QuizArena — Ace Your Exams with AI",
-  description: "Advanced AI-powered quiz platform for competitive exam preparation.",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | QuizArena",
+    default: "QuizArena — Ace Your Exams with AI",
+  },
+  description:
+    "Advanced AI-powered quiz platform for competitive exam preparation. Build discipline and master concepts.",
+  openGraph: {
+    title: "QuizArena — Ace Your Exams with AI",
+    description: "Advanced AI-powered quiz platform for competitive exam preparation.",
+    url: "https://quizarena.com",
+    siteName: "QuizArena",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "QuizArena",
+    description: "Advanced AI-powered quiz platform for competitive exam preparation.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 /**

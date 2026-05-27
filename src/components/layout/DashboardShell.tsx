@@ -95,16 +95,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const sidebarRef = useRef<HTMLElement>(null);
 
   const user = session?.user;
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "quizarenadev@gmail.com";
-  const actualRole = (user?.role as string) ?? ROLES.USER;
-
-  // Override the role to USER if the user is not the designated admin, preventing client-side layout leaking.
-  const role =
-    (actualRole === ROLES.ADMIN || actualRole === ROLES.SUPER_ADMIN) && user?.email !== adminEmail
-      ? ROLES.USER
-      : actualRole;
-
-  const isNotAdmin = user?.email !== adminEmail;
+  const role = (user?.role as string) ?? ROLES.USER;
+  const isNotAdmin = role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN;
   const navItems = getNavItemsForRole(role);
 
   // ── Super Admin Isolation flag ─────────────────────────────────────────
@@ -255,15 +247,15 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </div>
 
         {/* EXAM CONTEXT */}
-        {!collapsed && user?.category && (
+        {!collapsed && user?.examCategory && (
           <div className="px-4 py-3 border-b border-gray-100 shrink-0">
             <div className="flex items-center gap-2 p-2.5 bg-primary/5 rounded-lg border border-gray-100/50">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5 text-primary" />
                   <span className="text-xs font-medium text-navy">
-                    {EXAM_CATEGORY_LABELS[user.category as keyof typeof EXAM_CATEGORY_LABELS] ||
-                      user.category}
+                    {EXAM_CATEGORY_LABELS[user.examCategory as keyof typeof EXAM_CATEGORY_LABELS] ||
+                      user.examCategory}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -440,7 +432,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
               </div>
 
               {/* Exam Context */}
-              {user?.category && (
+              {user?.examCategory && (
                 <div className="px-5 py-3 border-b border-gray-100 shrink-0">
                   <div className="flex items-center gap-2 p-2.5 bg-primary/5 rounded-lg border border-gray-100/50">
                     <div className="flex flex-col gap-1">
@@ -448,8 +440,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
                         <Target className="w-3.5 h-3.5 text-primary" />
                         <span className="text-xs font-medium text-navy">
                           {EXAM_CATEGORY_LABELS[
-                            user.category as keyof typeof EXAM_CATEGORY_LABELS
-                          ] || user.category}
+                            user.examCategory as keyof typeof EXAM_CATEGORY_LABELS
+                          ] || user.examCategory}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">

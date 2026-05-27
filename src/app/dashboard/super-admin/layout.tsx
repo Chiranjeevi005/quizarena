@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 /**
  * QuizArena — Super Admin Sovereign Layout
  *

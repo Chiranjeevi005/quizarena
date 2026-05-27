@@ -12,6 +12,10 @@ import {
   Clock,
   Target,
   User as UserIcon,
+  Lock,
+  Zap,
+  Flame,
+  Crosshair,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -77,6 +81,15 @@ export default async function ChallengeLeaderboardDetailPage({
     return `${mins}m ${secs}s`;
   };
 
+  const currentUserIndex = data.entries.findIndex((e) => e.userId === session.user?.id);
+  const rivalryZone =
+    currentUserIndex !== -1
+      ? data.entries.slice(
+          Math.max(0, currentUserIndex - 2),
+          Math.min(data.entries.length, currentUserIndex + 3)
+        )
+      : [];
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto px-4 py-8">
       {/* Back Button and Header */}
@@ -94,9 +107,13 @@ export default async function ChallengeLeaderboardDetailPage({
             <span>
               🏆 {data.totalParticipants} Participant{data.totalParticipants !== 1 ? "s" : ""}
             </span>
-            {data.isFrozen && (
-              <span className="px-2.5 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold">
-                Leaderboard Frozen
+            {data.isFrozen ? (
+              <span className="px-2.5 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold flex items-center gap-1">
+                <Lock className="w-3 h-3" /> Leaderboard Frozen
+              </span>
+            ) : (
+              <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                <Zap className="w-3 h-3" /> Live Rankings
               </span>
             )}
           </p>
@@ -184,6 +201,62 @@ export default async function ChallengeLeaderboardDetailPage({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Rivalry Zone (Nearby Competitors) ─── */}
+      {rivalryZone.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden border-t-4 border-t-red-500">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2 bg-red-50/30">
+            <Flame className="w-5 h-5 text-red-500" />
+            <h2 className="font-bold text-navy text-lg">Your Rivalry Zone</h2>
+            <p className="text-xs text-gray-500 ml-2">Competitors closest to your rank</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <tbody className="divide-y divide-gray-100 text-sm">
+                {rivalryZone.map((entry) => {
+                  const isCurrentUser = entry.userId === session.user?.id;
+                  return (
+                    <tr
+                      key={`rival-${entry.userId}`}
+                      className={cn(
+                        "transition-colors hover:bg-gray-50/50",
+                        isCurrentUser && "bg-red-50/50 font-medium hover:bg-red-50/80"
+                      )}
+                    >
+                      <td className="px-6 py-4 font-bold w-20">#{entry.rank}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-gray-50 border border-gray-100">
+                            {entry.image ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={entry.image}
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <UserIcon className="w-4 h-4 text-gray-400" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-navy font-semibold">
+                              {entry.name || entry.username || "Anonymous"}{" "}
+                              {isCurrentUser && "(You)"}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold text-navy">
+                        {entry.score} pts
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

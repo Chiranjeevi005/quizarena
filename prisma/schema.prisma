@@ -10,49 +10,56 @@ datasource db {
 }
 
 model User {
-  id                  String             @id @default(cuid())
-  name                String?
-  username            String?            @unique
-  email               String?            @unique
-  emailVerified       DateTime?
-  image               String?
-  password            String?
-  role                UserRole           @default(USER)
-  onboardingCompleted Boolean            @default(false)
-  examCategory        ExamCategory?
-  preparationLevel    PreparationLevel?
-  accountState        AccountState       @default(ACTIVE)
-  flagged             Boolean            @default(false)
-  moderatorStatus     ModeratorStatus    @default(ACTIVE)
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  accounts            Account[]
-  sessions            Session[]
-  attempts            Attempt[]
-  createdChallenges   Challenge[]
-  reviewedChallenges  Challenge[]        @relation("ChallengeReviewer")
-  publishedChallenges Challenge[]        @relation("ChallengePublisher")
-  createdQuestions    Question[]
-  reviewedQuestions   Question[]         @relation("QuestionReviewer")
-  moderationNotes     ModerationNote[]   @relation("ModerationNoteUser")
-  createdByNotes      ModerationNote[]   @relation("ModerationNoteCreator")
-  moderatorNotes      ModeratorNote[]    @relation("ModeratorNoteModerator")
-  createdByModNotes   ModeratorNote[]    @relation("ModeratorNoteCreator")
-  roleChangesAsTarget RoleChangeAudit[]  @relation("RoleChangeTarget")
-  roleChangesAsActor  RoleChangeAudit[]  @relation("RoleChangeBy")
-  submittedReports    Report[]           @relation("ReportSubmitter")
-  targetedReports     Report[]           @relation("ReportTarget")
-  reviewedReports     Report[]           @relation("ReportReviewer")
-  reportNotes         ReportNote[]       @relation("ReportNoteAuthor")
-  updatedSettings     PlatformSetting[]  @relation("SettingUpdater")
-  settingAudits       SettingAudit[]     @relation("SettingAuditActor")
-  auditLogs           AuditLog[]         @relation("AuditActor")
-  targetedAudits      AuditLog[]         @relation("AuditTarget")
-  subscriptions       Subscription[]
-  transactions        Transaction[]
-  createdFeatures     FeatureFlag[]      @relation("FeatureCreatedBy")
-  updatedFeatures     FeatureFlag[]      @relation("FeatureUpdatedBy")
-  leaderboardEntries  LeaderboardEntry[]
+  id                        String                      @id @default(cuid())
+  name                      String?
+  username                  String?                     @unique
+  email                     String?                     @unique
+  emailVerified             DateTime?
+  image                     String?
+  password                  String?
+  role                      UserRole                    @default(USER)
+  onboardingCompleted       Boolean                     @default(false)
+  examCategory              ExamCategory?
+  preparationLevel          PreparationLevel?
+  accountState              AccountState                @default(ACTIVE)
+  flagged                   Boolean                     @default(false)
+  moderatorStatus           ModeratorStatus             @default(ACTIVE)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  accounts                  Account[]
+  sessions                  Session[]
+  attempts                  Attempt[]
+  createdChallenges         Challenge[]
+  reviewedChallenges        Challenge[]                 @relation("ChallengeReviewer")
+  publishedChallenges       Challenge[]                 @relation("ChallengePublisher")
+  createdQuestions          Question[]
+  reviewedQuestions         Question[]                  @relation("QuestionReviewer")
+  moderationNotes           ModerationNote[]            @relation("ModerationNoteUser")
+  createdByNotes            ModerationNote[]            @relation("ModerationNoteCreator")
+  moderatorNotes            ModeratorNote[]             @relation("ModeratorNoteModerator")
+  createdByModNotes         ModeratorNote[]             @relation("ModeratorNoteCreator")
+  roleChangesAsTarget       RoleChangeAudit[]           @relation("RoleChangeTarget")
+  roleChangesAsActor        RoleChangeAudit[]           @relation("RoleChangeBy")
+  submittedReports          Report[]                    @relation("ReportSubmitter")
+  targetedReports           Report[]                    @relation("ReportTarget")
+  reviewedReports           Report[]                    @relation("ReportReviewer")
+  reportNotes               ReportNote[]                @relation("ReportNoteAuthor")
+  updatedSettings           PlatformSetting[]           @relation("SettingUpdater")
+  settingAudits             SettingAudit[]              @relation("SettingAuditActor")
+  auditLogs                 AuditLog[]                  @relation("AuditActor")
+  targetedAudits            AuditLog[]                  @relation("AuditTarget")
+  subscriptions             UserSubscription[]
+  transactions              Transaction[]
+  createdFeatures           FeatureFlag[]               @relation("FeatureCreatedBy")
+  updatedFeatures           FeatureFlag[]               @relation("FeatureUpdatedBy")
+  leaderboardEntries        LeaderboardEntry[]
+  performanceProfile        UserPerformanceProfile?
+  categoryPerformance       UserCategoryPerformance[]
+  competitiveActivities     CompetitiveActivity[]
+  achievements              UserAchievement[]
+  tournamentLeaderboards    TournamentLeaderboard[]
+  UserDifficultyPerformance UserDifficultyPerformance[]
+  UserSubjectPerformance    UserSubjectPerformance[]
 
   @@index([email])
   @@index([username])
@@ -207,10 +214,16 @@ model AuditLog {
 
 enum SubscriptionStatus {
   ACTIVE
-  CANCELED
-  PAST_DUE
   EXPIRED
-  TRIALING
+  CANCELLED
+  PENDING
+  FAILED
+}
+
+enum PremiumAccessLevel {
+  FREE
+  PREMIUM
+  HARDCORE
 }
 
 enum TransactionStatus {
@@ -232,22 +245,58 @@ enum PaymentProvider {
   SYSTEM
 }
 
-model Subscription {
-  id           String             @id @default(cuid())
-  userId       String
-  plan         String
-  status       SubscriptionStatus @default(ACTIVE)
-  amount       Float
-  billingCycle String             @default("monthly")
-  startedAt    DateTime           @default(now())
-  expiresAt    DateTime?
-  canceledAt   DateTime?
+model SubscriptionPlan {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String? @db.Text
+  price       Float
+  duration    Int // Duration in days
+  features    Json?
+  isActive    Boolean @default(true)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions UserSubscription[]
+  premiumAccess PremiumAccess[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscription_plans")
+}
+
+model UserSubscription {
+  id               String             @id @default(cuid())
+  userId           String
+  planId           String
+  status           SubscriptionStatus @default(PENDING)
+  startsAt         DateTime           @default(now())
+  expiresAt        DateTime?
+  paymentProvider  PaymentProvider    @default(SYSTEM)
+  paymentReference String?
+  autoRenew        Boolean            @default(false)
+  canceledAt       DateTime?
+
+  user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
-  @@map("subscriptions")
+  @@index([planId])
+  @@map("user_subscriptions")
+}
+
+model PremiumAccess {
+  id             String             @id @default(cuid())
+  challengeId    String             @unique
+  requiredPlanId String?
+  accessLevel    PremiumAccessLevel @default(FREE)
+
+  challenge    Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  requiredPlan SubscriptionPlan? @relation(fields: [requiredPlanId], references: [id], onDelete: SetNull)
+
+  @@index([challengeId])
+  @@index([requiredPlanId])
+  @@map("premium_access")
 }
 
 model Transaction {
@@ -409,6 +458,7 @@ model Challenge {
   visibility        ChallengeVisibility @default(PUBLIC)
   participationType ParticipationType   @default(OPEN)
   status            ChallengeStatus     @default(DRAFT)
+  leaderboardFrozen Boolean             @default(false)
   scheduledAt       DateTime?
   startsAt          DateTime?
   endsAt            DateTime?
@@ -426,11 +476,13 @@ model Challenge {
   updatedAt DateTime @updatedAt
 
   // Relations
-  questions   ChallengeQuestion[]
-  attempts    Attempt[]
-  leaderboard LeaderboardEntry[]
-  invites     ChallengeInvite[]
-  reports     Report[]            @relation("ReportedChallenge")
+  questions            ChallengeQuestion[]
+  attempts             Attempt[]
+  leaderboard          LeaderboardEntry[]
+  invites              ChallengeInvite[]
+  reports              Report[]              @relation("ReportedChallenge")
+  tournamentChallenges TournamentChallenge[]
+  premiumAccess        PremiumAccess?
 
   @@index([slug])
   @@index([category])
@@ -515,9 +567,11 @@ model Attempt {
   status      AttemptStatus @default(IN_PROGRESS)
 
   // Scoring
-  score          Int @default(0)
-  correctAnswers Int @default(0)
-  totalAnswered  Int @default(0)
+  score           Int @default(0)
+  correctAnswers  Int @default(0)
+  wrongAnswers    Int @default(0)
+  unansweredCount Int @default(0)
+  totalAnswered   Int @default(0)
 
   // Timing
   startedAt          DateTime  @default(now())
@@ -543,12 +597,17 @@ model Attempt {
   antiCheatLogs    AntiCheatLog[]
   leaderboardEntry LeaderboardEntry?
 
+  tournamentId String?
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+
   @@unique([userId, challengeId])
   @@index([userId])
   @@index([challengeId])
   @@index([status])
   @@index([submittedAt])
   @@index([isFlagged])
+  @@index([userId, status])
+  @@index([challengeId, status])
   @@map("attempts")
 }
 
@@ -574,15 +633,19 @@ model AttemptAnswer {
 // ─── Leaderboard ─────────────────────────────────────────────
 
 model LeaderboardEntry {
-  id                 String   @id @default(cuid())
+  id                 String    @id @default(cuid())
   challengeId        String
   userId             String
-  attemptId          String   @unique
+  attemptId          String    @unique
   rank               Int
   score              Int
   accuracy           Float
   timeTakenInSeconds Int
-  frozenAt           DateTime @default(now())
+  correctAnswers     Int       @default(0)
+  totalQuestions     Int       @default(0)
+  category           String?
+  submittedAt        DateTime?
+  frozenAt           DateTime  @default(now())
 
   challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -590,8 +653,11 @@ model LeaderboardEntry {
 
   @@unique([challengeId, userId])
   @@index([challengeId, rank])
+  @@index([category, score])
+  @@index([category, rank])
   @@index([userId])
   @@index([challengeId])
+  @@index([challengeId, score(sort: Desc)])
   @@map("leaderboard_entries")
 }
 
@@ -835,4 +901,236 @@ model FeatureFlag {
   @@index([key])
   @@index([enabled])
   @@map("feature_flags")
+}
+
+// ─── Performance Analytics & Discipline ──────────────────────────────
+
+model UserPerformanceProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Discipline & Streaks
+  currentStreak       Int       @default(0)
+  longestStreak       Int       @default(0)
+  lastParticipationAt DateTime?
+  participationGaps   Int       @default(0)
+  disciplineIndex     Float     @default(100.0)
+
+  // Overall Analytics
+  totalAttempts     Int   @default(0)
+  completedAttempts Int   @default(0)
+  averageScore      Float @default(0)
+  averageAccuracy   Float @default(0)
+  totalCorrect      Int   @default(0)
+  totalAnswered     Int   @default(0)
+
+  // Insights
+  strongestCategory      String?
+  weakestCategory        String?
+  readinessScore         Float     @default(0)
+  lastInsightGeneratedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_performance_profiles")
+}
+
+model UserCategoryPerformance {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category String
+
+  totalAttempts   Int       @default(0)
+  averageScore    Float     @default(0)
+  averageAccuracy Float     @default(0)
+  totalCorrect    Int       @default(0)
+  totalAnswered   Int       @default(0)
+  lastAttemptAt   DateTime?
+
+  @@unique([userId, category])
+  @@index([userId])
+  @@index([category])
+  @@map("user_category_performance")
+}
+
+model UserDifficultyPerformance {
+  id         String              @id @default(cuid())
+  userId     String
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  difficulty ChallengeDifficulty
+
+  totalAttempts   Int       @default(0)
+  averageScore    Float     @default(0)
+  averageAccuracy Float     @default(0)
+  totalCorrect    Int       @default(0)
+  totalAnswered   Int       @default(0)
+  lastAttemptAt   DateTime?
+
+  @@unique([userId, difficulty])
+  @@index([userId])
+  @@index([difficulty])
+  @@map("user_difficulty_performance")
+}
+
+model UserSubjectPerformance {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject String
+
+  totalAttempts   Int       @default(0)
+  averageScore    Float     @default(0)
+  averageAccuracy Float     @default(0)
+  totalCorrect    Int       @default(0)
+  totalAnswered   Int       @default(0)
+  lastAttemptAt   DateTime?
+
+  @@unique([userId, subject])
+  @@index([userId])
+  @@index([subject])
+  @@map("user_subject_performance")
+}
+
+// ─── Social & Competitive Engagement ─────────────────────────────
+
+enum ActivityType {
+  RANK_UP
+  STREAK_REACHED
+  MILESTONE
+  INVITE_ACCEPTED
+  CHALLENGE_WON
+}
+
+model CompetitiveActivity {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      ActivityType
+  content   String       @db.Text
+  metadata  Json?
+  createdAt DateTime     @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("competitive_activities")
+}
+
+enum AchievementType {
+  FIRST_CHALLENGE
+  TOP_100
+  STREAK_7
+  STREAK_30
+  CATEGORY_MASTER
+}
+
+model UserAchievement {
+  id         String          @id @default(cuid())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       AchievementType
+  unlockedAt DateTime        @default(now())
+  metadata   Json?
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@map("user_achievements")
+}
+
+// ─── Seasonal Events & Tournaments ─────────────────────────────
+
+enum SeasonStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+  ARCHIVED
+}
+
+enum TournamentStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+  ARCHIVED
+}
+
+model Season {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?       @db.Text
+  startsAt    DateTime
+  endsAt      DateTime
+  status      SeasonStatus  @default(UPCOMING)
+  category    ExamCategory?
+  bannerImage String?
+
+  tournaments Tournament[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([status])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@map("seasons")
+}
+
+model Tournament {
+  id                String              @id @default(cuid())
+  seasonId          String
+  season            Season              @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  title             String
+  description       String?             @db.Text
+  startsAt          DateTime
+  endsAt            DateTime
+  visibility        ChallengeVisibility @default(PUBLIC)
+  participationType ParticipationType   @default(OPEN)
+  status            TournamentStatus    @default(UPCOMING)
+
+  challenges  TournamentChallenge[]
+  leaderboard TournamentLeaderboard[]
+  attempts    Attempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([seasonId])
+  @@index([status])
+  @@map("tournaments")
+}
+
+model TournamentChallenge {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  challengeId  String
+  challenge    Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  order        Int        @default(0)
+
+  @@unique([tournamentId, challengeId])
+  @@index([tournamentId])
+  @@index([challengeId])
+  @@map("tournament_challenges")
+}
+
+model TournamentLeaderboard {
+  id                       String     @id @default(cuid())
+  userId                   String
+  user                     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournamentId             String
+  tournament               Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  totalScore               Int        @default(0)
+  averageAccuracy          Float      @default(0)
+  totalChallengesCompleted Int        @default(0)
+  rank                     Int        @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, tournamentId])
+  @@index([tournamentId, rank])
+  @@index([userId])
+  @@map("tournament_leaderboards")
 }

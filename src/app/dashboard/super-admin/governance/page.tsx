@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 /**
  * QuizArena — Governance Hub
  *

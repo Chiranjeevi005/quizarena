@@ -77,7 +77,7 @@ export async function PATCH(request: NextRequest) {
       where: { email: userEmail },
       data: {
         username: normalizeUsername(username),
-        category: category,
+        examCategory: category,
         preparationLevel: preparationLevel,
         onboardingCompleted: true,
       },

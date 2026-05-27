@@ -105,9 +105,9 @@ export const validateSuperAdminSession = async (
       return { valid: false, reason: "NO_USER_ID", dbVerified: false, sessionFresh: false };
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL ?? "quizarenadev@gmail.com";
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
 
-    if (session.user.email !== adminEmail) {
+    if (!superAdminEmail || session.user.email !== superAdminEmail) {
       return { valid: false, reason: "EMAIL_MISMATCH", dbVerified: false, sessionFresh: false };
     }
 
@@ -127,7 +127,7 @@ export const validateSuperAdminSession = async (
         valid: true,
         userId: session.user.id,
         role: sessionRole,
-        email: session.user.email ?? adminEmail,
+        email: session.user.email ?? superAdminEmail,
         dbVerified: false,
         sessionFresh: true,
       };
@@ -177,7 +177,7 @@ export const validateSuperAdminSession = async (
       valid: true,
       userId: session.user.id,
       role: dbRole,
-      email: dbUser.email ?? adminEmail,
+      email: dbUser.email ?? superAdminEmail,
       dbVerified: true,
       sessionFresh: true,
     };

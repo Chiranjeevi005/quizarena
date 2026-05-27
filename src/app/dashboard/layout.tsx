@@ -19,10 +19,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect(ROUTES.AUTH.SIGN_IN);
   }
 
-  // Ensure that only the designated ADMIN_EMAIL is granted access to see administrative tools/pages.
+  // Ensure that only the designated ADMIN_EMAIL or SUPER_ADMIN_EMAIL is granted access to see administrative tools/pages.
   // Normal users are forced to go to the onboarding process if not yet completed.
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
-  const isNotAdmin = session.user.email !== adminEmail;
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+  const isNotAdmin = session.user.email !== adminEmail && session.user.email !== superAdminEmail;
 
   if (isNotAdmin && !session.user.onboardingCompleted) {
     redirect("/onboarding");

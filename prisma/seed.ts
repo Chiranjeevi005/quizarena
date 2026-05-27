@@ -33,6 +33,30 @@ async function main() {
     console.log(`Admin user created: ${adminEmail} with role ADMIN`);
   }
 
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+  const superAdminPassword = process.env.SUPER_ADMIN_PASSWORD;
+
+  if (superAdminEmail && superAdminPassword) {
+    const hashedSuperPassword = await hashPassword(superAdminPassword);
+    await prisma.user.upsert({
+      where: { email: superAdminEmail },
+      update: {
+        password: hashedSuperPassword,
+        role: "SUPER_ADMIN",
+        name: "QuizArena Super Admin",
+        onboardingCompleted: true,
+      },
+      create: {
+        email: superAdminEmail,
+        password: hashedSuperPassword,
+        name: "QuizArena Super Admin",
+        role: "SUPER_ADMIN",
+        onboardingCompleted: true,
+      },
+    });
+    console.log(`Super Admin user created: ${superAdminEmail} with role SUPER_ADMIN`);
+  }
+
   const questions = [
     {
       question: "What is the capital of India?",

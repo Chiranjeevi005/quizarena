@@ -44,13 +44,15 @@ export const requireRole = async (
   const user = await requireAuth(redirectTo);
   const userRole = (user?.role as Role) ?? ROLES.USER;
 
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
-  const isTargetingAdmin =
-    requiredRole === ROLES.ADMIN ||
-    requiredRole === ROLES.SUPER_ADMIN ||
-    userRole === ROLES.ADMIN ||
-    userRole === ROLES.SUPER_ADMIN;
-  if (isTargetingAdmin && user?.email !== adminEmail) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+  const isTargetingSuperAdmin =
+    requiredRole === ROLES.SUPER_ADMIN || userRole === ROLES.SUPER_ADMIN;
+  const isTargetingAdmin = requiredRole === ROLES.ADMIN || userRole === ROLES.ADMIN;
+  if (isTargetingSuperAdmin && user?.email !== superAdminEmail) {
+    redirect("/dashboard/home");
+  }
+  if (isTargetingAdmin && user?.email !== adminEmail && user?.email !== superAdminEmail) {
     redirect("/dashboard/home");
   }
 
@@ -67,13 +69,14 @@ export const requireMinimumRole = async (
   const user = await requireAuth(redirectTo);
   const userRole = (user?.role as Role) ?? ROLES.USER;
 
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
-  const isTargetingAdmin =
-    minimumRole === ROLES.ADMIN ||
-    minimumRole === ROLES.SUPER_ADMIN ||
-    userRole === ROLES.ADMIN ||
-    userRole === ROLES.SUPER_ADMIN;
-  if (isTargetingAdmin && user?.email !== adminEmail) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+  const isTargetingSuperAdmin = minimumRole === ROLES.SUPER_ADMIN || userRole === ROLES.SUPER_ADMIN;
+  const isTargetingAdmin = minimumRole === ROLES.ADMIN || userRole === ROLES.ADMIN;
+  if (isTargetingSuperAdmin && user?.email !== superAdminEmail) {
+    redirect("/dashboard/home");
+  }
+  if (isTargetingAdmin && user?.email !== adminEmail && user?.email !== superAdminEmail) {
     redirect("/dashboard/home");
   }
 
@@ -149,14 +152,16 @@ export const checkRole = async (
   if (!user) {
     return { authorized: false, user: null };
   }
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
   const userRole = (user?.role as Role) ?? ROLES.USER;
-  const isTargetingAdmin =
-    requiredRole === ROLES.ADMIN ||
-    requiredRole === ROLES.SUPER_ADMIN ||
-    userRole === ROLES.ADMIN ||
-    userRole === ROLES.SUPER_ADMIN;
-  if (isTargetingAdmin && user.email !== adminEmail) {
+  const isTargetingSuperAdmin =
+    requiredRole === ROLES.SUPER_ADMIN || userRole === ROLES.SUPER_ADMIN;
+  const isTargetingAdmin = requiredRole === ROLES.ADMIN || userRole === ROLES.ADMIN;
+  if (isTargetingSuperAdmin && user.email !== superAdminEmail) {
+    return { authorized: false, user };
+  }
+  if (isTargetingAdmin && user.email !== adminEmail && user.email !== superAdminEmail) {
     return { authorized: false, user };
   }
   return {
@@ -172,14 +177,15 @@ export const checkMinimumRole = async (
   if (!user) {
     return { authorized: false, user: null };
   }
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
   const userRole = (user?.role as Role) ?? ROLES.USER;
-  const isTargetingAdmin =
-    minimumRole === ROLES.ADMIN ||
-    minimumRole === ROLES.SUPER_ADMIN ||
-    userRole === ROLES.ADMIN ||
-    userRole === ROLES.SUPER_ADMIN;
-  if (isTargetingAdmin && user.email !== adminEmail) {
+  const isTargetingSuperAdmin = minimumRole === ROLES.SUPER_ADMIN || userRole === ROLES.SUPER_ADMIN;
+  const isTargetingAdmin = minimumRole === ROLES.ADMIN || userRole === ROLES.ADMIN;
+  if (isTargetingSuperAdmin && user.email !== superAdminEmail) {
+    return { authorized: false, user };
+  }
+  if (isTargetingAdmin && user.email !== adminEmail && user.email !== superAdminEmail) {
     return { authorized: false, user };
   }
   return {
@@ -211,13 +217,15 @@ export const canAccessRoute = async (pathname: string): Promise<boolean> => {
 
   if (!requiredRole) return true;
 
-  const adminEmail = process.env.ADMIN_EMAIL || "quizarenadev@gmail.com";
-  const isRouteTargetingAdmin =
-    requiredRole === ROLES.ADMIN ||
-    requiredRole === ROLES.SUPER_ADMIN ||
-    userRole === ROLES.ADMIN ||
-    userRole === ROLES.SUPER_ADMIN;
-  if (isRouteTargetingAdmin && user.email !== adminEmail) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+  const isRouteTargetingSuperAdmin =
+    requiredRole === ROLES.SUPER_ADMIN || userRole === ROLES.SUPER_ADMIN;
+  const isRouteTargetingAdmin = requiredRole === ROLES.ADMIN || userRole === ROLES.ADMIN;
+  if (isRouteTargetingSuperAdmin && user.email !== superAdminEmail) {
+    return false;
+  }
+  if (isRouteTargetingAdmin && user.email !== adminEmail && user.email !== superAdminEmail) {
     return false;
   }
 
