@@ -310,7 +310,7 @@ function RegisterForm() {
 
                 <div className="pt-4">
                   <AuthButton type="submit" loading={loading} disabled={isAnyLoading} size="lg">
-                    Start Preparing Now
+                    Register Now
                   </AuthButton>
                 </div>
               </form>
@@ -331,7 +331,7 @@ function RegisterForm() {
               <div className="mt-8 pt-8 border-t border-slate-100">
                 <AuthFooterLink
                   text="Already have an account?"
-                  linkText="Sign in"
+                  linkText="Sign In"
                   href={ROUTES.AUTH.SIGN_IN}
                 />
               </div>

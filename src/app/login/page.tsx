@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Lock, Check } from "lucide-react";
 import {
   AuthInput,
   PasswordField,
@@ -25,9 +26,13 @@ function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const isEmailValid = email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -68,7 +73,10 @@ function LoginForm() {
         return;
       }
 
-      window.location.href = callbackUrl;
+      setSuccess(true);
+      setTimeout(() => {
+        window.location.href = callbackUrl;
+      }, 600);
     } catch {
       setErrors({ general: "An unexpected error occurred. Please try again." });
       setLoading(false);
@@ -100,115 +108,145 @@ function LoginForm() {
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col lg:flex-row pt-[64px] sm:pt-[88px] md:pt-[112px]">
-        <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 bg-linear-to-br from-navy via-navy/95 to-navy/90 relative overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row pt-[64px] sm:pt-[88px] md:pt-0">
+        <div className="hidden lg:flex lg:w-[35%] xl:w-[32%] bg-linear-to-br from-navy via-navy/95 to-navy/90 relative overflow-hidden mt-[64px] sm:mt-[88px] md:mt-[112px] lg:mt-0 pt-[112px] lg:pt-[112px]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(230,112,30,0.15)_0%,transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(37,113,231,0.1)_0%,transparent_40%)]" />
           <BrandSection />
         </div>
 
-        <div className="w-full lg:w-1/2 xl:w-2/5 flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 bg-white">
-        <AuthCard className="w-full max-w-[420px]">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-navy">Welcome back</h2>
-            <p className="mt-2 text-sm text-navy/60">Sign in to continue your preparation</p>
-          </div>
-
-          {registered && (
-            <div className="mb-6 rounded-lg bg-green-50/80 border border-green-200/50 p-4">
-              <p className="text-sm text-green-700/90">
-                <span className="font-medium">Account created!</span> Please sign in to continue.
-              </p>
+        <div className="w-full lg:w-[65%] xl:w-[68%] flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 bg-white min-h-[calc(100vh-64px)] lg:min-h-screen pt-4 lg:pt-[112px]">
+          <AuthCard className="w-full max-w-[540px]">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold tracking-tight text-navy">
+                Continue your preparation
+              </h2>
+              <p className="mt-2 text-sm text-navy/60">Sign in to access your dashboard</p>
             </div>
-          )}
 
-          {errors.general && (
-            <div className="mb-6">
-              <ValidationMessage type="error" message={errors.general} />
-            </div>
-          )}
-
-          <form onSubmit={handleCredentialsLogin} className="space-y-5">
-            <AuthInput
-              label="Email address"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
-              }}
-              error={errors.email}
-              required
-              disabled={loading}
-            />
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="block text-sm font-medium text-navy/80">
-                  Password
-                </label>
-                <a
-                  href="/forgot-password"
-                  className="text-xs font-medium text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors"
-                >
-                  Forgot password?
-                </a>
+            {registered && (
+              <div className="mb-6 rounded-lg bg-green-50/80 border border-green-200/50 p-4">
+                <p className="text-sm text-green-700/90">
+                  <span className="font-medium">Account created!</span> Please sign in to continue.
+                </p>
               </div>
-              <PasswordField
-                name="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                value={password}
+            )}
+
+            {errors.general && (
+              <div className="mb-6">
+                <ValidationMessage type="error" message={errors.general} />
+              </div>
+            )}
+
+            <form onSubmit={handleCredentialsLogin} className="space-y-5">
+              <AuthInput
+                label="Email address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
                 onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (errors.password) setErrors((p) => ({ ...p, password: undefined }));
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                 }}
-                error={errors.password}
+                error={errors.email}
+                isSuccess={isEmailValid}
                 required
-                disabled={loading}
+                disabled={loading || success}
+              />
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="password" className="block text-sm font-medium text-navy/80">
+                    Password
+                  </label>
+                  <a
+                    href="/forgot-password"
+                    className="text-[13px] font-semibold text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors p-2 -mr-2"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+                <PasswordField
+                  name="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors((p) => ({ ...p, password: undefined }));
+                  }}
+                  error={errors.password}
+                  required
+                  disabled={loading || success}
+                />
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/20 transition-colors"
+                  disabled={loading || success}
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-[13px] text-slate-600">
+                  Remember me for 30 days
+                </label>
+              </div>
+
+              <div className="pt-2">
+                <AuthButton type="submit" loading={loading} size="lg" className="w-full">
+                  <span
+                    className={`transition-opacity duration-300 ${success ? "opacity-0" : "opacity-100"}`}
+                  >
+                    Sign In
+                  </span>
+                  {success && (
+                    <span className="absolute inset-0 flex items-center justify-center text-white animate-in zoom-in duration-300">
+                      <Check className="w-5 h-5 mr-2" />
+                      Success!
+                    </span>
+                  )}
+                </AuthButton>
+              </div>
+            </form>
+
+            <div className="mt-6">
+              <AuthDivider />
+            </div>
+
+            <div className="mt-6">
+              <OAuthButton
+                onClick={handleGoogleLogin}
+                loading={googleLoading}
+                disabled={loading || success}
+                mode="login"
               />
             </div>
 
-            <AuthButton type="submit" loading={loading} size="lg">
-              Sign in
-            </AuthButton>
-          </form>
+            <div className="mt-4">
+              <AuthFooterLink
+                text="Don't have an account?"
+                linkText="Create one"
+                href={ROUTES.AUTH.SIGN_UP}
+              />
+            </div>
+          </AuthCard>
 
-          <div className="mt-6">
-            <AuthDivider />
+          <div className="mt-4 flex items-center justify-center gap-4 text-[13px] font-medium text-slate-400">
+            <a href="/privacy" className="hover:text-slate-600 transition-colors">
+              Privacy Policy
+            </a>
+            <a href="/terms" className="hover:text-slate-600 transition-colors">
+              Terms of Service
+            </a>
+            <span>© 2026 QuizArena</span>
           </div>
-
-          <div className="mt-6">
-            <OAuthButton
-              onClick={handleGoogleLogin}
-              loading={googleLoading}
-              disabled={loading}
-              mode="login"
-            />
-          </div>
-
-          <div className="mt-6">
-            <AuthFooterLink
-              text="Don't have an account?"
-              linkText="Create one"
-              href={ROUTES.AUTH.SIGN_UP}
-            />
-          </div>
-        </AuthCard>
-
-        <div className="mt-6 flex items-center justify-center gap-4 text-[13px] font-medium text-slate-400">
-          <a href="/privacy" className="hover:text-slate-600 transition-colors">
-            Privacy Policy
-          </a>
-          <a href="/terms" className="hover:text-slate-600 transition-colors">
-            Terms of Service
-          </a>
-          <span>© 2026 QuizArena</span>
         </div>
-      </div>
       </div>
     </div>
   );

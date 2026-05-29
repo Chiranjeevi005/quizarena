@@ -67,8 +67,7 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
       props.onBlur?.(e);
     };
 
-    const shouldShowRequirements =
-      showRequirements && (isFocused || !!props.value || !!error);
+    const shouldShowRequirements = showRequirements && (isFocused || !!props.value || !!error);
 
     const isFullyValid = isSuccess || strengthScore === 5;
 
@@ -191,21 +190,17 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
                   key={req.text}
                   className={clsx(
                     "flex items-center gap-1.5 text-[11px] font-semibold transition-colors duration-300",
-                    req.met 
-                      ? "text-green-600" 
-                      : error 
-                        ? "text-red-500" 
-                        : "text-slate-400"
+                    req.met ? "text-green-600" : error ? "text-red-500" : "text-slate-400"
                   )}
                 >
                   <motion.div
                     initial={false}
                     animate={{
                       scale: req.met ? 1.15 : 0.85,
-                      backgroundColor: req.met 
-                        ? "rgba(34,197,94,0.15)" 
-                        : error 
-                          ? "rgba(239,68,68,0.15)" 
+                      backgroundColor: req.met
+                        ? "rgba(34,197,94,0.15)"
+                        : error
+                          ? "rgba(239,68,68,0.15)"
                           : "rgba(226,232,240,1)",
                     }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -214,7 +209,12 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
                     <motion.svg
                       initial={false}
                       animate={{ opacity: req.met ? 1 : 0, scale: req.met ? 1 : 0.2 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25, delay: req.met ? 0.05 : 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 25,
+                        delay: req.met ? 0.05 : 0,
+                      }}
                       className="w-2.5 h-2.5 text-green-600"
                       fill="none"
                       viewBox="0 0 24 24"

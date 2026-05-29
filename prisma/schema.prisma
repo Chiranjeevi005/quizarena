@@ -1338,3 +1338,16 @@ model SearchAnalytics {
   @@index([createdAt])
   @@map("search_analytics")
 }
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique
+  expires   DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}

@@ -35,12 +35,13 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     // If the database is completely unreachable, Prisma throws P1001 or initialization errors.
     // We gracefully catch this so it doesn't break the UI with a hard 500 Network Error.
-    const isDbUnreachable = 
-      error?.message?.includes("Can't reach database server") || 
-      error?.code === "P1001";
-      
+    const isDbUnreachable =
+      error?.message?.includes("Can't reach database server") || error?.code === "P1001";
+
     if (isDbUnreachable) {
-      console.warn("[check-username] Database is currently unreachable. Gracefully falling back to 'available' to not block UI.");
+      console.warn(
+        "[check-username] Database is currently unreachable. Gracefully falling back to 'available' to not block UI."
+      );
       return NextResponse.json({ available: true, warning: "DB_OFFLINE" }, { status: 200 });
     }
 
