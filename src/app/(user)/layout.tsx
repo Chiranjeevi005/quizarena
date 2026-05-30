@@ -1,18 +1,15 @@
 /**
- * QuizArena — Dashboard Layout with App Shell
+ * QuizArena — User Application Shell Layout
  *
- * Wraps all authenticated dashboard views with:
- * - Session-verified sidebar navigation
- * - Responsive mobile drawer
- * - Consistent page structure
- * - User identity display
+ * Wraps all authenticated views (Dashboard, Challenges, Analytics, Profile, Settings)
+ * with the persistent sidebar navigation and mobile drawer.
  */
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function UserAppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   if (!session?.user) {

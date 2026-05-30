@@ -1,508 +1,570 @@
-import { EXAM_CATEGORY_LABELS, PREPARATION_LEVEL_LABELS } from "@/lib/onboarding";
-import { getLatestChallenge, getUserLatestAttempt } from "@/actions/challenge";
-import { getPerformanceOverview, detectWeakAreas } from "@/actions/performance";
-import { getCompetitiveFeed } from "@/actions/engagement";
+import { EXAM_CATEGORY_LABELS } from "@/lib/onboarding";
+import { getLatestChallenge } from "@/actions/challenge";
+import {
+  getPerformanceOverview,
+  getCompetitivePosition,
+  getRecentAttempts,
+} from "@/actions/performance";
 import type { DefaultSession } from "next-auth";
 import Link from "next/link";
 import {
   Target,
-  GraduationCap,
   Clock,
   Flame,
-  Play,
-  TrendingUp,
-  TrendingDown,
-  Brain,
-  AlertTriangle,
-  Activity,
-  History,
-  ChevronRight,
   Zap,
-  BarChart3,
+  Trophy,
+  Swords,
+  TrendingUp,
+  ChevronRight,
+  CircleDot,
+  Brain,
+  Crosshair,
+  Award,
   CheckCircle2,
+  Circle,
+  ArrowUpRight,
+  Users,
+  Lock,
 } from "lucide-react";
 
 interface UserDashboardViewProps {
   user: DefaultSession["user"] & { examCategory?: string | null; preparationLevel?: string | null };
 }
 
+/* ─── Helpers ──────────────────────────────────────────────── */
+
+function getDifficultyStyle(difficulty: string) {
+  const d = difficulty.toUpperCase();
+  if (d === "HARD" || d === "EXPERT") return "bg-red-500/20 text-red-300 border-red-500/30";
+  if (d === "MEDIUM") return "bg-amber-500/20 text-amber-300 border-amber-500/30";
+  return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+}
+
+function getAccuracyColor(accuracy: number) {
+  if (accuracy >= 70) return { text: "text-emerald-400", bg: "bg-emerald-400/10" };
+  if (accuracy >= 40) return { text: "text-amber-400", bg: "bg-amber-400/10" };
+  return { text: "text-red-400", bg: "bg-red-400/10" };
+}
+
+function getRankBadge(rank: number | null) {
+  if (!rank) return null;
+  if (rank === 1)
+    return {
+      color: "text-amber-400",
+      bg: "bg-amber-400/10",
+      border: "border-amber-400/30",
+      label: "🥇",
+    };
+  if (rank === 2)
+    return {
+      color: "text-gray-300",
+      bg: "bg-gray-300/10",
+      border: "border-gray-300/30",
+      label: "🥈",
+    };
+  if (rank === 3)
+    return {
+      color: "text-amber-600",
+      bg: "bg-amber-600/10",
+      border: "border-amber-600/30",
+      label: "🥉",
+    };
+  return {
+    color: "text-blue-400",
+    bg: "bg-blue-400/10",
+    border: "border-blue-400/30",
+    label: `#${rank}`,
+  };
+}
+
+/* ─── Main Component ───────────────────────────────────────── */
+
 export async function UserDashboardView({ user }: UserDashboardViewProps) {
   const category = user.examCategory as keyof typeof EXAM_CATEGORY_LABELS | undefined;
-  const prepLevel = user.preparationLevel as keyof typeof PREPARATION_LEVEL_LABELS | undefined;
 
   const challenge = await getLatestChallenge();
-  const latestAttempt = user.id ? await getUserLatestAttempt(user.id) : null;
   const performance = user.id ? await getPerformanceOverview(user.id) : null;
-  const weakAreas = user.id ? await detectWeakAreas(user.id) : [];
-  const feed = user.id ? await getCompetitiveFeed(user.id, 5) : [];
+  const competitivePosition = user.id ? await getCompetitivePosition(user.id) : null;
+  const recentAttempts = user.id ? await getRecentAttempts(user.id, 5) : [];
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "BEGINNER":
-        return "text-green-600";
-      case "MEDIUM":
-        return "text-amber-600";
-      case "HARDCORE":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
-
-  const streakActive = performance && performance.currentStreak > 0;
   const hasHistory = performance && performance.totalAttempts > 0;
+  const hasEnoughData = performance && performance.totalAttempts >= 3;
+  const showOnboarding = !hasHistory;
+
+  const checklist = [
+    { title: "Create Account", completed: true },
+    { title: "Complete First Challenge", completed: hasHistory },
+    { title: "Unlock Analytics", completed: hasHistory && performance.totalAttempts > 2 },
+    { title: "Appear On Rankings", completed: competitivePosition?.globalRank !== null },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* TODAY'S PREPARATION COMMAND CENTER - Hero Section */}
-      <div className="relative overflow-hidden bg-linear-to-br from-navy via-navy to-navy/90 rounded-2xl p-5 sm:p-6 text-white shadow-lg">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            {/* Left: Greeting & Context */}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-white/50" />
-                <span className="text-xs font-medium text-white/60 uppercase tracking-wider">
-                  {getGreeting()} •{" "}
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-
-              <h1 className="text-xl sm:text-2xl font-bold mb-2">
-                Welcome back, {user.name?.split(" ")[0] || "Aspirant"}
-              </h1>
-
-              {category && (
-                <div className="flex flex-wrap items-center gap-3 text-sm text-white/70 mb-3">
-                  <span className="flex items-center gap-1.5">
-                    <Target className="w-3.5 h-3.5" />
-                    {EXAM_CATEGORY_LABELS[category]}
+    <div className="max-w-[1600px] mx-auto space-y-6 lg:space-y-8">
+      {/* ════════════════════════════════════════════════════════
+          SECTION 1 — TODAY'S MISSION (Primary Hero)
+          ════════════════════════════════════════════════════════ */}
+      <section
+        className="arena-hero rounded-2xl p-6 md:p-8 lg:p-10 text-white arena-section"
+        style={{ animationDelay: "0ms", minHeight: 240 }}
+      >
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* Left: Challenge Info */}
+          <div className="flex-1 space-y-4">
+            {/* Status badge */}
+            <div className="flex items-center gap-3">
+              {challenge ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/25">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 arena-live-dot" />
+                  <span className="text-xs font-bold text-emerald-300 uppercase tracking-widest">
+                    Today&apos;s Mission
                   </span>
-                  <span className="w-1 h-1 bg-white/30 rounded-full" />
-                  <span className="flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5" />
-                    {PREPARATION_LEVEL_LABELS[prepLevel || "BEGINNER"]}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                  <CircleDot className="w-3.5 h-3.5 text-white/40" />
+                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">
+                    Practice Arena Open
                   </span>
                 </div>
               )}
-
-              <p className="text-sm text-white/50 max-w-md">
-                Your performance command center. Complete daily challenges to build discipline and
-                momentum.
-              </p>
             </div>
 
-            {/* Right: Primary CTA - Start Today's Challenge */}
-            <div className="shrink-0">
-              {challenge ? (
-                <Link
-                  href={`/dashboard/challenges/${challenge.slug}`}
-                  className="group inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
-                >
-                  <Play className="w-5 h-5" />
-                  Start Today&apos;s Challenge
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              ) : (
-                <Link
-                  href="/challenges"
-                  className="group inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
-                >
-                  <Play className="w-5 h-5" />
-                  View Challenges
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+            {/* Title */}
+            {challenge ? (
+              <>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
+                  Complete Today&apos;s Challenge
+                </h1>
 
-      {/* LEVEL 1 — PRIMARY ACTION: Today's Challenge */}
-      <div className="bg-linear-to-r from-primary/5 to-primary/10 rounded-2xl p-5 sm:p-6 border border-primary/10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-navy">Today&apos;s Competitive Challenge</h2>
-              {challenge ? (
-                <p className="text-sm text-gray-500">
-                  {challenge.totalQuestions} questions • {challenge.durationInMinutes} minutes •{" "}
-                  <span className={getDifficultyColor(challenge.difficulty)}>
+                {/* Challenge meta pills */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Target className="w-3.5 h-3.5 text-primary" />
+                    {category ? EXAM_CATEGORY_LABELS[category] : "General"}
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold ${getDifficultyStyle(challenge.difficulty)}`}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
                     {challenge.difficulty}
                   </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Swords className="w-3.5 h-3.5 text-blue-400" />
+                    {challenge.totalQuestions} Questions
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                    {challenge.durationInMinutes} Min
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Users className="w-3.5 h-3.5 text-pink-400" />
+                    1,248 Participants
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20 text-xs font-semibold text-orange-300">
+                    <Flame className="w-3.5 h-3.5" />
+                    Maintain Streak
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white/80 leading-tight">
+                  No Scheduled Challenge
+                </h1>
+
+                {/* Practice meta pills */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Swords className="w-3.5 h-3.5 text-blue-400" />
+                    20 Questions
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                    20 Minutes
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-300">
+                    <Trophy className="w-3.5 h-3.5" />
+                    Instant Ranking
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Right: CTA */}
+          <div className="shrink-0 mt-4 lg:mt-0">
+            {challenge ? (
+              <Link
+                href={`/dashboard/challenges/${challenge.slug}`}
+                className="arena-cta-pulse w-full lg:w-auto flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white px-10 py-4 rounded-xl font-black text-lg tracking-wide transition-all hover:scale-105 active:scale-95 uppercase"
+              >
+                <Swords className="w-5 h-5" />
+                Enter Challenge
+              </Link>
+            ) : (
+              <Link
+                href="/challenges"
+                className="w-full lg:w-auto flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/15 text-white/80 px-8 py-3.5 rounded-xl font-bold text-base border border-white/10 transition-all hover:scale-105 active:scale-95"
+              >
+                <Target className="w-5 h-5" />
+                Browse Challenges
+              </Link>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION 6 — FIRST-TIME ONBOARDING (0 attempts only)
+          ════════════════════════════════════════════════════════ */}
+      {showOnboarding && (
+        <section className="arena-section" style={{ animationDelay: "60ms" }}>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h2 className="text-xs font-bold text-navy/50 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Target className="w-3.5 h-3.5 text-primary" />
+              Getting Started
+            </h2>
+            <div className="flex flex-wrap gap-x-8 gap-y-3">
+              {checklist.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center gap-2 ${item.completed ? "text-green-600" : "text-gray-400"}`}
+                >
+                  {item.completed ? (
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  ) : (
+                    <Circle className="w-4 h-4 shrink-0" />
+                  )}
+                  <span
+                    className={`text-sm font-medium ${item.completed ? "text-navy" : "text-gray-500"}`}
+                  >
+                    {item.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION 5 — COMPETITIVE POSITION (Ranking)
+          ════════════════════════════════════════════════════════ */}
+      <section className="arena-section" style={{ animationDelay: "120ms" }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xs font-bold text-navy/50 uppercase tracking-widest flex items-center gap-2">
+            <Trophy className="w-3.5 h-3.5" />
+            Your Position
+          </h2>
+          <Link
+            href="/leaderboard"
+            className="text-xs font-semibold text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
+          >
+            View Rankings <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="arena-glass rounded-xl p-5 md:p-6 text-white arena-shimmer">
+          <div className="flex flex-col md:grid md:grid-cols-4 gap-0 md:gap-8">
+            {/* Global Rank */}
+            <div className="flex items-center justify-between md:block py-3 md:py-0 border-b border-white/10 md:border-0">
+              <p className="text-[11px] md:text-[10px] font-semibold text-white/50 md:text-white/35 uppercase tracking-wider md:mb-1.5">
+                Global Rank
+              </p>
+              <p className="text-lg md:text-2xl font-black text-white">
+                {competitivePosition?.globalRank ? (
+                  `#${competitivePosition.globalRank}`
+                ) : (
+                  <span className="text-white/15">—</span>
+                )}
+              </p>
+            </div>
+
+            {/* Category Rank */}
+            <div className="flex items-center justify-between md:block py-3 md:py-0 border-b border-white/10 md:border-0">
+              <p className="text-[11px] md:text-[10px] font-semibold text-white/50 md:text-white/35 uppercase tracking-wider md:mb-1.5">
+                Category Rank
+              </p>
+              <p className="text-lg md:text-2xl font-black text-white">
+                {competitivePosition?.categoryRank ? (
+                  `#${competitivePosition.categoryRank}`
+                ) : (
+                  <span className="text-white/15">—</span>
+                )}
+              </p>
+            </div>
+
+            {/* Percentile */}
+            <div className="flex items-center justify-between md:block py-3 md:py-0 border-b border-white/10 md:border-0">
+              <p className="text-[11px] md:text-[10px] font-semibold text-white/50 md:text-white/35 uppercase tracking-wider md:mb-1.5">
+                Percentile
+              </p>
+              <p className="text-lg md:text-2xl font-black text-white">
+                {competitivePosition?.percentile ? (
+                  <span className="text-emerald-400">
+                    Top {Math.max(1, 100 - competitivePosition.percentile)}%
+                  </span>
+                ) : (
+                  <span className="text-white/15">—</span>
+                )}
+              </p>
+            </div>
+
+            {/* Weekly Movement */}
+            <div className="flex items-center justify-between md:block py-3 md:py-0 border-b-0">
+              <p className="text-[11px] md:text-[10px] font-semibold text-white/50 md:text-white/35 uppercase tracking-wider md:mb-1.5">
+                Weekly Movement
+              </p>
+              <p className="text-lg md:text-2xl font-black text-white">
+                {competitivePosition?.weeklyMovement ? (
+                  <span className="flex items-center gap-1.5 text-emerald-400">
+                    <TrendingUp className="w-5 h-5" />+{competitivePosition.weeklyMovement}
+                  </span>
+                ) : (
+                  <span className="text-white/15">—</span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION 4 — RECENT PERFORMANCE
+          ════════════════════════════════════════════════════════ */}
+      <section className="arena-section" style={{ animationDelay: "180ms" }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xs font-bold text-navy/50 uppercase tracking-widest flex items-center gap-2">
+            <Swords className="w-3.5 h-3.5" />
+            Recent Performance
+          </h2>
+          {recentAttempts.length > 0 && (
+            <Link
+              href="/analytics"
+              className="text-xs font-semibold text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
+            >
+              View All <ChevronRight className="w-3 h-3" />
+            </Link>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          {recentAttempts.length > 0 ? (
+            <div className="divide-y divide-gray-50">
+              {recentAttempts.map((attempt) => {
+                const rankBadge = getRankBadge(attempt.rankAchieved);
+                const accColors = getAccuracyColor(attempt.accuracy);
+                return (
+                  <Link
+                    href={`/dashboard/results/${attempt.id}`}
+                    key={attempt.id}
+                    className="group block"
+                  >
+                    <div className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50/80 transition-colors">
+                      {/* Rank dot */}
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${rankBadge ? `${rankBadge.bg} ${rankBadge.color} border ${rankBadge.border}` : "bg-gray-50 text-gray-400 border border-gray-100"}`}
+                      >
+                        {rankBadge ? rankBadge.label : "—"}
+                      </div>
+
+                      {/* Name + Date */}
+                      <div className="flex-1 min-w-0 ml-1">
+                        <p className="text-base font-bold text-navy truncate group-hover:text-primary transition-colors">
+                          {attempt.challengeName}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {attempt.submittedAt
+                            ? attempt.submittedAt.toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })
+                            : "—"}
+                        </p>
+                      </div>
+
+                      {/* Score + Accuracy */}
+                      <div className="flex items-center gap-4 shrink-0">
+                        <div className="text-right hidden md:block">
+                          <p className="text-sm font-black text-navy">{attempt.score} pts</p>
+                        </div>
+                        <div
+                          className={`px-2.5 py-1 rounded-md text-xs font-bold ${accColors.bg} ${accColors.text}`}
+                        >
+                          {attempt.accuracy}%
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors hidden sm:block" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+              <div className="w-12 h-12 rounded-xl bg-navy/5 flex items-center justify-center mb-4">
+                <Swords className="w-6 h-6 text-navy/20" />
+              </div>
+              <p className="text-base font-bold text-navy/60">No Performance Data</p>
+              <p className="text-sm text-gray-400 mt-1.5">
+                Start a challenge to build your history.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════
+          SECTION 2 & 3 — PREPARATION SNAPSHOT & FOCUS AREA
+          ════════════════════════════════════════════════════════ */}
+      <div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6 arena-section"
+        style={{ animationDelay: "240ms" }}
+      >
+        {/* PREPARATION SNAPSHOT */}
+        <section>
+          <h2 className="text-xs font-bold text-navy/50 uppercase tracking-widest mb-4">
+            Preparation Snapshot
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Current Streak */}
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:border-orange-200 transition-colors group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Current Streak
+                </span>
+                <Flame
+                  className={`w-5 h-5 text-orange-500 ${hasHistory && performance?.currentStreak ? "arena-fire" : "opacity-30"}`}
+                />
+              </div>
+              {hasHistory ? (
+                <p className="text-3xl font-black text-navy">{performance?.currentStreak || 0}</p>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-2">
+                  <Lock className="w-4 h-4 text-gray-300" />
+                  <span className="text-xs font-semibold text-gray-400">Locked</span>
+                </div>
+              )}
+            </div>
+
+            {/* Accuracy */}
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:border-emerald-200 transition-colors group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Accuracy
+                </span>
+                <Crosshair
+                  className={`w-5 h-5 text-emerald-500 ${!hasHistory ? "opacity-30" : ""}`}
+                />
+              </div>
+              {hasHistory ? (
+                <p className="text-3xl font-black text-navy">
+                  {Math.round(performance?.averageAccuracy || 0)}%
                 </p>
               ) : (
-                <p className="text-sm text-gray-500">Check back soon for new challenges</p>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <Lock className="w-4 h-4 text-gray-300" />
+                  <span className="text-xs font-semibold text-gray-400">Locked</span>
+                </div>
+              )}
+            </div>
+
+            {/* Current Rank */}
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:border-blue-200 transition-colors group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Current Rank
+                </span>
+                <Trophy className={`w-5 h-5 text-blue-500 ${!hasHistory ? "opacity-30" : ""}`} />
+              </div>
+              {hasHistory && performance?.rank ? (
+                <p className="text-3xl font-black text-navy">#{performance.rank}</p>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-2">
+                  <Lock className="w-4 h-4 text-gray-300" />
+                  <span className="text-xs font-semibold text-gray-400">Locked</span>
+                </div>
+              )}
+            </div>
+
+            {/* Completed */}
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:border-violet-200 transition-colors group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Completed
+                </span>
+                <CheckCircle2
+                  className={`w-5 h-5 text-violet-500 ${!hasHistory ? "opacity-30" : ""}`}
+                />
+              </div>
+              {hasHistory ? (
+                <p className="text-3xl font-black text-navy">
+                  {performance?.completedAttempts || 0}
+                </p>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-2">
+                  <Lock className="w-4 h-4 text-gray-300" />
+                  <span className="text-xs font-semibold text-gray-400">Locked</span>
+                </div>
               )}
             </div>
           </div>
-          <Link
-            href="/challenges"
-            className="inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline"
-          >
-            View all challenges <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
+        </section>
 
-        {challenge ? (
-          <Link
-            href={`/dashboard/challenges/${challenge.slug}`}
-            className="block w-full bg-white hover:bg-gray-50 rounded-xl p-4 border border-gray-100 transition-all duration-200 group shadow-sm hover:shadow"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-bold text-navy mb-1">{challenge.title}</p>
-                <p className="text-sm text-gray-500">
-                  {challenge.description || `Test your competitive knowledge now`}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-                <Play className="w-5 h-5 text-primary group-hover:text-white" />
-              </div>
-            </div>
-          </Link>
-        ) : (
-          <div className="block w-full bg-white rounded-xl p-4 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-bold text-navy mb-1">No challenges available</p>
-                <p className="text-sm text-gray-500">Check back soon for new challenges</p>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-gray-400" />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        {/* FOCUS AREA INTELLIGENCE */}
+        <section>
+          <h2 className="text-xs font-bold text-navy/50 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <Brain className="w-3.5 h-3.5" />
+            Focus Area
+          </h2>
 
-      {/* LEVEL 2 — PERFORMANCE STATUS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Discipline Streak */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all duration-200 relative overflow-hidden">
-          {streakActive && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-orange-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="flex items-center justify-between mb-3 relative z-10">
-            <div
-              className={`w-9 h-9 rounded-lg flex items-center justify-center ${streakActive ? "bg-orange-100" : "bg-gray-50"}`}
-            >
-              <Flame
-                className={`w-4.5 h-4.5 ${streakActive ? "text-orange-500" : "text-gray-400"}`}
-              />
-            </div>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${streakActive ? "text-orange-700 bg-orange-100" : "text-gray-500 bg-gray-100"}`}
-            >
-              {streakActive ? "Active" : "Lost"}
-            </span>
-          </div>
-          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Discipline Streak</p>
-          <p className="text-xl font-bold text-navy relative z-10">
-            {performance?.currentStreak || 0}{" "}
-            <span className="text-sm font-medium text-gray-400">days</span>
-          </p>
-          <p className="text-xs text-gray-400 mt-1 relative z-10">
-            {streakActive
-              ? `Longest: ${performance.longestStreak} days`
-              : "Start your streak today"}
-          </p>
-        </div>
-
-        {/* Accuracy */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 relative overflow-hidden">
-          {hasHistory && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="flex items-center justify-between mb-3 relative z-10">
-            <div className="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
-              <TrendingUp className="w-4.5 h-4.5 text-purple-500" />
-            </div>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasHistory ? "text-purple-700 bg-purple-100" : "text-gray-500 bg-gray-100"}`}
-            >
-              {hasHistory ? "Tracked" : "Pending"}
-            </span>
-          </div>
-          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Overall Accuracy</p>
-          <p className="text-xl font-bold text-navy relative z-10">
-            {hasHistory ? `${Math.round(performance.averageAccuracy)}%` : "—%"}
-          </p>
-          <p className="text-xs text-gray-400 mt-1 relative z-10">
-            {hasHistory
-              ? `Across ${performance.totalAnswered} questions`
-              : "Track after first attempt"}
-          </p>
-        </div>
-
-        {/* Total Attempts */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all duration-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
-              <Target className="w-4.5 h-4.5 text-green-600" />
-            </div>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${hasHistory ? "text-green-700 bg-green-100" : "text-gray-500 bg-gray-100"}`}
-            >
-              {hasHistory ? "Active" : "None"}
-            </span>
-          </div>
-          <p className="text-xs font-medium text-gray-500 mb-1">Total Attempts</p>
-          <p className="text-xl font-bold text-navy">{performance?.totalAttempts || 0}</p>
-          <p className="text-xs text-gray-400 mt-1">
-            {hasHistory ? `${performance!.completedAttempts} completed` : "Complete more to track"}
-          </p>
-        </div>
-
-        {/* Preparation Momentum (Rank) */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 relative overflow-hidden">
-          {performance?.rank && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="flex items-center justify-between mb-3 relative z-10">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Activity className="w-4.5 h-4.5 text-blue-600" />
-            </div>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${performance?.rank ? "text-blue-700 bg-blue-100" : "text-gray-500 bg-gray-100"}`}
-            >
-              {performance?.rank ? "Ranked" : "Pending"}
-            </span>
-          </div>
-          <p className="text-xs font-medium text-gray-500 mb-1 relative z-10">Best Rank Achieved</p>
-          <p className="text-xl font-bold text-navy relative z-10">
-            {performance?.rank ? `#${performance.rank}` : "—"}
-          </p>
-          <p className="text-xs text-gray-400 mt-1 relative z-10">
-            {performance?.rank ? "Top competitor" : "Build with consistent practice"}
-          </p>
-        </div>
-      </div>
-
-      {/* LEVEL 3 — PREPARATION INTELLIGENCE */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Weakness Detection */}
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-amber-500" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-navy">Weakness Detection</h3>
-                <p className="text-xs text-gray-500">Deterministic topic analysis</p>
-              </div>
-            </div>
-          </div>
-
-          {weakAreas.length > 0 ? (
-            <div className="space-y-3">
-              {weakAreas.map((weak, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 bg-red-50/50 rounded-xl border border-red-100"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-red-500" />
-                    <span className="font-semibold text-navy text-sm">{weak.category}</span>
-                  </div>
-                  <span className="text-red-600 font-bold text-sm">{weak.accuracy}% Accuracy</span>
-                </div>
-              ))}
-              <p className="text-xs text-gray-400 mt-2">
-                Categories with accuracy below 60%. Focus your practice here.
-              </p>
-            </div>
-          ) : hasHistory ? (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <Brain className="w-10 h-10 text-green-300 mb-3" />
-              <p className="text-sm font-medium text-green-700 mb-1">
-                No critical weaknesses detected
-              </p>
-              <p className="text-xs text-gray-500 max-w-xs">
-                Your accuracy is holding strong across attempted categories. Keep up the momentum!
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <Brain className="w-10 h-10 text-gray-200 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">Analysis pending</p>
-              <p className="text-xs text-gray-400 max-w-xs">
-                Your weak-topic analysis will appear after attempting at least 3 challenges in a
-                category.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Recommended Focus Area */}
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-navy">Recommended Focus Area</h3>
-              <p className="text-xs text-gray-500">Personalized preparation</p>
-            </div>
-          </div>
-
-          {weakAreas.length > 0 ? (
-            <div className="flex flex-col items-center justify-center py-4 text-center">
-              <TrendingDown className="w-10 h-10 text-blue-400 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">Target: {weakAreas[0].category}</p>
-              <p className="text-xs text-gray-500 max-w-xs mb-4">
-                Prioritize practicing {weakAreas[0].category} challenges to pull up your overall
-                accuracy.
-              </p>
-              <Link
-                href={`/challenges?category=${weakAreas[0].category}`}
-                className="text-primary text-sm font-bold hover:underline"
-              >
-                Find {weakAreas[0].category} Challenges
-              </Link>
-            </div>
-          ) : hasHistory && performance?.strongestCategory ? (
-            <div className="flex flex-col items-center justify-center py-4 text-center">
-              <TrendingUp className="w-10 h-10 text-blue-400 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">
-                Maintain Lead: {performance.strongestCategory}
-              </p>
-              <p className="text-xs text-gray-500 max-w-xs mb-4">
-                You excel at {performance.strongestCategory}. Reinforce it by taking advanced
-                challenges.
-              </p>
-              <Link href="/challenges" className="text-primary text-sm font-bold hover:underline">
-                Browse Hardcore Challenges
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <TrendingDown className="w-10 h-10 text-gray-200 mb-3" />
-              <p className="text-sm font-medium text-navy mb-1">Focus area pending</p>
-              <p className="text-xs text-gray-400 max-w-xs">
-                Targeted practice recommendations will appear after your analytics are established.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* LEVEL 4 — HISTORY & ACTIVITY */}
-      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
-              <History className="w-5 h-5 text-gray-500" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-navy">Recent Attempts</h3>
-              <p className="text-xs text-gray-500">Your practice history</p>
-            </div>
-          </div>
-          <Link href="/analytics" className="text-xs font-medium text-primary hover:underline">
-            View all insights
-          </Link>
-        </div>
-
-        {latestAttempt ? (
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-xs hover:border-primary/20 transition-all">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <p className="font-bold text-navy">{latestAttempt.challenge.title}</p>
-                <p className="text-sm text-gray-500">
-                  {latestAttempt.correctAnswers} correct •{" "}
-                  {Math.round(
-                    (latestAttempt.correctAnswers / (latestAttempt.totalAnswered || 1)) * 100
-                  )}
-                  % accuracy
-                </p>
-              </div>
-            </div>
-            <Link
-              href={`/dashboard/results/${latestAttempt.id}`}
-              className="text-primary font-medium text-sm hover:underline px-4 py-2 bg-white rounded-lg border border-gray-200 hover:border-primary/50 transition-colors"
-            >
-              View Details
-            </Link>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
-              <History className="w-7 h-7 text-gray-300" />
-            </div>
-            <p className="text-sm font-medium text-navy mb-1">No challenges attempted yet</p>
-            <p className="text-xs text-gray-400 max-w-sm mb-4">
-              Complete your first challenge to unlock performance diagnostics.
-            </p>
-            <Link
-              href="/challenges"
-              className="inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline"
-            >
-              Attempt your first challenge <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* LEVEL 5 — COMPETITIVE ACTIVITY FEED */}
-      {feed.length > 0 && (
-        <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-indigo-500" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-navy">Competitive Feed</h3>
-              <p className="text-xs text-gray-500">Your recent milestones and activities</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {feed.map((act) => (
-              <div
-                key={act.id}
-                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
-              >
-                <div className="w-2 h-2 mt-2 rounded-full bg-indigo-400 shrink-0" />
+          {hasEnoughData && performance?.weakestCategory ? (
+            <div className="arena-glass rounded-xl p-6 text-white h-[calc(100%-32px)]">
+              <div className="space-y-5">
                 <div>
-                  <p className="text-sm text-navy font-medium">{act.content}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(act.createdAt).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
+                  <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-1.5">
+                    Current Priority
+                  </p>
+                  <p className="text-2xl font-black text-white">
+                    {EXAM_CATEGORY_LABELS[
+                      performance.weakestCategory as keyof typeof EXAM_CATEGORY_LABELS
+                    ] || performance.weakestCategory}
                   </p>
                 </div>
+
+                <div className="border-t border-white/6 pt-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-white/40 font-medium">Accuracy</span>
+                    <span className="text-base font-bold text-red-400">Needs Work</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-white/40 font-medium">Recommended</span>
+                    <span className="text-base font-bold text-amber-400">High Priority</span>
+                  </div>
+                </div>
+
+                <Link
+                  href="/challenges"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 mt-2 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white rounded-xl text-sm font-bold transition-colors border border-white/5"
+                >
+                  <Target className="w-4 h-4" />
+                  Practice This Area
+                </Link>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 flex flex-col items-center justify-center text-center h-[calc(100%-32px)] min-h-[240px]">
+              <div className="w-12 h-12 rounded-xl bg-navy/5 flex items-center justify-center mb-4">
+                <Brain className="w-6 h-6 text-navy/20" />
+              </div>
+              <p className="text-base font-bold text-navy/60">Preparation Intelligence</p>
+              <p className="text-sm text-gray-400 mt-2 max-w-[240px]">
+                Complete 3 challenges to unlock personalized preparation intelligence.
+              </p>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

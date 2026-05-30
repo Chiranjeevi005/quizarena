@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     // Send email
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3004";
     const resetLink = `${appUrl}/reset-password?token=${token}`;
-    
+
     // In development, log the link to the console so you can test without SMTP working
     if (process.env.NODE_ENV === "development") {
       console.log("----------------------------------------");
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     }
 
     const emailResult = await sendPasswordResetEmail(user.email, resetLink);
-    
+
     if (!emailResult.success) {
       console.warn("Email failed to send. If you are in development, use the link printed above.");
     }

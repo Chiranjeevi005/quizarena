@@ -129,7 +129,6 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
             ) : (
               <>
                 <ChevronLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">Collapse</span>
               </>
             )}
           </button>

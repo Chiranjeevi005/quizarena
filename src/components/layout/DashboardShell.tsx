@@ -184,7 +184,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       <aside
         ref={sidebarRef}
         className={`hidden md:flex flex-col fixed left-0 top-0 bottom-0 bg-white border-r border-gray-100 z-30 ${
-          collapsed ? "w-[72px]" : "w-[256px]"
+          collapsed ? "w-[72px]" : "w-[280px]"
         } transition-[width] duration-220 ease-out`}
       >
         {/* HEADER */}
@@ -318,17 +318,23 @@ export function DashboardShell({ children }: DashboardShellProps) {
               <>
                 <Link
                   href="/settings"
-                  className="flex items-center justify-center p-2.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-220"
-                  title="Settings"
+                  className="group relative flex items-center justify-center p-2.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-220"
                 >
                   <Settings className="w-5 h-5" />
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-navy text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+                    Settings
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 border-4 border-transparent border-r-navy" />
+                  </div>
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="flex items-center justify-center p-2.5 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-220"
-                  title="Sign Out"
+                  className="group relative flex items-center justify-center p-2.5 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-220"
                 >
                   <LogOut className="w-5 h-5" />
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-navy text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+                    Sign Out
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 border-4 border-transparent border-r-navy" />
+                  </div>
                 </button>
               </>
             ) : (
@@ -354,12 +360,18 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <div className={`p-3 pt-0 ${collapsed ? "flex justify-center" : ""}`}>
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-220 w-full ${
+              className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-220 w-full ${
                 collapsed ? "justify-center" : ""
               }`}
             >
               {collapsed ? (
-                <ChevronRight className="w-5 h-5" />
+                <>
+                  <ChevronRight className="w-5 h-5" />
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-navy text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+                    Expand
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 border-4 border-transparent border-r-navy" />
+                  </div>
+                </>
               ) : (
                 <>
                   <ChevronLeft className="w-5 h-5" />
@@ -512,11 +524,11 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
       {/* Main Content */}
       <main
-        className={`md:ml-[256px] min-h-[calc(100vh-3.5rem)] md:min-h-screen transition-[margin] duration-220 ease-out ${
+        className={`md:ml-[280px] min-h-[calc(100vh-3.5rem)] md:min-h-screen transition-[margin] duration-220 ease-out ${
           collapsed ? "md:ml-[72px]" : ""
         }`}
       >
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-4 md:py-6">{children}</div>
+        <div className="px-4 md:px-8 py-6 md:py-8">{children}</div>
       </main>
     </div>
   );

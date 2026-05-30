@@ -32,6 +32,22 @@ export interface WeakArea {
   accuracy: number;
 }
 
+export interface CompetitivePosition {
+  globalRank: number | null;
+  categoryRank: number | null;
+  percentile: number;
+  weeklyMovement: number;
+}
+
+export interface RecentAttempt {
+  id: string;
+  challengeName: string;
+  score: number;
+  accuracy: number;
+  rankAchieved: number | null;
+  submittedAt: Date | null;
+}
+
 // ============================================================================
 // READ OPERATIONS
 // ============================================================================
@@ -148,6 +164,69 @@ export async function detectWeakAreas(userId: string): Promise<WeakArea[]> {
       category: cat.category,
       accuracy: Math.round(cat.averageAccuracy),
     }));
+}
+
+export async function getCompetitivePosition(userId: string): Promise<CompetitivePosition> {
+  // Best rank entry gives us our "Global" best if not filtering by category
+  const bestRankEntry = await prisma.leaderboardEntry.findFirst({
+    where: { userId },
+    orderBy: { rank: "asc" },
+  });
+
+  // Calculate approximate percentile based on total users on leaderboard
+  let percentile = 0;
+  if (bestRankEntry && bestRankEntry.rank > 0) {
+    const totalUsers = await prisma.leaderboardEntry.count({
+      where: { challengeId: bestRankEntry.challengeId },
+    });
+    if (totalUsers > 1) {
+      percentile = Math.max(0, Math.round(100 - (bestRankEntry.rank / totalUsers) * 100));
+    }
+  }
+
+  // Placeholder for weekly movement, could be calculated by comparing historical snapshots
+  const weeklyMovement = bestRankEntry ? 12 : 0;
+
+  return {
+    globalRank: bestRankEntry?.rank || null,
+    categoryRank: bestRankEntry?.rank || null, // Mocking category rank as global for now
+    percentile,
+    weeklyMovement,
+  };
+}
+
+export async function getRecentAttempts(
+  userId: string,
+  limit: number = 5
+): Promise<RecentAttempt[]> {
+  const attempts = await prisma.attempt.findMany({
+    where: {
+      userId,
+      status: AttemptStatus.EVALUATED,
+    },
+    include: {
+      challenge: {
+        select: { title: true, totalQuestions: true },
+      },
+      leaderboardEntry: {
+        select: { rank: true },
+      },
+    },
+    orderBy: {
+      submittedAt: "desc",
+    },
+    take: limit,
+  });
+
+  return attempts.map((a) => ({
+    id: a.id,
+    challengeName: a.challenge.title,
+    score: a.score,
+    accuracy:
+      a.totalAnswered > 0 ? Math.round((a.correctAnswers / a.challenge.totalQuestions) * 100) : 0,
+    rankAchieved: a.leaderboardEntry?.rank || null,
+    submittedAt: a.submittedAt,
+  }));
 }
 
 // ============================================================================
