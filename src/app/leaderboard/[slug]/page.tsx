@@ -18,6 +18,7 @@ import {
   Crosshair,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AvatarIdentity } from "@/components/ui/AvatarIdentity";
 
 interface LeaderboardDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -90,6 +91,15 @@ export default async function ChallengeLeaderboardDetailPage({
         )
       : [];
 
+  const getRankTier = (rank: number, totalParticipants: number) => {
+    if (totalParticipants === 0) return "BRONZE";
+    const percentile = rank / totalParticipants;
+    if (percentile <= 0.05) return "DIAMOND";
+    if (percentile <= 0.2) return "GOLD";
+    if (percentile <= 0.5) return "SILVER";
+    return "BRONZE";
+  };
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto px-4 py-8">
       {/* Back Button and Header */}
@@ -147,27 +157,14 @@ export default async function ChallengeLeaderboardDetailPage({
                     {isFirst && (
                       <Crown className="w-8 h-8 text-amber-500 absolute -top-6 left-1/2 -translate-x-1/2 drop-shadow-md animate-bounce" />
                     )}
-                    <div
-                      className={cn(
-                        "w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 bg-gray-50",
-                        isFirst
-                          ? "border-amber-300"
-                          : isSecond
-                            ? "border-gray-300"
-                            : "border-orange-300"
-                      )}
-                    >
-                      {entry.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={entry.image}
-                          alt={entry.name || entry.username || "Avatar"}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <UserIcon className="w-8 h-8 text-gray-400" />
-                      )}
-                    </div>
+                    <AvatarIdentity
+                      name={entry.name}
+                      username={entry.username}
+                      image={entry.image}
+                      examCategory={entry.examCategory}
+                      rankTier={getRankTier(entry.rank, data.totalParticipants)}
+                      size={64}
+                    />
                     <div
                       className={cn(
                         "absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs border shadow-sm",
@@ -229,18 +226,14 @@ export default async function ChallengeLeaderboardDetailPage({
                       <td className="px-6 py-4 font-bold w-20">#{entry.rank}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-gray-50 border border-gray-100">
-                            {entry.image ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={entry.image}
-                                alt="Avatar"
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <UserIcon className="w-4 h-4 text-gray-400" />
-                            )}
-                          </div>
+                          <AvatarIdentity
+                            name={entry.name}
+                            username={entry.username}
+                            image={entry.image}
+                            examCategory={entry.examCategory}
+                            rankTier={getRankTier(entry.rank, data.totalParticipants)}
+                            size={32}
+                          />
                           <div>
                             <p className="text-navy font-semibold">
                               {entry.name || entry.username || "Anonymous"}{" "}
@@ -303,18 +296,14 @@ export default async function ChallengeLeaderboardDetailPage({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-gray-50 border border-gray-100">
-                            {entry.image ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={entry.image}
-                                alt={entry.name || entry.username || "Avatar"}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <UserIcon className="w-4 h-4 text-gray-400" />
-                            )}
-                          </div>
+                          <AvatarIdentity
+                            name={entry.name}
+                            username={entry.username}
+                            image={entry.image}
+                            examCategory={entry.examCategory}
+                            rankTier={getRankTier(entry.rank, data.totalParticipants)}
+                            size={32}
+                          />
                           <div>
                             <p className="text-navy font-semibold">
                               {entry.name || entry.username || "Anonymous"}

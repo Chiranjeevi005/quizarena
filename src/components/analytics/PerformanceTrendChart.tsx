@@ -22,7 +22,7 @@ export function PerformanceTrendChart({ data }: PerformanceTrendChartProps) {
     const paddingX = 40; // More padding for Y-axis labels
     const paddingY = 20;
     const paddingBottom = 30; // Padding for X-axis labels
-    
+
     const chartWidth = width - paddingX * 2;
     const chartHeight = height - paddingY - paddingBottom;
 
@@ -81,14 +81,7 @@ export function PerformanceTrendChart({ data }: PerformanceTrendChartProps) {
         {/* Y-Axis Grid lines & Labels */}
         {gridLines.map((g, i) => (
           <g key={`grid-${i}`}>
-            <line
-              x1={35}
-              y1={g.y}
-              x2={width - 20}
-              y2={g.y}
-              stroke="#e5e7eb"
-              strokeWidth="1"
-            />
+            <line x1={35} y1={g.y} x2={width - 20} y2={g.y} stroke="#e5e7eb" strokeWidth="1" />
             <text
               x={30}
               y={g.y + 3}
@@ -114,9 +107,10 @@ export function PerformanceTrendChart({ data }: PerformanceTrendChartProps) {
 
         {/* X-Axis Labels (Show first, last, and middle if enough points to prevent crowding) */}
         {points.map((p, i) => {
-          const showLabel = i === 0 || i === points.length - 1 || i === Math.floor(points.length / 2);
+          const showLabel =
+            i === 0 || i === points.length - 1 || i === Math.floor(points.length / 2);
           if (!showLabel) return null;
-          
+
           return (
             <text
               key={`x-label-${i}`}

@@ -49,6 +49,7 @@ export async function getChallengeLeaderboard(
             username: true,
             name: true,
             image: true,
+            examCategory: true,
           },
         },
       },
@@ -78,6 +79,7 @@ export async function getChallengeLeaderboard(
       username: entry.user.username,
       name: entry.user.name,
       image: entry.user.image,
+      examCategory: entry.user.examCategory,
       score: entry.score,
       accuracy: entry.accuracy,
       timeTakenInSeconds: entry.timeTakenInSeconds,
@@ -170,6 +172,7 @@ const getCachedCategoryLeaderboard = unstable_cache(
             username: true,
             name: true,
             image: true,
+            examCategory: true,
           },
         },
       },
@@ -183,6 +186,7 @@ const getCachedCategoryLeaderboard = unstable_cache(
         username: string | null;
         name: string | null;
         image: string | null;
+        examCategory: string | null;
         totalScore: number;
         totalAccuracy: number;
         challengeCount: number;
@@ -201,6 +205,7 @@ const getCachedCategoryLeaderboard = unstable_cache(
           username: entry.user.username,
           name: entry.user.name,
           image: entry.user.image,
+          examCategory: entry.user.examCategory,
           totalScore: entry.score,
           totalAccuracy: entry.accuracy,
           challengeCount: 1,
@@ -223,6 +228,7 @@ const getCachedCategoryLeaderboard = unstable_cache(
         username: user.username,
         name: user.name,
         image: user.image,
+        examCategory: user.examCategory,
         totalScore: user.totalScore,
         averageAccuracy:
           user.challengeCount > 0 ? Math.round(user.totalAccuracy / user.challengeCount) : 0,

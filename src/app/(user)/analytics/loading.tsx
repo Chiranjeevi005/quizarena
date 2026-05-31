@@ -1,44 +1,40 @@
 /**
  * Analytics Loading Skeleton
  *
- * Matches the Performance Intelligence System Phase 10.1.6B layout:
- * Hero → Priority Focus → Strength/Weakness List → Sparkline → Action Center → Momentum Footer
+ * Mirrors the Performance Coach "Intelligence Locked" empty state
+ * to prevent massive layout shifts for new users.
  */
 export default function AnalyticsLoading() {
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-12 animate-pulse">
+    <div className="skeleton-page max-w-4xl mx-auto space-y-6">
       {/* Page Header */}
       <div>
-        <div className="h-7 w-48 bg-gray-200 rounded-lg mb-2" />
-        <div className="h-4 w-72 bg-gray-100 rounded-lg" />
+        <div className="skeleton-shimmer w-56 h-8 rounded-lg mb-2" />
+        <div className="skeleton-shimmer w-96 h-5 rounded-lg" />
       </div>
 
-      {/* SECTION 1: HERO */}
-      <div className="bg-[#1b2234] rounded-3xl p-8 h-48 relative overflow-hidden" />
-
-      {/* SECTION 2: PRIORITY FOCUS */}
-      <div>
-        <div className="h-4 w-32 bg-gray-200 rounded mb-3" />
-        <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 lg:p-8 flex flex-col md:flex-row items-center gap-6 justify-between h-40" />
-      </div>
-
-
-      {/* SECTION 4: JOURNEY */}
-      <div>
-        <div className="h-4 w-44 bg-gray-200 rounded mb-3" />
-        <div className="bg-white rounded-2xl border border-gray-100 h-32" />
-      </div>
-
-      {/* SECTION 5: ACTION CENTER */}
-      <div>
-        <div className="h-4 w-32 bg-gray-200 rounded mb-3" />
-        <div className="space-y-3">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-gray-100 h-24" />
-          ))}
+      {/* Empty State Box */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center relative overflow-hidden flex flex-col items-center">
+        {/* Subtle background decoration */}
+        <div className="absolute inset-0 bg-linear-to-br from-gray-50/50 to-gray-100/30" />
+        
+        <div className="relative z-10 flex flex-col items-center w-full">
+          {/* Lock Icon Box */}
+          <div className="w-16 h-16 bg-gray-50 rounded-2xl mb-6 shadow-sm border border-gray-100 flex items-center justify-center">
+            <div className="skeleton-shimmer w-8 h-8 rounded-lg" />
+          </div>
+          
+          {/* Title */}
+          <div className="skeleton-shimmer w-48 h-7 rounded-lg mb-4" />
+          
+          {/* Description Lines */}
+          <div className="skeleton-shimmer w-full max-w-md h-4 rounded mx-auto mb-2" />
+          <div className="skeleton-shimmer w-[80%] max-w-sm h-4 rounded mx-auto mb-8" />
+          
+          {/* Button */}
+          <div className="skeleton-shimmer w-[220px] h-14 rounded-xl" />
         </div>
       </div>
-
     </div>
   );
 }

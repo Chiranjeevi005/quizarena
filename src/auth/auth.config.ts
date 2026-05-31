@@ -42,6 +42,7 @@ export const authConfig = {
       const isRegisterPage = nextUrl.pathname === "/register";
       const isAuthPage = isLoginPage || isRegisterPage;
       const isOnboardingRoute = nextUrl.pathname.startsWith("/onboarding");
+      const isLandingPage = nextUrl.pathname === "/";
 
       const protectedRoutes = [
         "/dashboard",
@@ -57,6 +58,13 @@ export const authConfig = {
       );
 
       if (isApiAuthRoute || nextUrl.pathname.startsWith("/api/me")) {
+        return true;
+      }
+
+      if (isLandingPage) {
+        if (isLoggedIn) {
+          return Response.redirect(new URL("/dashboard", nextUrl));
+        }
         return true;
       }
 

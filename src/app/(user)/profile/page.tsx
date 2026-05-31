@@ -6,9 +6,9 @@
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
-import Image from "next/image";
 import { User, Mail, Shield, LogIn, Target, GraduationCap, CheckCircle, Clock } from "lucide-react";
 import { EXAM_CATEGORY_LABELS, PREPARATION_LEVEL_LABELS } from "@/lib/onboarding";
+import { AvatarIdentity } from "@/components/ui/AvatarIdentity";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -19,18 +19,7 @@ export default async function ProfilePage() {
 
   const user = session.user;
 
-  const isGoogle = !!user.image && !user.image.includes("gravatar") && !user.image.startsWith("/");
-
-  const getInitials = (name: string | null | undefined) => {
-    if (!name) return "?";
-    return name
-      .trim()
-      .split(/\s+/)
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const isGoogle = !!user.image && user.image.includes("googleusercontent.com");
 
   const category = user.examCategory as keyof typeof EXAM_CATEGORY_LABELS | undefined;
   const prepLevel = user.preparationLevel as keyof typeof PREPARATION_LEVEL_LABELS | undefined;
@@ -42,21 +31,16 @@ export default async function ProfilePage() {
       {/* Profile Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-primary/10 via-blue-50/50 to-transparent px-6 py-8 sm:px-10">
+        <div className="bg-linear-to-r from-primary/10 via-blue-50/50 to-transparent px-6 py-8 sm:px-10">
           <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-            {user.image ? (
-              <Image
-                src={user.image}
-                alt={user.name || "User"}
-                width={96}
-                height={96}
-                className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-xl"
-              />
-            ) : (
-              <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-3xl border-4 border-white shadow-xl">
-                {getInitials(user.name)}
-              </div>
-            )}
+            <AvatarIdentity
+              name={user.name}
+              username={user.username}
+              image={user.image}
+              examCategory={user.examCategory}
+              rankTier="BRONZE"
+              size={96}
+            />
             <div>
               <h2 className="text-2xl font-bold text-navy mb-1">
                 {user.name || "Anonymous Aspirant"}

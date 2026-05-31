@@ -446,11 +446,7 @@
 .analytics-locked-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(245, 245, 250, 0.95)
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(245, 245, 250, 0.95));
   backdrop-filter: blur(3px);
   z-index: 10;
   display: flex;
@@ -537,4 +533,146 @@
 }
 .analytics-rec-card[data-type="speed"]::before {
   background: var(--color-secondary);
+}
+
+/* ─── Skeleton Loading System ──────────────────────────────── */
+
+/* Base skeleton block */
+.skeleton {
+  background: #e5e7eb;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Premium shimmer overlay — subtle, slow, low-contrast */
+.skeleton-shimmer {
+  background: #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(243, 244, 246, 0.6) 40%,
+    rgba(243, 244, 246, 0.8) 50%,
+    rgba(243, 244, 246, 0.6) 60%,
+    transparent 100%
+  );
+  animation: skeleton-shimmer-move 1.8s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer-move {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Dark-themed shimmer for arena-glass / dark backgrounds */
+.skeleton-shimmer-dark {
+  background: rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.skeleton-shimmer-dark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 100%
+  );
+  animation: skeleton-shimmer-move 1.8s ease-in-out infinite;
+}
+
+/* Skeleton text lines */
+.skeleton-text {
+  height: 14px;
+  border-radius: 6px;
+}
+
+/* Skeleton heading */
+.skeleton-heading {
+  height: 28px;
+  border-radius: 8px;
+}
+
+/* Skeleton circle (avatars) */
+.skeleton-circle {
+  border-radius: 9999px;
+}
+
+/* Skeleton badge / pill */
+.skeleton-pill {
+  border-radius: 9999px;
+  height: 24px;
+}
+
+/* Chart-shaped skeleton for analytics */
+.skeleton-chart {
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-chart::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: 60%;
+  background: linear-gradient(
+    to right,
+    #e5e7eb 0%,
+    #d1d5db 15%,
+    #e5e7eb 30%,
+    #d1d5db 50%,
+    #e5e7eb 65%,
+    #d1d5db 80%,
+    #e5e7eb 100%
+  );
+  clip-path: polygon(
+    0% 80%,
+    8% 65%,
+    16% 70%,
+    24% 45%,
+    32% 55%,
+    40% 35%,
+    48% 40%,
+    56% 25%,
+    64% 30%,
+    72% 20%,
+    80% 35%,
+    88% 15%,
+    96% 25%,
+    100% 30%,
+    100% 100%,
+    0% 100%
+  );
+  border-radius: 4px;
+}
+
+/* Skeleton wrapper — prevents content from showing through */
+.skeleton-page {
+  animation: skeleton-page-in 0.15s ease-out forwards;
+}
+@keyframes skeleton-page-in {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
 }

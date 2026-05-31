@@ -361,7 +361,6 @@ export default async function AnalyticsPage({
           </div>
         )}
       </section>
-
     </div>
   );
 }

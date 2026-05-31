@@ -120,6 +120,7 @@ export interface LeaderboardEntry {
   username: string | null;
   name: string | null;
   image: string | null;
+  examCategory?: string | null;
   score: number;
   accuracy: number;
   timeTakenInSeconds: number;
@@ -182,6 +183,7 @@ export interface CategoryRankingEntry {
   username: string | null;
   name: string | null;
   image: string | null;
+  examCategory?: string | null;
   totalScore: number;
   averageAccuracy: number;
   challengesCompleted: number;
