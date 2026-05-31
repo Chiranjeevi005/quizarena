@@ -4,271 +4,364 @@ import { ROUTES } from "@/lib/routes";
 import Link from "next/link";
 import {
   TrendingUp,
+  TrendingDown,
   Target,
   Flame,
   Award,
   BarChart3,
-  PieChart,
   ArrowRight,
-  Activity,
   AlertTriangle,
+  Lock,
+  Lightbulb,
+  Zap,
   CheckCircle2,
+  Trophy,
 } from "lucide-react";
-import {
-  getPerformanceOverview,
-  generatePerformanceTrends,
-  getCategoryAnalytics,
-  detectWeakAreas,
-} from "@/actions/performance";
+import { getAnalyticsIntelligence, type AnalyticsIntelligence } from "@/actions/performance";
+import { PerformanceTrendChart } from "@/components/analytics/PerformanceTrendChart";
 
-export default async function AnalyticsPage() {
+// ── Preview mock data for UI testing ──
+function getPreviewData(): AnalyticsIntelligence {
+  const today = new Date();
+  const trendData = Array.from({ length: 18 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - (17 - i));
+    return {
+      date: d.toISOString().split("T")[0],
+      accuracy: Math.round(58 + Math.random() * 30 + i * 0.8),
+    };
+  });
+
+  return {
+    maturityLevel: 4,
+    snapshot: {
+      totalAttempts: 42,
+      overallAccuracy: 74,
+      currentStreak: 5,
+      currentRank: 12,
+      accuracyDelta: 3,
+      bestRank: 3,
+      bestAccuracy: 88,
+    },
+    weakness: {
+      weakestCategory: "Quantitative Aptitude",
+      categoryAccuracy: 61,
+      averageAccuracy: 74,
+      differenceFromAverage: 13,
+      priority: "HIGH",
+    },
+    categories: [
+      {
+        category: "Reasoning",
+        accuracy: 82,
+        attemptCount: 14,
+        status: "Strong Area",
+      },
+      {
+        category: "English",
+        accuracy: 75,
+        attemptCount: 11,
+        status: "Strong Area",
+      },
+      {
+        category: "General Awareness",
+        accuracy: 68,
+        attemptCount: 9,
+        status: "Needs Improvement",
+      },
+      {
+        category: "Quantitative Aptitude",
+        accuracy: 61,
+        attemptCount: 8,
+        status: "Needs Improvement",
+      },
+    ],
+    trendData,
+    actions: [
+      {
+        title: "Practice Quantitative Aptitude",
+        reason: "Accuracy is 13% below your average.",
+        expectedImpact: "+4% Overall Accuracy",
+        type: "practice",
+        category: "Quantitative Aptitude",
+      },
+      {
+        title: "Improve speed in General Awareness",
+        reason: "Shows understanding at 68%, needs consistency.",
+        expectedImpact: "Faster clear times",
+        type: "speed",
+        category: "General Awareness",
+      },
+      {
+        title: "Continue Reasoning practice",
+        reason: "Current accuracy of 82% is a strong advantage.",
+        expectedImpact: "Maintain competitive edge",
+        type: "continue",
+        category: "Reasoning",
+      },
+    ],
+  };
+}
+
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect(ROUTES.AUTH.SIGN_IN);
   }
 
-  const userId = session.user.id;
-  const performance = await getPerformanceOverview(userId);
-  const trends = await generatePerformanceTrends(userId, 30);
-  const categoryStats = await getCategoryAnalytics(userId);
-  const weakAreas = await detectWeakAreas(userId);
+  const params = await searchParams;
+  const isPreview = params.preview === "true";
 
-  const hasHistory = performance.totalAttempts > 0;
+  const data = isPreview ? getPreviewData() : await getAnalyticsIntelligence(session.user.id);
+  const { maturityLevel, snapshot, weakness, categories, trendData, actions } = data;
 
-  // Find max accuracy in trends to scale bars
-  const maxTrendAccuracy = 100; // Always scale to 100%
+  // ── Level 0: Analytics Locked ──
+  if (maturityLevel === 0) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Performance Coach</h1>
+          <p className="text-gray-500 mt-1">
+            Complete challenges to unlock personalized preparation intelligence.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 to-purple-500/5" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
+              <Lock className="w-8 h-8 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Intelligence Locked</h2>
+            <p className="text-gray-500 max-w-md mx-auto mb-8">
+              We need at least 1 completed challenge to establish your performance baseline. Take a
+              challenge to unlock your Preparation Status Hero.
+            </p>
+            <Link href="/challenges" className="btn btn-primary btn-lg gap-2">
+              Start First Challenge <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const topCategories = [...categories]
+    .filter((c) => c.attemptCount > 0)
+    .sort((a, b) => b.accuracy - a.accuracy)
+    .slice(0, 3);
+  const bottomCategories = [...categories]
+    .filter((c) => c.attemptCount > 0)
+    .sort((a, b) => a.accuracy - b.accuracy)
+    .slice(0, 3);
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6 pb-12">
       <div>
-        <h1 className="text-2xl font-bold text-navy mb-2">Performance Intelligence</h1>
-        <p className="text-gray-500">Track your preparation consistency and competitive growth</p>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Performance Coach</h1>
+        <p className="text-gray-500 mt-1">
+          Your personalized preparation intelligence and next actions.
+        </p>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mb-4 relative z-10">
-            <BarChart3 className="w-5 h-5 text-gray-400" />
-          </div>
-          <p className="text-sm font-medium text-gray-500 mb-1 relative z-10">Total Attempts</p>
-          <p className="text-2xl font-bold text-navy relative z-10">
-            {performance.totalAttempts || 0}
-          </p>
+      {/* ── SECTION 1: PREPARATION STATUS HERO ── */}
+      <section className="analytics-section bg-[#1b2234] rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 opacity-10">
+          <Target className="w-64 h-64" />
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
-          {hasHistory && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-green-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4 relative z-10">
-            <Target className="w-5 h-5 text-green-500" />
-          </div>
-          <p className="text-sm font-medium text-gray-500 mb-1 relative z-10">Overall Accuracy</p>
-          <p className="text-2xl font-bold text-navy relative z-10">
-            {hasHistory ? `${Math.round(performance.averageAccuracy)}%` : "—%"}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
-          {performance.currentStreak > 0 && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-orange-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mb-4 relative z-10">
-            <Flame
-              className={`w-5 h-5 ${performance.currentStreak > 0 ? "text-orange-500" : "text-orange-300"}`}
-            />
-          </div>
-          <p className="text-sm font-medium text-gray-500 mb-1 relative z-10">Current Streak</p>
-          <p className="text-2xl font-bold text-navy relative z-10">
-            {performance.currentStreak} days
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
-          {performance.rank && (
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-100 rounded-full blur-2xl opacity-50"></div>
-          )}
-          <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center mb-4 relative z-10">
-            <Award className="w-5 h-5 text-purple-500" />
-          </div>
-          <p className="text-sm font-medium text-gray-500 mb-1 relative z-10">Global Rank</p>
-          <p className="text-2xl font-bold text-navy relative z-10">
-            {performance.rank ? `#${performance.rank}` : "—"}
-          </p>
-        </div>
-      </div>
-
-      {/* Visualizations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Trend Analytics (Native HTML/CSS Bars) */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-navy">Accuracy Trends (30 Days)</h2>
-            <Activity className="w-5 h-5 text-gray-300" />
-          </div>
-
-          {trends.length > 0 ? (
-            <div className="h-64 flex items-end gap-2 md:gap-4 justify-between pt-4 pb-2 border-b border-gray-100">
-              {trends.slice(-14).map((trend, i) => (
-                <div key={i} className="flex flex-col items-center flex-1 group">
-                  <div className="w-full relative flex items-end justify-center h-48 bg-gray-50 rounded-t border border-gray-100">
-                    <div
-                      className="w-full bg-primary/80 group-hover:bg-primary transition-all rounded-t"
-                      style={{ height: `${(trend.accuracy / maxTrendAccuracy) * 100}%` }}
-                    >
-                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-navy text-white text-[10px] px-2 py-1 rounded shadow pointer-events-none z-10 whitespace-nowrap">
-                        {trend.accuracy}%
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-[10px] text-gray-400 mt-2 rotate-45 md:rotate-0 origin-left">
-                    {new Date(trend.date).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center h-64">
-              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
-                <BarChart3 className="w-8 h-8 text-gray-300" />
-              </div>
-              <h3 className="text-base font-semibold text-navy mb-2">Not enough data</h3>
-              <p className="text-sm text-gray-500 max-w-xs">
-                Take challenges over multiple days to see your growth visualized here.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Category Performance */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-navy">Category Intelligence</h2>
-            <PieChart className="w-5 h-5 text-gray-300" />
-          </div>
-
-          {categoryStats.length > 0 ? (
-            <div className="space-y-5">
-              {categoryStats.map((cat, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="font-bold text-navy">{cat.category}</span>
-                    <span className="text-gray-500 font-medium">
-                      {Math.round(cat.averageAccuracy)}% acc
-                    </span>
-                  </div>
-                  <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${cat.averageAccuracy > 75 ? "bg-green-500" : cat.averageAccuracy > 50 ? "bg-amber-500" : "bg-red-500"}`}
-                      style={{ width: `${Math.round(cat.averageAccuracy)}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-400">
-                    <span>{cat.totalAttempts} attempts</span>
-                    <span>
-                      {cat.totalCorrect}/{cat.totalAnswered} correct
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
-                <PieChart className="w-8 h-8 text-gray-300" />
-              </div>
-              <h3 className="text-base font-semibold text-navy mb-2">No category data yet</h3>
-              <p className="text-sm text-gray-500 max-w-xs">
-                Category strengths and weaknesses will appear here.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Weakness Engine Insights */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <AlertTriangle className="w-5 h-5 text-amber-500" />
-          <h2 className="text-lg font-bold text-navy">Vulnerability Report</h2>
-        </div>
-
-        {weakAreas.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {weakAreas.map((weak, i) => (
-              <div
-                key={i}
-                className="bg-red-50/50 border border-red-100 rounded-xl p-5 flex flex-col items-start gap-2"
-              >
-                <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider">
-                  High Risk
-                </span>
-                <h3 className="text-base font-bold text-navy">{weak.category}</h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  Accuracy is critically low at{" "}
-                  <span className="font-bold text-red-600">{weak.accuracy}%</span>. Recommended deep
-                  revision.
-                </p>
-                <Link
-                  href={`/challenges?category=${weak.category}`}
-                  className="text-primary text-sm font-semibold hover:underline mt-auto"
-                >
-                  Practice {weak.category} &rarr;
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : hasHistory ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center bg-green-50/50 border border-green-100 rounded-xl">
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
-              <CheckCircle2 className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-base font-semibold text-navy mb-1">
-              Solid Performance Across the Board
-            </h3>
-            <p className="text-sm text-gray-500 max-w-md">
-              We haven&apos;t detected any critical weaknesses across your attempted categories.
-              Keep practicing to maintain consistency.
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <p className="text-indigo-200 font-medium text-sm tracking-wide uppercase mb-1">
+              Overall Accuracy
             </p>
+            <div className="flex items-baseline gap-3">
+              <span className="text-6xl font-black tracking-tighter">
+                {snapshot.overallAccuracy}%
+              </span>
+              {snapshot.accuracyDelta !== null && snapshot.accuracyDelta !== 0 && (
+                <span
+                  className={`flex items-center text-sm font-semibold px-2 py-1 rounded-full ${
+                    snapshot.accuracyDelta > 0
+                      ? "bg-green-500/20 text-green-300"
+                      : "bg-red-500/20 text-red-300"
+                  }`}
+                >
+                  {snapshot.accuracyDelta > 0 ? (
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3 mr-1" />
+                  )}
+                  {Math.abs(snapshot.accuracyDelta)}% this week
+                </span>
+              )}
+            </div>
           </div>
+
+          <div className="flex gap-8 md:justify-end">
+            <div>
+              <p className="text-indigo-200 text-sm mb-1">Current Rank</p>
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-yellow-400" />
+                <span className="text-2xl font-bold">
+                  {snapshot.currentRank ? `#${snapshot.currentRank}` : "Unranked"}
+                </span>
+              </div>
+            </div>
+            <div>
+              <p className="text-indigo-200 text-sm mb-1">Streak</p>
+              <div className="flex items-center gap-2">
+                <Flame className="w-5 h-5 text-orange-400" />
+                <span className="text-2xl font-bold">{snapshot.currentStreak}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 2: PRIORITY FOCUS ── */}
+      <section className="analytics-section">
+        <h2 className="text-sm font-bold tracking-wider text-gray-500 uppercase mb-3">
+          Priority Focus
+        </h2>
+
+        {maturityLevel >= 2 ? (
+          weakness ? (
+            <div className="bg-white rounded-2xl border-2 border-red-100 shadow-sm p-6 lg:p-8 flex flex-col md:flex-row items-center gap-6 justify-between">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-6 h-6 text-red-500" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-xl font-bold text-gray-900">{weakness.weakestCategory}</h3>
+                    <span className="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                      HIGH IMPACT
+                    </span>
+                  </div>
+                  <p className="text-gray-600 mb-2">
+                    Accuracy is{" "}
+                    <span className="font-semibold text-red-600">
+                      {weakness.differenceFromAverage}% below
+                    </span>{" "}
+                    your average. Practicing this will yield the highest rating increase.
+                  </p>
+                  <div className="flex gap-4 text-sm font-medium">
+                    <span className="text-gray-500">Current: {weakness.categoryAccuracy}%</span>
+                    <span className="text-gray-500">Average: {weakness.averageAccuracy}%</span>
+                  </div>
+                </div>
+              </div>
+              <Link
+                href={`/challenges?category=${encodeURIComponent(weakness.weakestCategory)}`}
+                className="btn bg-red-500 hover:bg-red-600 text-white w-full md:w-auto px-8 whitespace-nowrap"
+              >
+                Practice Category
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center text-center min-h-[160px]">
+              <CheckCircle2 className="w-10 h-10 text-green-500 mb-3" />
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Balanced Performance</h3>
+              <p className="text-gray-500 text-sm">
+                No significant weaknesses detected. Keep practicing across all categories to
+                maintain your edge.
+              </p>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center border border-dashed border-gray-200 rounded-xl">
-            <h3 className="text-base font-semibold text-navy mb-2">Insufficient Data</h3>
-            <p className="text-sm text-gray-500 max-w-md">
-              Complete at least 3 challenges in a category to unlock vulnerability reports.
+          <div className="analytics-locked rounded-2xl border border-gray-100 p-8 flex flex-col items-center justify-center text-center relative">
+            <Lock className="w-8 h-8 text-gray-400 mb-3 relative z-10" />
+            <h3 className="font-semibold text-gray-900 mb-1 relative z-10">
+              Priority Focus Locked
+            </h3>
+            <p className="text-sm text-gray-500 relative z-10">
+              Complete {4 - snapshot.totalAttempts} more attempts to unlock.
             </p>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Empty State CTA (if no history) */}
-      {!hasHistory && (
-        <div className="bg-linear-to-r from-primary/5 to-blue-50 rounded-2xl p-6 border border-primary/10">
-          <div className="flex flex-col sm:flex-row items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Target className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-navy mb-1">Start tracking your progress</h3>
-              <p className="text-sm text-gray-600 mb-3">
-                Complete practice quizzes to see your performance analytics and track improvement
-                over time.
-              </p>
-              <Link
-                href="/challenges"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline text-sm"
-              >
-                Browse challenges <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+      {/* ── SECTION 4: PERFORMANCE JOURNEY (Sparkline) ── */}
+      <section className="analytics-section">
+        <h2 className="text-sm font-bold tracking-wider text-gray-500 uppercase mb-3">
+          Performance Journey
+        </h2>
+        {maturityLevel >= 1 ? (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            {trendData.length >= 2 ? (
+              <PerformanceTrendChart data={trendData} />
+            ) : (
+              <div className="h-20 flex flex-col items-center justify-center text-center">
+                <BarChart3 className="w-6 h-6 text-gray-300 mb-2" />
+                <p className="text-sm text-gray-500">Not enough historical data to map journey.</p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        ) : null}
+      </section>
+
+      {/* ── SECTION 5: ACTION CENTER ── */}
+      <section className="analytics-section">
+        <h2 className="text-sm font-bold tracking-wider text-gray-500 uppercase mb-3">
+          Action Center
+        </h2>
+
+        {maturityLevel >= 4 ? (
+          <div className="space-y-3">
+            {actions.length > 0 ? (
+              actions.map((action, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between hover:border-indigo-100 transition-colors"
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className="mt-1">
+                      {action.type === "practice" && <Target className="w-5 h-5 text-indigo-500" />}
+                      {action.type === "speed" && <Zap className="w-5 h-5 text-yellow-500" />}
+                      {action.type === "continue" && (
+                        <TrendingUp className="w-5 h-5 text-green-500" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 mb-0.5">{action.title}</h3>
+                      <p className="text-sm text-gray-500 mb-2">{action.reason}</p>
+                      <span className="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">
+                        Impact: {action.expectedImpact}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/challenges?category=${encodeURIComponent(action.category)}`}
+                    className="btn btn-outline text-sm whitespace-nowrap w-full md:w-auto"
+                  >
+                    Start Practice
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-gray-500 text-sm">
+                No specific actions recommended at this time. Keep practicing!
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="analytics-locked rounded-2xl border border-gray-100 p-8 flex flex-col items-center justify-center text-center relative">
+            <Lock className="w-8 h-8 text-gray-400 mb-3 relative z-10" />
+            <h3 className="font-semibold text-gray-900 mb-1 relative z-10">Action Center Locked</h3>
+            <p className="text-sm text-gray-500 relative z-10">
+              Complete {20 - snapshot.totalAttempts} more attempts to unlock.
+            </p>
+          </div>
+        )}
+      </section>
+
     </div>
   );
 }

@@ -49,6 +49,236 @@ export interface RecentAttempt {
 }
 
 // ============================================================================
+// ANALYTICS INTELLIGENCE TYPES
+// ============================================================================
+
+export interface AnalyticsWeakness {
+  weakestCategory: string;
+  categoryAccuracy: number;
+  averageAccuracy: number;
+  differenceFromAverage: number;
+  priority: "HIGH" | "MEDIUM";
+}
+
+export interface AnalyticsCategory {
+  category: string;
+  accuracy: number;
+  attemptCount: number;
+  status: "Strong Area" | "Needs Improvement" | "Getting Started";
+}
+
+export interface AnalyticsAction {
+  title: string;
+  reason: string;
+  expectedImpact: string;
+  type: "practice" | "speed" | "continue";
+  category: string;
+}
+
+export interface AnalyticsIntelligence {
+  maturityLevel: number;
+  snapshot: {
+    totalAttempts: number;
+    overallAccuracy: number;
+    currentStreak: number;
+    currentRank: number | null;
+    accuracyDelta: number | null;
+    bestRank: number | null;
+    bestAccuracy: number | null;
+  };
+  weakness: AnalyticsWeakness | null;
+  categories: AnalyticsCategory[];
+  trendData: Array<{ date: string; accuracy: number }>;
+  actions: AnalyticsAction[];
+}
+
+// ============================================================================
+// ANALYTICS INTELLIGENCE — Consolidated Action
+// ============================================================================
+
+export async function getAnalyticsIntelligence(userId: string): Promise<AnalyticsIntelligence> {
+  // Fetch all data in parallel
+  const [profile, bestRankEntry, latestRankEntry, bestAccuracyEntry, categoryPerfs, trendAttempts] =
+    await Promise.all([
+      prisma.userPerformanceProfile.findUnique({ where: { userId } }),
+      prisma.leaderboardEntry.findFirst({
+        where: { userId },
+        orderBy: { rank: "asc" },
+      }),
+      prisma.leaderboardEntry.findFirst({
+        where: { userId },
+        orderBy: { submittedAt: "desc" },
+      }),
+      prisma.leaderboardEntry.findFirst({
+        where: { userId },
+        orderBy: { accuracy: "desc" },
+      }),
+      prisma.userCategoryPerformance.findMany({
+        where: { userId },
+        orderBy: { totalAttempts: "desc" },
+      }),
+      prisma.attempt.findMany({
+        where: {
+          userId,
+          status: AttemptStatus.EVALUATED,
+          submittedAt: {
+            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          },
+        },
+        orderBy: { submittedAt: "asc" },
+        select: {
+          submittedAt: true,
+          correctAnswers: true,
+          totalAnswered: true,
+        },
+      }),
+    ]);
+
+  const totalAttempts = profile?.totalAttempts ?? 0;
+  const overallAccuracy = profile?.averageAccuracy ?? 0;
+
+  // ── Maturity Level ──
+  let maturityLevel = 0;
+  if (totalAttempts >= 20) maturityLevel = 4;
+  else if (totalAttempts >= 10) maturityLevel = 3;
+  else if (totalAttempts >= 4) maturityLevel = 2;
+  else if (totalAttempts >= 1) maturityLevel = 1;
+
+  // ── Trend Data (grouped by day) ──
+  const grouped: Record<string, { totalCorrect: number; totalAnswered: number }> = {};
+  for (const a of trendAttempts) {
+    if (!a.submittedAt) continue;
+    const day = a.submittedAt.toISOString().split("T")[0];
+    if (!grouped[day]) grouped[day] = { totalCorrect: 0, totalAnswered: 0 };
+    grouped[day].totalCorrect += a.correctAnswers;
+    grouped[day].totalAnswered += a.totalAnswered || 1;
+  }
+  const trendData = Object.entries(grouped).map(([date, d]) => ({
+    date,
+    accuracy: Math.round((d.totalCorrect / d.totalAnswered) * 100),
+  }));
+
+  // ── Accuracy Delta (compare last 7 days vs. prior 7 days) ──
+  let accuracyDelta: number | null = null;
+  if (trendData.length >= 2) {
+    const now = Date.now();
+    const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const fourteenDaysAgo = now - 14 * 24 * 60 * 60 * 1000;
+
+    const recentPoints = trendData.filter((t) => new Date(t.date).getTime() >= sevenDaysAgo);
+    const priorPoints = trendData.filter((t) => {
+      const ts = new Date(t.date).getTime();
+      return ts >= fourteenDaysAgo && ts < sevenDaysAgo;
+    });
+
+    if (recentPoints.length > 0 && priorPoints.length > 0) {
+      const recentAvg = recentPoints.reduce((s, p) => s + p.accuracy, 0) / recentPoints.length;
+      const priorAvg = priorPoints.reduce((s, p) => s + p.accuracy, 0) / priorPoints.length;
+      accuracyDelta = Math.round(recentAvg - priorAvg);
+    }
+  }
+
+  // ── Snapshot ──
+  const snapshot = {
+    totalAttempts,
+    overallAccuracy: Math.round(overallAccuracy),
+    currentStreak: profile?.currentStreak ?? 0,
+    currentRank: latestRankEntry?.rank ?? null,
+    accuracyDelta,
+    bestRank: bestRankEntry?.rank ?? null,
+    bestAccuracy: bestAccuracyEntry ? Math.round(bestAccuracyEntry.accuracy) : null,
+  };
+
+  // ── Weakness Detection ──
+  let weakness: AnalyticsWeakness | null = null;
+  if (maturityLevel >= 2 && categoryPerfs.length > 0) {
+    // Find weakest category with at least 3 attempts
+    const eligible = categoryPerfs.filter((c) => c.totalAttempts >= 3);
+    if (eligible.length > 0) {
+      const weakest = eligible.reduce((prev, curr) =>
+        curr.averageAccuracy < prev.averageAccuracy ? curr : prev
+      );
+      const diff = Math.round(overallAccuracy - weakest.averageAccuracy);
+      if (diff > 0) {
+        weakness = {
+          weakestCategory: weakest.category,
+          categoryAccuracy: Math.round(weakest.averageAccuracy),
+          averageAccuracy: Math.round(overallAccuracy),
+          differenceFromAverage: diff,
+          priority: diff >= 15 ? "HIGH" : "MEDIUM",
+        };
+      }
+    }
+  }
+
+  // ── Category Intelligence ──
+  const categories: AnalyticsCategory[] = categoryPerfs.map((c) => ({
+    category: c.category,
+    accuracy: Math.round(c.averageAccuracy),
+    attemptCount: c.totalAttempts,
+    status:
+      c.averageAccuracy >= 70
+        ? "Strong Area"
+        : c.totalAttempts < 3
+          ? "Getting Started"
+          : "Needs Improvement",
+  }));
+
+  // ── Actions (Action Center) ──
+  const actions: AnalyticsAction[] = [];
+  if (maturityLevel >= 4) {
+    // 1. Weakest category action
+    if (weakness) {
+      actions.push({
+        title: `Practice ${weakness.weakestCategory}`,
+        reason: `Accuracy is ${weakness.differenceFromAverage}% below your average.`,
+        expectedImpact: `+${Math.min(3, Math.round(weakness.differenceFromAverage / 3))}% Overall Accuracy`,
+        type: "practice",
+        category: weakness.weakestCategory,
+      });
+    }
+
+    // 2. Speed / medium performer action
+    const mediumPerformers = categories
+      .filter((c) => c.accuracy >= 50 && c.accuracy < 70 && c.attemptCount >= 3)
+      .sort((a, b) => a.accuracy - b.accuracy);
+    if (mediumPerformers.length > 0) {
+      const target = mediumPerformers[0];
+      actions.push({
+        title: `Improve speed in ${target.category}`,
+        reason: `Shows understanding at ${target.accuracy}%, needs consistency.`,
+        expectedImpact: "Faster clear times",
+        type: "speed",
+        category: target.category,
+      });
+    }
+
+    // 3. Strongest category action
+    const strongest = categories
+      .filter((c) => c.accuracy >= 70)
+      .sort((a, b) => b.accuracy - a.accuracy);
+    if (strongest.length > 0) {
+      actions.push({
+        title: `Continue ${strongest[0].category} practice`,
+        reason: `Current accuracy of ${strongest[0].accuracy}% is a strong advantage.`,
+        expectedImpact: "Maintain competitive edge",
+        type: "continue",
+        category: strongest[0].category,
+      });
+    }
+  }
+
+  return {
+    maturityLevel,
+    snapshot,
+    weakness,
+    categories,
+    trendData,
+    actions: actions.slice(0, 3),
+  };
+}
+
+// ============================================================================
 // READ OPERATIONS
 // ============================================================================
 
