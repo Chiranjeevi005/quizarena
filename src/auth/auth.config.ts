@@ -124,11 +124,15 @@ export const authConfig = {
       }
 
       // Handle session update
-      if (trigger === "update" && session?.user) {
-        token.onboardingCompleted = session.user.onboardingCompleted ?? token.onboardingCompleted;
-        token.examCategory = session.user.examCategory ?? token.examCategory;
-        token.preparationLevel = session.user.preparationLevel ?? token.preparationLevel;
-        token.username = session.user.username ?? token.username;
+      if (trigger === "update" && session) {
+        // The payload from update(data) might be passed directly as session or wrapped in session.user
+        const data = session.user || session;
+        if (data.onboardingCompleted !== undefined) token.onboardingCompleted = data.onboardingCompleted;
+        if (data.examCategory !== undefined) token.examCategory = data.examCategory;
+        if (data.preparationLevel !== undefined) token.preparationLevel = data.preparationLevel;
+        if (data.username !== undefined) token.username = data.username;
+        if (data.name !== undefined) token.name = data.name;
+        if (data.image !== undefined) token.picture = data.image; // NextAuth JWT uses token.picture
       }
 
       return token;

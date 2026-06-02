@@ -81,7 +81,14 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-navy truncate">{user?.name || "User"}</p>
-                <p className="text-xs text-gray-500 truncate">{user?.username || "Aspirant"}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <p className="text-xs text-gray-500 truncate">{user?.username || "Aspirant"}</p>
+                  {(user as any)?.examCategory && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/10 text-primary uppercase tracking-wider whitespace-nowrap">
+                      {(user as any).examCategory.replace('_', ' ')}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -180,7 +187,14 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                   </div>
                   <div>
                     <p className="text-sm font-bold text-navy">{user?.name || "User"}</p>
-                    <p className="text-xs text-gray-500">{user?.username || "Aspirant"}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <p className="text-xs text-gray-500">{user?.username || "Aspirant"}</p>
+                      {(user as any)?.examCategory && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/10 text-primary uppercase tracking-wider whitespace-nowrap">
+                          {(user as any).examCategory.replace('_', ' ')}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <button

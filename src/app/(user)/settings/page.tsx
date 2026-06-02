@@ -3,15 +3,14 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
 import { prisma } from "@/lib/prisma";
 
-import { AccountHero } from "@/components/dashboard/settings/AccountHero";
-import { PreparationPreferences } from "@/components/dashboard/settings/PreparationPreferences";
+import { NotificationsReminders } from "@/components/dashboard/settings/NotificationsReminders";
 import { SecuritySettings } from "@/components/dashboard/settings/SecuritySettings";
 import { SubscriptionSettings } from "@/components/dashboard/settings/SubscriptionSettings";
-import { DangerZone } from "@/components/dashboard/settings/DangerZone";
+import { DangerZone as AccountControls } from "@/components/dashboard/settings/DangerZone";
 
 export const metadata = {
-  title: "Account Workspace | QuizArena",
-  description: "Manage your account identity, security, and active sessions.",
+  title: "Settings | QuizArena",
+  description: "Manage your preparation preferences, security, subscription, and account controls.",
 };
 
 export default async function SettingsPage() {
@@ -24,6 +23,7 @@ export default async function SettingsPage() {
   // Fetch full user details from the database
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
+    include: { accounts: true, sessions: true }
   });
 
   if (!user) {
@@ -32,27 +32,24 @@ export default async function SettingsPage() {
 
   // In a real implementation, you'd fetch the actual subscription plan for the user
   const currentPlan = "Free Plan";
+  const activeSessionsCount = user.sessions?.length || 1;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
       <div className="mb-8 text-center sm:text-left">
-        <h1 className="text-3xl font-bold text-navy mb-2">Account Workspace</h1>
+        <h1 className="text-3xl font-bold text-navy mb-2">Settings</h1>
         <p className="text-gray-500">
-          Manage your identity, preparation preferences, and subscription in one place.
+          Manage your preparation preferences, security, subscription, and account controls.
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         <section>
-          <AccountHero user={user} subscriptionPlan={currentPlan} />
+          <NotificationsReminders user={user} />
         </section>
 
         <section>
-          <PreparationPreferences user={user} />
-        </section>
-
-        <section>
-          <SecuritySettings user={user} />
+          <SecuritySettings user={user} activeSessionsCount={activeSessionsCount} />
         </section>
 
         <section>
@@ -60,7 +57,7 @@ export default async function SettingsPage() {
         </section>
 
         <section>
-          <DangerZone />
+          <AccountControls />
         </section>
       </div>
     </div>

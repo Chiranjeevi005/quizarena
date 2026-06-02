@@ -21,6 +21,9 @@ model User {
   onboardingCompleted       Boolean                     @default(false)
   examCategory              ExamCategory?
   preparationLevel          PreparationLevel?
+  dailyPracticeGoal         Int                         @default(20)
+  recommendationEngine      Boolean                     @default(true)
+  notificationPrefs         Json?
   accountState              AccountState                @default(ACTIVE)
   flagged                   Boolean                     @default(false)
   moderatorStatus           ModeratorStatus             @default(ACTIVE)

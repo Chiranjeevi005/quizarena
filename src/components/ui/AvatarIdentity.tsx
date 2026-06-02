@@ -5,7 +5,7 @@ interface AvatarIdentityProps {
   username?: string | null;
   image?: string | null;
   examCategory?: string | null;
-  rankTier?: "BRONZE" | "SILVER" | "GOLD" | "DIAMOND" | null;
+  rankTier?: "UNRANKED" | "BRONZE" | "SILVER" | "GOLD" | "DIAMOND" | null;
   size?: number;
   className?: string;
 }
@@ -45,15 +45,19 @@ export function AvatarIdentity({
   size = 48,
   className,
 }: AvatarIdentityProps) {
+  const isMonogramPref = image?.endsWith("#monogram");
+  const actualImage = image?.replace("#monogram", "");
+  
   // We only consider the image valid if it's a Google Profile photo
-  const isGoogle = !!image && image.includes("googleusercontent.com");
+  const isGoogle = !!actualImage && actualImage.includes("googleusercontent.com");
 
   const seed = username || name || "anonymous";
   const bgColor = getDeterministicColor(seed);
   const initials = getInitials(name);
 
   // Determine Rank Ring Color
-  let ringColor = "ring-gray-200 border-white"; // Bronze fallback/default
+  let ringColor = "ring-gray-200 border-white"; // UNRANKED fallback/default
+  if (rankTier === "BRONZE") ringColor = "ring-[#CD7F32] border-white";
   if (rankTier === "SILVER") ringColor = "ring-gray-400 border-white";
   if (rankTier === "GOLD") ringColor = "ring-amber-400 border-white";
   if (rankTier === "DIAMOND") ringColor = "ring-cyan-400 border-white";
@@ -73,14 +77,14 @@ export function AvatarIdentity({
       <div
         className={cn(
           "w-full h-full rounded-full flex items-center justify-center overflow-hidden text-white font-bold tracking-wider ring-2 ring-offset-2 shadow-sm transition-all duration-300",
-          !isGoogle && bgColor,
+          !(isGoogle && !isMonogramPref) && bgColor,
           ringColor
         )}
         style={{ fontSize: size * 0.4 }}
       >
-        {isGoogle ? (
+        {isGoogle && !isMonogramPref ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={image!} alt={name || "Avatar"} className="w-full h-full object-cover" />
+          <img src={actualImage!} alt={name || "Avatar"} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
         ) : (
           <span>{initials}</span>
         )}

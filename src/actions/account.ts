@@ -59,7 +59,7 @@ export async function updateAvatarAction(imageUrl: string) {
     data: { image: imageUrl },
   });
 
-  revalidatePath("/settings");
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
@@ -177,7 +177,7 @@ export async function updateProfileAction(data: {
     data,
   });
 
-  revalidatePath("/settings");
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
@@ -187,6 +187,8 @@ export async function updateProfileAction(data: {
 export async function updatePreferencesAction(data: {
   examCategory?: ExamCategory;
   preparationLevel?: PreparationLevel;
+  dailyPracticeGoal?: number;
+  recommendationEngine?: boolean;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
@@ -196,9 +198,74 @@ export async function updatePreferencesAction(data: {
     data: {
       examCategory: data.examCategory,
       preparationLevel: data.preparationLevel,
+      dailyPracticeGoal: data.dailyPracticeGoal,
+      recommendationEngine: data.recommendationEngine,
     },
   });
 
   revalidatePath("/settings");
+  return { success: true };
+}
+
+/**
+ * Update Notification Preferences
+ */
+export async function updateNotificationPrefsAction(prefs: Record<string, boolean>) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { notificationPrefs: true }
+  });
+
+  const currentPrefs = typeof user?.notificationPrefs === 'object' && user?.notificationPrefs !== null
+    ? user.notificationPrefs as Record<string, boolean>
+    : {
+        dailyReminder: true,
+        challengeAlerts: true,
+        rankUpdates: true,
+        competitionAnnouncements: true,
+        streakProtectionAlert: true,
+      };
+
+  const updatedPrefs = { ...currentPrefs, ...prefs };
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { notificationPrefs: updatedPrefs },
+  });
+
+  return { success: true };
+}
+
+/**
+ * Sign Out Other Devices
+ */
+export async function signOutOtherDevicesAction() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
+  
+  if (sessionToken) {
+    await prisma.session.deleteMany({
+      where: {
+        userId: session.user.id,
+        sessionToken: {
+          not: sessionToken
+        }
+      }
+    });
+  } else {
+    await prisma.session.deleteMany({
+      where: {
+        userId: session.user.id
+      }
+    });
+  }
+  
   return { success: true };
 }

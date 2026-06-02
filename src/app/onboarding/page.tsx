@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
@@ -258,34 +259,38 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="h-dvh overflow-hidden bg-[#F8FAFC] flex flex-col font-sans">
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200">
-        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
-              Q
-            </div>
-            <span className="text-navy font-bold text-xl tracking-tight">QuizArena</span>
+        <div className="max-w-2xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <Image
+              src="/logo-header.png"
+              alt="QuizArena"
+              width={180}
+              height={100}
+              className="h-12 sm:h-16 md:h-20 w-auto object-contain origin-left drop-shadow-sm"
+              priority
+              unoptimized
+            />
           </div>
 
           <div className="flex items-center gap-1.5">
             {STEPS.map((s) => (
               <div
                 key={s.id}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  step === s.id
+                className={`h-1.5 rounded-full transition-all duration-300 ${step === s.id
                     ? "w-8 bg-primary"
                     : step > s.id
                       ? "w-4 bg-primary/40"
                       : "w-4 bg-slate-200"
-                }`}
+                  }`}
               />
             ))}
           </div>
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center py-12 px-6">
+      <main className="flex-1 flex flex-col items-center py-4 px-4 sm:px-6 overflow-y-auto">
         <div className="w-full max-w-lg">
           <AnimatePresence mode="wait" custom={step}>
             <motion.div
@@ -301,16 +306,16 @@ export default function OnboardingPage() {
               }}
               className="w-full"
             >
-              <div className="mb-10 text-center">
-                <div className="inline-flex p-3 rounded-2xl bg-primary/10 text-primary mb-4">
-                  <currentStepInfo.icon size={28} />
+              <div className="mb-4 text-center flex flex-col items-center">
+                <div className="flex items-center justify-center w-12 h-12 rounded-[14px] bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 text-navy mb-3">
+                  <currentStepInfo.icon size={22} strokeWidth={2.25} />
                 </div>
-                <h1 className="text-3xl font-extrabold text-navy tracking-tight mb-2">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-navy tracking-tight mb-1.5">
                   {step === 1 && "What's your handle?"}
                   {step === 2 && "Target Exam"}
                   {step === 3 && "How's your prep?"}
                 </h1>
-                <p className="text-slate-500 text-lg">
+                <p className="text-slate-500 text-base">
                   {step === 1 && "Choose a unique username to start your journey."}
                   {step === 2 && "Pick the exam category you're focusing on."}
                   {step === 3 && "Tell us your level so we can tailor the tests."}
@@ -333,11 +338,10 @@ export default function OnboardingPage() {
                       }}
                       onKeyDown={(e) => e.key === "Enter" && handleUsernameSubmit()}
                       placeholder="Username"
-                      className={`w-full pl-12 pr-4 py-4 bg-white border-2 rounded-2xl outline-none transition-all text-lg ${
-                        errors.username
+                      className={`w-full pl-11 pr-4 py-3 bg-white border-2 rounded-2xl outline-none transition-all text-base ${errors.username
                           ? "border-red-200 focus:border-red-500 bg-red-50/30"
                           : "border-slate-100 focus:border-primary bg-white shadow-sm"
-                      }`}
+                        }`}
                       autoFocus
                       autoCapitalize="off"
                       spellCheck={false}
@@ -377,7 +381,7 @@ export default function OnboardingPage() {
                   <button
                     onClick={handleUsernameSubmit}
                     disabled={!formData.username || loading || checkingUsername}
-                    className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                    className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-base"
                   >
                     {loading ? <Loader2 className="animate-spin" /> : "Continue"}
                     <ChevronRight size={20} />
@@ -387,7 +391,7 @@ export default function OnboardingPage() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <div className="grid gap-3">
+                  <div className="grid gap-2">
                     {EXAM_CATEGORIES.map((cat) => (
                       <button
                         key={cat.value}
@@ -398,23 +402,21 @@ export default function OnboardingPage() {
                           }));
                           setErrors({});
                         }}
-                        className={`group relative w-full p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
-                          formData.category === cat.value
+                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${formData.category === cat.value
                             ? "border-primary bg-primary/5 ring-4 ring-primary/5"
                             : "border-white bg-white hover:border-slate-200 shadow-sm"
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-between items-center">
                           <div>
-                            <div className="font-bold text-navy text-lg">{cat.label}</div>
-                            <div className="text-sm text-slate-500 mt-1">{cat.description}</div>
+                            <div className="font-bold text-navy text-base">{cat.label}</div>
+                            <div className="text-xs text-slate-500">{cat.description}</div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                              formData.category === cat.value
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${formData.category === cat.value
                                 ? "bg-primary border-primary"
                                 : "border-slate-200"
-                            }`}
+                              }`}
                           >
                             {formData.category === cat.value && (
                               <CheckCircle2 size={16} className="text-white" />
@@ -425,21 +427,21 @@ export default function OnboardingPage() {
                     ))}
                   </div>
 
-                  <div className="flex gap-4 mt-8">
+                  <div className="flex gap-4 mt-4">
                     <button
                       onClick={() => setStep(1)}
-                      className="flex-1 bg-white border-2 border-slate-100 hover:border-slate-200 text-navy font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2"
+                      className="flex-1 bg-white border-2 border-slate-100 hover:border-slate-200 text-navy font-bold py-3 rounded-2xl transition-all flex items-center justify-center gap-2 text-base"
                     >
-                      <ChevronLeft size={20} />
+                      <ChevronLeft size={18} />
                       Back
                     </button>
                     <button
                       onClick={handleExamCategorySubmit}
                       disabled={!formData.category}
-                      className="flex-2 bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-2 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-2xl shadow-lg shadow-primary/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-base"
                     >
                       Continue
-                      <ChevronRight size={20} />
+                      <ChevronRight size={18} />
                     </button>
                   </div>
                 </div>
@@ -447,7 +449,7 @@ export default function OnboardingPage() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  <div className="grid gap-3">
+                  <div className="grid gap-2">
                     {PREPARATION_LEVELS.map((level) => (
                       <button
                         key={level.value}
@@ -458,23 +460,21 @@ export default function OnboardingPage() {
                           }));
                           setErrors({});
                         }}
-                        className={`group relative w-full p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
-                          formData.preparationLevel === level.value
+                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${formData.preparationLevel === level.value
                             ? "border-primary bg-primary/5 ring-4 ring-primary/5"
                             : "border-white bg-white hover:border-slate-200 shadow-sm"
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-between items-center">
                           <div>
-                            <div className="font-bold text-navy text-lg">{level.label}</div>
-                            <div className="text-sm text-slate-500 mt-1">{level.description}</div>
+                            <div className="font-bold text-navy text-base">{level.label}</div>
+                            <div className="text-xs text-slate-500">{level.description}</div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                              formData.preparationLevel === level.value
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${formData.preparationLevel === level.value
                                 ? "bg-primary border-primary"
                                 : "border-slate-200"
-                            }`}
+                              }`}
                           >
                             {formData.preparationLevel === level.value && (
                               <CheckCircle2 size={16} className="text-white" />
@@ -485,22 +485,22 @@ export default function OnboardingPage() {
                     ))}
                   </div>
 
-                  <div className="flex gap-4 mt-8">
+                  <div className="flex gap-4 mt-4">
                     <button
                       onClick={() => setStep(2)}
                       disabled={loading}
-                      className="flex-1 bg-white border-2 border-slate-100 hover:border-slate-200 text-navy font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2"
+                      className="flex-1 bg-white border-2 border-slate-100 hover:border-slate-200 text-navy font-bold py-3 rounded-2xl transition-all flex items-center justify-center gap-2 text-base"
                     >
-                      <ChevronLeft size={20} />
+                      <ChevronLeft size={18} />
                       Back
                     </button>
                     <button
                       onClick={handleComplete}
                       disabled={!formData.preparationLevel || loading}
-                      className="flex-2 bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-2 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-2xl shadow-lg shadow-primary/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-base"
                     >
                       {loading ? <Loader2 className="animate-spin" /> : "Complete Setup"}
-                      {!loading && <CheckCircle2 size={20} />}
+                      {!loading && <CheckCircle2 size={18} />}
                     </button>
                   </div>
                 </div>
@@ -509,10 +509,6 @@ export default function OnboardingPage() {
           </AnimatePresence>
         </div>
       </main>
-
-      <footer className="py-8 text-center">
-        <p className="text-slate-400 text-sm">Secured by QuizArena Auth System</p>
-      </footer>
     </div>
   );
 }

@@ -38,6 +38,12 @@ interface DashboardShellProps {
   children: React.ReactNode;
   currentStreak?: number;
   currentRank?: number | null;
+  freshUser?: {
+    name: string | null;
+    image: string | null;
+    username: string | null;
+    examCategory: string | null;
+  } | null;
 }
 
 const userNavItems = [
@@ -85,7 +91,7 @@ function getNavItemsForRole(role: string | undefined) {
   }
 }
 
-export function DashboardShell({ children, currentStreak, currentRank }: DashboardShellProps) {
+export function DashboardShell({ children, currentStreak, currentRank, freshUser }: DashboardShellProps) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
@@ -98,6 +104,14 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
   const role = (user?.role as string) ?? ROLES.USER;
   const isNotAdmin = role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN;
   const navItems = getNavItemsForRole(role);
+
+  const mergedUser = {
+    ...user,
+    name: freshUser?.name !== undefined ? freshUser.name : user?.name,
+    image: freshUser?.image !== undefined ? freshUser.image : user?.image,
+    username: freshUser?.username !== undefined ? freshUser.username : user?.username,
+    examCategory: freshUser?.examCategory !== undefined ? freshUser.examCategory : (user as any)?.examCategory,
+  };
 
   // ── Super Admin Isolation flag ─────────────────────────────────────────
   // Checked after all hooks to avoid Rules of Hooks violation.
@@ -189,20 +203,26 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
             unoptimized
           />
         </Link>
-        <Link href="/profile" className="shrink-0 group hover:opacity-80 transition-opacity">
-          {user?.image ? (
-            <Image
-              src={user.image}
-              alt={user?.name || "Profile"}
-              width={34}
-              height={34}
-              className="rounded-full w-[34px] h-[34px] object-cover border border-gray-200"
-            />
-          ) : (
-            <div className="w-[34px] h-[34px] rounded-full bg-navy text-white flex items-center justify-center text-xs font-bold border border-navy/10 shadow-sm">
-              {getInitials(user?.name)}
-            </div>
-          )}
+        <Link href="/profile" className="shrink-0 group hover:opacity-80 transition-opacity mt-1 mr-2">
+          <AvatarIdentity
+            name={mergedUser?.name}
+            username={mergedUser?.username}
+            image={mergedUser?.image}
+            examCategory={mergedUser?.examCategory}
+            rankTier={
+              currentRank
+                ? currentRank <= 10
+                  ? "DIAMOND"
+                  : currentRank <= 50
+                    ? "GOLD"
+                    : currentRank <= 100
+                      ? "SILVER"
+                      : "BRONZE"
+                : "BRONZE"
+            }
+            size={36}
+            className="group-hover:shadow-md transition-all duration-300"
+          />
         </Link>
       </header>
 
@@ -234,10 +254,10 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
         <div className="p-5 border-b border-gray-100 shrink-0">
           <Link href="/profile" className="flex items-center gap-4 group transition-all">
             <AvatarIdentity
-              name={user?.name}
-              username={user?.username}
-              image={user?.image}
-              examCategory={user?.examCategory}
+              name={mergedUser?.name}
+              username={mergedUser?.username}
+              image={mergedUser?.image}
+              examCategory={mergedUser?.examCategory}
               rankTier={
                 currentRank
                   ? currentRank <= 10
@@ -254,11 +274,11 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-navy truncate group-hover:text-primary transition-colors">
-                {user?.name || "User"}
+                {mergedUser?.name || "User"}
               </p>
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="text-xs text-gray-500 truncate">
-                  @{user?.username || "aspirant"}
+                  @{mergedUser?.username || "aspirant"}
                 </span>
                 {role !== ROLES.USER && (
                   <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">
@@ -388,10 +408,10 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
                   className="flex items-center gap-4 group transition-all"
                 >
                   <AvatarIdentity
-                    name={user?.name}
-                    username={user?.username}
-                    image={user?.image}
-                    examCategory={user?.examCategory}
+                    name={mergedUser?.name}
+                    username={mergedUser?.username}
+                    image={mergedUser?.image}
+                    examCategory={mergedUser?.examCategory}
                     rankTier={
                       currentRank
                         ? currentRank <= 10
@@ -408,11 +428,11 @@ export function DashboardShell({ children, currentStreak, currentRank }: Dashboa
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-navy truncate group-hover:text-primary transition-colors">
-                      {user?.name || "User"}
+                      {mergedUser?.name || "User"}
                     </p>
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <span className="text-xs text-gray-500 truncate">
-                        @{user?.username || "aspirant"}
+                        @{mergedUser?.username || "aspirant"}
                       </span>
                       {role !== ROLES.USER && (
                         <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">

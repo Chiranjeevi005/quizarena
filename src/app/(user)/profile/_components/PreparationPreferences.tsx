@@ -16,6 +16,12 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
   const [preparationLevel, setPreparationLevel] = useState<PreparationLevel | "">(
     user.preparationLevel || ""
   );
+  const [dailyPracticeGoal, setDailyPracticeGoal] = useState<number>(
+    (user as any).dailyPracticeGoal || 20
+  );
+  const [recommendationEngine, setRecommendationEngine] = useState<boolean>(
+    (user as any).recommendationEngine ?? true
+  );
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +30,8 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
         const result = await updatePreferencesAction({
           examCategory: (examCategory as ExamCategory) || undefined,
           preparationLevel: (preparationLevel as PreparationLevel) || undefined,
+          dailyPracticeGoal,
+          recommendationEngine,
         });
         if (result.success) {
           toast.success("Preferences updated successfully");
@@ -37,28 +45,21 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 transition-all duration-300 hover:shadow-md">
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
-            <BookOpen className="w-6 h-6 text-navy" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-navy tracking-tight">Preparation Preferences</h3>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Configure your target exams and difficulty
-            </p>
-          </div>
-        </div>
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2 text-gray-500">
+        <BookOpen className="w-4 h-4 text-gray-400" />
+        <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-700">
+          Preparation Preferences
+        </h2>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-6">
+      <form onSubmit={handleSave} className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
             <label className="flex text-sm font-bold text-gray-700 items-center gap-2">
               <Target className="w-4 h-4 text-gray-400" />
-              Target Exam
+              Target Examination
             </label>
             <div className="grid grid-cols-2 gap-3">
               {[
@@ -71,11 +72,10 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
                   key={exam.value}
                   type="button"
                   onClick={() => setExamCategory(exam.value as ExamCategory)}
-                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                    examCategory === exam.value
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all ${examCategory === exam.value
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
-                  }`}
+                    }`}
                 >
                   {exam.label}
                 </button>
@@ -91,18 +91,17 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
             <div className="flex flex-col gap-3">
               {[
                 { value: "BEGINNER", label: "Beginner" },
-                { value: "INTERMEDIATE", label: "Medium" },
-                { value: "ADVANCED", label: "Hardcore" },
+                { value: "INTERMEDIATE", label: "Intermediate" },
+                { value: "ADVANCED", label: "Advanced" },
               ].map((level) => (
                 <button
                   key={level.value}
                   type="button"
                   onClick={() => setPreparationLevel(level.value as PreparationLevel)}
-                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all text-left flex justify-between items-center ${
-                    preparationLevel === level.value
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all text-left flex justify-between items-center ${preparationLevel === level.value
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
-                  }`}
+                    }`}
                 >
                   {level.label}
                   {preparationLevel === level.value && (
@@ -110,6 +109,58 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
                   )}
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div className="space-y-3">
+            <label className="flex text-sm font-bold text-gray-700 items-center gap-2">
+              <BookOpen className="w-4 h-4 text-gray-400" />
+              Daily Practice Goal
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {[10, 20, 50].map((goal) => (
+                <button
+                  key={goal}
+                  type="button"
+                  onClick={() => setDailyPracticeGoal(goal)}
+                  className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all text-center ${dailyPracticeGoal === goal
+                      ? "border-green-500 bg-green-50 text-green-700"
+                      : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
+                    }`}
+                >
+                  {goal} Qs
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="flex text-sm font-bold text-gray-700 items-center gap-2">
+              <Target className="w-4 h-4 text-gray-400" />
+              Recommendation Engine
+            </label>
+            <div className="p-4 rounded-xl border-2 border-gray-100 bg-gray-50 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-gray-700">Personalized Challenges</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {recommendationEngine
+                    ? "Personalized challenge recommendations enabled"
+                    : "Only standard challenge suggestions"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRecommendationEngine(!recommendationEngine)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ease-in-out ${recommendationEngine ? 'bg-green-500' : 'bg-gray-200'
+                  }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition duration-150 ease-in-out ${recommendationEngine ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                />
+              </button>
             </div>
           </div>
         </div>

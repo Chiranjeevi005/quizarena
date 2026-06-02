@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { getPerformanceOverview, getCompetitivePosition } from "@/actions/performance";
+import { prisma } from "@/lib/prisma";
 
 export default async function UserAppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -29,6 +30,15 @@ export default async function UserAppLayout({ children }: { children: React.Reac
 
   let currentStreak = 0;
   let currentRank: number | null = null;
+  let freshUser = null;
+
+  if (session.user?.id) {
+    freshUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { examCategory: true, name: true, image: true, username: true }
+    });
+  }
+
   if (isNotAdmin && session.user.id) {
     const performance = await getPerformanceOverview(session.user.id);
     const position = await getCompetitivePosition(session.user.id);
@@ -37,7 +47,7 @@ export default async function UserAppLayout({ children }: { children: React.Reac
   }
 
   return (
-    <DashboardShell currentStreak={currentStreak} currentRank={currentRank}>
+    <DashboardShell currentStreak={currentStreak} currentRank={currentRank} freshUser={freshUser}>
       {children}
     </DashboardShell>
   );
