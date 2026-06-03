@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireModerator } from "@/features/rbac/services/guards";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export default async function ModeratorDashboardPage() {
   try {

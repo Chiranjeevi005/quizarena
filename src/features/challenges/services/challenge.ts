@@ -3,7 +3,7 @@
 import { auth } from "@/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import type {
   ChallengeWithQuestionsForAttempt,
   ChallengeStartResult,

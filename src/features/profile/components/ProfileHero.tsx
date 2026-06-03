@@ -89,7 +89,7 @@ export function ProfileHero({ user, isGoogleUser }: ProfileHeroProps) {
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-6 sm:mt-0">
               <button
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-xs"
-                onClick={() => { }}
+                onClick={() => {}}
               >
                 <Share2 className="w-4 h-4" />
                 Share

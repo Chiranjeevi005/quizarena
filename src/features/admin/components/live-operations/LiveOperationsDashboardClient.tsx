@@ -55,7 +55,8 @@ export function LiveOperationsDashboardClient({
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const { getLiveOperationsDashboardData } = await import("@/features/admin/services/live-operations");
+      const { getLiveOperationsDashboardData } =
+        await import("@/features/admin/services/live-operations");
       const freshData = await getLiveOperationsDashboardData();
       setData(freshData);
       setLastRefreshed(new Date(freshData.lastUpdated));

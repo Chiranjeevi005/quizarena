@@ -7,7 +7,7 @@
 
 import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { getSovereignDashboardData } from "@/features/super-admin/services/dashboard";
 import { SovereignCommandHeader } from "@/features/super-admin/components/dashboard/SovereignCommandHeader";
 import { SovereignMetricCard } from "@/features/super-admin/components/dashboard/SovereignMetricCard";

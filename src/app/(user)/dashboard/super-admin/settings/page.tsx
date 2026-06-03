@@ -8,9 +8,12 @@
  */
 
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { validateSuperAdminAccess } from "@/features/rbac/services/super-admin";
-import { getSettingsDashboardData, getUnseededSettingsCount } from "@/features/settings/services/settings";
+import {
+  getSettingsDashboardData,
+  getUnseededSettingsCount,
+} from "@/features/settings/services/settings";
 import { SettingsPanel } from "@/features/settings/components/SettingsPanel";
 import { Settings2, ShieldAlert } from "lucide-react";
 

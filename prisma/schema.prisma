@@ -68,6 +68,7 @@ model User {
   savedFilters              SavedFilter[]
   searchAnalytics           SearchAnalytics[]
   QuestionAuditLog          QuestionAuditLog[]
+  performanceSnapshot       UserPerformanceSnapshot?
 
   @@index([email])
   @@index([username])
@@ -1353,4 +1354,40 @@ model PasswordResetToken {
   @@index([email])
   @@index([tokenHash])
   @@map("password_reset_tokens")
+}
+
+// -----------------------------------------------------------------------------
+// Performance Snapshots Layer
+// -----------------------------------------------------------------------------
+
+model UserPerformanceSnapshot {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  overallAccuracy    Float    @default(0)
+  currentRank        Int?
+  percentile         Int      @default(0)
+  currentStreak      Int      @default(0)
+  highestStreak      Int      @default(0)
+  bestCategory       String?
+  weakestCategory    String?
+  totalAttempts      Int      @default(0)
+  competitionsPlayed Int      @default(0)
+  lastUpdatedAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([currentRank])
+  @@map("user_performance_snapshots")
+}
+
+model LeaderboardSnapshot {
+  id                     String   @id @default(cuid())
+  totalParticipants      Int      @default(0)
+  activeCompetitions     Int      @default(0)
+  rankingMetadata        Json?
+  cachedLeaderboardStats Json?
+  lastUpdatedAt          DateTime @default(now())
+
+  @@map("leaderboard_snapshots")
 }

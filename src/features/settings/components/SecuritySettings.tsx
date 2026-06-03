@@ -1,9 +1,19 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Shield, KeyRound, CheckCircle2, Lock, X, MonitorSmartphone, Clock, LogOut } from "lucide-react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Shield,
+  KeyRound,
+  CheckCircle2,
+  Lock,
+  X,
+  MonitorSmartphone,
+  Clock,
+  LogOut,
+} from "lucide-react";
 import type { User as PrismaUser } from "@/generated/prisma";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { updatePasswordAction, signOutOtherDevicesAction } from "@/features/user/services/account";
 
 interface SecuritySettingsProps {
@@ -14,11 +24,23 @@ interface SecuritySettingsProps {
 }
 
 export function SecuritySettings({ user, activeSessionsCount = 1 }: SecuritySettingsProps) {
+  const router = useRouter();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [pendingToast, setPendingToast] = useState<{ id: string; title: string; desc?: string } | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    if (!isPending && pendingToast) {
+      notify.success(pendingToast.title, {
+        id: pendingToast.id,
+        description: pendingToast.desc,
+      });
+      setPendingToast(null);
+    }
+  }, [isPending, pendingToast]);
 
   const isGoogleAuth = user.accounts?.some((acc) => acc.provider === "google");
   const hasPasswordMethod = !!user.password && !isGoogleAuth;
@@ -26,36 +48,62 @@ export function SecuritySettings({ user, activeSessionsCount = 1 }: SecuritySett
   const handleUpdatePassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      notify.error("Passwords do not match");
       return;
     }
+    const toastId = notify.loading("Updating Password...");
     startTransition(async () => {
       try {
         const result = await updatePasswordAction(password);
         if (result.success) {
-          toast.success("Password updated successfully");
+          router.refresh();
+          setPendingToast({
+            id: toastId,
+            title: "Password Updated",
+            desc: "Your password has been changed successfully.",
+          });
           setIsPasswordModalOpen(false);
           setPassword("");
           setConfirmPassword("");
+        } else {
+          notify.error("Update Failed", {
+            id: toastId,
+            description: "We couldn't update your password. Please try again.",
+          });
         }
       } catch (err) {
-        toast.error("Failed to update password");
+        notify.error("Update Failed", {
+          id: toastId,
+          description: "We couldn't update your password. Please try again.",
+        });
       }
     });
   };
 
   const handleSignOutOtherDevices = () => {
+    const toastId = notify.loading("Revoking Sessions...");
     startTransition(async () => {
       try {
         const result = await signOutOtherDevicesAction();
         if (result.success) {
-          toast.success("Other devices signed out successfully.");
+          router.refresh();
+          setPendingToast({
+            id: toastId,
+            title: "Sessions Revoked",
+            desc: "You have been signed out of all other devices.",
+          });
           setIsSignOutModalOpen(false);
         } else {
-          toast.error("Failed to sign out other devices.");
+          notify.error("Sign Out Failed", {
+            id: toastId,
+            description: "We couldn't sign out other devices. Please try again.",
+          });
         }
       } catch (err) {
-        toast.error("Failed to sign out other devices.");
+        notify.error("Sign Out Failed", {
+          id: toastId,
+          description: "An unexpected error occurred. Please try again.",
+        });
       }
     });
   };
@@ -71,9 +119,7 @@ export function SecuritySettings({ user, activeSessionsCount = 1 }: SecuritySett
             </div>
             <div>
               <h3 className="text-xl font-bold text-navy tracking-tight">Security & Sessions</h3>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Manage access and active devices.
-              </p>
+              <p className="text-sm text-gray-500 mt-0.5">Manage access and active devices.</p>
             </div>
           </div>
         </div>
@@ -114,7 +160,9 @@ export function SecuritySettings({ user, activeSessionsCount = 1 }: SecuritySett
                   Last login: Current Session
                 </p>
                 <p className="text-xs text-navy font-semibold mt-2">
-                  {activeSessionsCount === 1 ? "Current Session Only" : `${activeSessionsCount} Active Sessions`}
+                  {activeSessionsCount === 1
+                    ? "Current Session Only"
+                    : `${activeSessionsCount} Active Sessions`}
                 </p>
               </div>
             </div>
@@ -219,7 +267,8 @@ export function SecuritySettings({ user, activeSessionsCount = 1 }: SecuritySett
             </div>
             <div className="p-6">
               <p className="text-gray-600 mb-6 text-sm">
-                Are you sure you want to sign out of all other active sessions? You will remain signed in on this device.
+                Are you sure you want to sign out of all other active sessions? You will remain
+                signed in on this device.
               </p>
               <div className="flex gap-3">
                 <button

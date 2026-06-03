@@ -10,7 +10,10 @@
 import { useState } from "react";
 import { Lock, Clock, User, Save, RotateCcw } from "lucide-react";
 import type { SettingDisplay } from "@/features/settings/services/settings/types";
-import { getSettingValueType, isDangerousSetting } from "@/features/settings/services/settings/constants";
+import {
+  getSettingValueType,
+  isDangerousSetting,
+} from "@/features/settings/services/settings/constants";
 import type { JsonValue } from "@/generated/prisma/runtime/library";
 
 interface SettingCardProps {

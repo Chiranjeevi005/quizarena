@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { ROLES, type Role } from "./roles";
 import { hasMinimumRole, hasRole, getRoleLevel } from "./hierarchy";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import {
   SUPER_ADMIN_ROUTES,
   FINANCIAL_ROUTES,

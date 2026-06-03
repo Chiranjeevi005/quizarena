@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { getChallenges } from "@/features/challenges/services/challenge-management";
 import { cn } from "@/lib/utils";
 

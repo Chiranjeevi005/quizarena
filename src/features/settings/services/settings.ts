@@ -17,9 +17,9 @@ import { ROLES, type Role } from "@/features/rbac/services/roles";
 import {
   getAllSettingsGrouped,
   getSettingAuditHistory,
-  updatePlatformSetting,
-  seedDefaultSettings,
-} from './settings/index';
+  updatePlatformSetting as _updatePlatformSetting,
+  seedDefaultSettings as _seedDefaultSettings,
+} from "./settings/index";
 import {
   getSettingDefinition,
   isDangerousSetting,
@@ -162,7 +162,7 @@ export async function updatePlatformSetting(
       return { success: false, error: "A reason is required for modifying this critical setting" };
     }
 
-    await updatePlatformSetting(key, value, userId, reason);
+    await _updatePlatformSetting(key, value, userId, reason);
 
     return { success: true };
   } catch (error) {
@@ -175,7 +175,7 @@ export async function updatePlatformSetting(
  * Toggle a boolean feature flag.
  * Convenience wrapper for boolean settings.
  */
-export async function updatePlatformSetting(
+export async function togglePlatformSetting(
   key: string,
   reason?: string
 ): Promise<SettingActionResult> {
@@ -220,7 +220,7 @@ export async function updatePlatformSetting(
       return { success: false, error: "A reason is required for toggling this critical setting" };
     }
 
-    await updatePlatformSetting(key, newValue, userId, reason);
+    await _updatePlatformSetting(key, newValue, userId, reason);
 
     return { success: true };
   } catch (error) {
@@ -233,9 +233,7 @@ export async function updatePlatformSetting(
  * Seed default settings into the database.
  * Only SUPER_ADMIN can seed settings.
  */
-export async function seedDefaultSettings(): Promise<
-  SettingActionResult & { created?: number }
-> {
+export async function seedDefaultSettings(): Promise<SettingActionResult & { created?: number }> {
   try {
     const { role } = await validateSettingsAccess();
 
@@ -243,7 +241,7 @@ export async function seedDefaultSettings(): Promise<
       return { success: false, error: "Access denied: Only Super Admin can seed settings" };
     }
 
-    const created = await seedDefaultSettings();
+    const created = await _seedDefaultSettings();
 
     return { success: true, created };
   } catch (error) {

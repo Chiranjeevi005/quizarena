@@ -7,6 +7,7 @@ import {
 } from "@/features/analytics/services/performance";
 import type { DefaultSession } from "next-auth";
 import Link from "next/link";
+
 import {
   Target,
   Clock,
@@ -103,6 +104,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-6 md:space-y-8">
+
       {/* 1. HERO */}
       <section
         className="arena-hero rounded-2xl p-6 md:p-8 lg:p-10 text-white arena-section"

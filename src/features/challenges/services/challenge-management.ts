@@ -14,7 +14,10 @@ import {
   scheduleChallengeSchema,
 } from "@/lib/validations/challenge";
 import { revalidatePath } from "next/cache";
-import { generateChallengeSnapshots, verifySnapshotIntegrity } from "@/features/exam/services/snapshot";
+import {
+  generateChallengeSnapshots,
+  verifySnapshotIntegrity,
+} from "@/features/exam/services/snapshot";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   DRAFT: ["DRAFT"],

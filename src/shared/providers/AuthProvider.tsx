@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import type { Session } from "next-auth";
 
 /**

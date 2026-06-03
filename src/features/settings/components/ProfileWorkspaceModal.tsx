@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition, useRef } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { User, Mail, AtSign, Save, X } from "lucide-react";
 import type { User as PrismaUser } from "@/generated/prisma";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { updateProfileAction } from "@/features/user/services/account";
 import { AvatarIdentity } from "@/shared/components/AvatarIdentity";
 
@@ -14,6 +15,7 @@ interface ProfileWorkspaceModalProps {
 }
 
 export function ProfileWorkspaceModal({ isOpen, onClose, user }: ProfileWorkspaceModalProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -22,6 +24,19 @@ export function ProfileWorkspaceModal({ isOpen, onClose, user }: ProfileWorkspac
     username: user.username || "",
     email: user.email || "",
   });
+
+  const [pendingToast, setPendingToast] = useState<{ id: string; title: string; desc?: string } | null>(null);
+
+  useEffect(() => {
+    if (!isPending && pendingToast) {
+      notify.success(pendingToast.title, {
+        id: pendingToast.id,
+        description: pendingToast.desc,
+      });
+      setPendingToast(null);
+      onClose();
+    }
+  }, [isPending, pendingToast, onClose]);
 
   if (!isOpen) return null;
 
@@ -34,17 +49,22 @@ export function ProfileWorkspaceModal({ isOpen, onClose, user }: ProfileWorkspac
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    const toastId = notify.loading("Updating profile...");
     startTransition(async () => {
       try {
         const result = await updateProfileAction(formData);
         if (result.success) {
-          toast.success("Profile updated successfully");
-          onClose();
+          router.refresh();
+          setPendingToast({
+            id: toastId,
+            title: "Profile Updated",
+            desc: "Your profile has been saved successfully.",
+          });
         } else {
-          toast.error(result.error || "Failed to update profile");
+          notify.error(result.error || "Failed to update profile", { id: toastId });
         }
       } catch (error) {
-        toast.error("Failed to update profile");
+        notify.error("Failed to update profile", { id: toastId });
       }
     });
   };

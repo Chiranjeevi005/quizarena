@@ -20,7 +20,7 @@ import {
 import { generateQuestionCode } from "@/features/admin/services/question-bank/question-code";
 import { validateTransition } from "@/features/admin/services/question-bank/governance";
 import { checkForDuplicates } from "@/features/admin/services/question-bank/duplicate-detection";
-import { createAuditLog } from '@/features/super-admin/services/audit/index';
+import { createAuditLog } from "@/features/super-admin/services/audit/index";
 import { revalidatePath } from "next/cache";
 
 // ─── Auth Helpers ───────────────────────────────────────────────────────────

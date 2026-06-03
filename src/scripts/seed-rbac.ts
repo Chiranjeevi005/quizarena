@@ -3,14 +3,16 @@ import {
   PERMISSIONS,
   PERMISSION_LABELS,
   PERMISSION_CATEGORIES,
-} from '@/features/rbac/constants/authorization';
-import { ROLE_PERMISSION_MAP } from '@/features/rbac/constants/authorization';
+} from "@/features/rbac/services/permission-constants";
+import { ROLE_PERMISSION_MAP } from "@/features/rbac/services/permission-map";
 
 async function main() {
   console.log("Seeding RBAC system...");
 
   // 1. Seed Permissions
-  const allPermissionKeys = Object.values(PERMISSIONS).flatMap((group) => Object.values(group));
+  const allPermissionKeys = Object.values(PERMISSIONS).flatMap((group) =>
+    Object.values(group as Record<string, string>)
+  );
 
   for (const key of allPermissionKeys) {
     const label = PERMISSION_LABELS[key as keyof typeof PERMISSION_LABELS] || key;
@@ -18,21 +20,21 @@ async function main() {
     // Find category
     let category = "OTHER";
     for (const [cat, keys] of Object.entries(PERMISSION_CATEGORIES)) {
-      if ((keys as readonly string[]).includes(key)) {
+      if ((keys as readonly string[]).includes(key as string)) {
         category = cat.toUpperCase();
         break;
       }
     }
 
     await prisma.permission.upsert({
-      where: { key },
+      where: { key: key as string },
       update: {
-        description: label,
+        description: label as string,
         category: category,
       },
       create: {
-        key,
-        description: label,
+        key: key as string,
+        description: label as string,
         category: category,
       },
     });
@@ -41,8 +43,8 @@ async function main() {
 
   // 2. Seed RolePermissions
   for (const roleMap of Object.values(ROLE_PERMISSION_MAP)) {
-    const role = roleMap.role;
-    const permissions = roleMap.permissions;
+    const role = (roleMap as any).role;
+    const permissions = (roleMap as any).permissions;
 
     for (const permKey of permissions) {
       const permissionRecord = await prisma.permission.findUnique({

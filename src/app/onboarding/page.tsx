@@ -15,7 +15,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import {
   EXAM_CATEGORIES,
   PREPARATION_LEVELS,
@@ -205,14 +205,14 @@ export default function OnboardingPage() {
       });
 
       sessionStorage.removeItem("onboarding_data");
-      toast.success("Welcome to QuizArena!");
+      notify.success("Welcome to QuizArena!");
 
       // Use window.location.href for a hard redirect to ensure middleware sees fresh session
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1500);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      notify.error(err instanceof Error ? err.message : "Something went wrong");
       setErrors({
         preparationLevel: err instanceof Error ? err.message : "Failed to complete onboarding",
       });
@@ -278,12 +278,13 @@ export default function OnboardingPage() {
             {STEPS.map((s) => (
               <div
                 key={s.id}
-                className={`h-1.5 rounded-full transition-all duration-300 ${step === s.id
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  step === s.id
                     ? "w-8 bg-primary"
                     : step > s.id
                       ? "w-4 bg-primary/40"
                       : "w-4 bg-slate-200"
-                  }`}
+                }`}
               />
             ))}
           </div>
@@ -338,10 +339,11 @@ export default function OnboardingPage() {
                       }}
                       onKeyDown={(e) => e.key === "Enter" && handleUsernameSubmit()}
                       placeholder="Username"
-                      className={`w-full pl-11 pr-4 py-3 bg-white border-2 rounded-2xl outline-none transition-all text-base ${errors.username
+                      className={`w-full pl-11 pr-4 py-3 bg-white border-2 rounded-2xl outline-none transition-all text-base ${
+                        errors.username
                           ? "border-red-200 focus:border-red-500 bg-red-50/30"
                           : "border-slate-100 focus:border-primary bg-white shadow-sm"
-                        }`}
+                      }`}
                       autoFocus
                       autoCapitalize="off"
                       spellCheck={false}
@@ -402,10 +404,11 @@ export default function OnboardingPage() {
                           }));
                           setErrors({});
                         }}
-                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${formData.category === cat.value
+                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${
+                          formData.category === cat.value
                             ? "border-primary bg-primary/5 ring-4 ring-primary/5"
                             : "border-white bg-white hover:border-slate-200 shadow-sm"
-                          }`}
+                        }`}
                       >
                         <div className="flex justify-between items-center">
                           <div>
@@ -413,10 +416,11 @@ export default function OnboardingPage() {
                             <div className="text-xs text-slate-500">{cat.description}</div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${formData.category === cat.value
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              formData.category === cat.value
                                 ? "bg-primary border-primary"
                                 : "border-slate-200"
-                              }`}
+                            }`}
                           >
                             {formData.category === cat.value && (
                               <CheckCircle2 size={16} className="text-white" />
@@ -460,10 +464,11 @@ export default function OnboardingPage() {
                           }));
                           setErrors({});
                         }}
-                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${formData.preparationLevel === level.value
+                        className={`group relative w-full p-3.5 rounded-2xl border-2 text-left transition-all duration-200 ${
+                          formData.preparationLevel === level.value
                             ? "border-primary bg-primary/5 ring-4 ring-primary/5"
                             : "border-white bg-white hover:border-slate-200 shadow-sm"
-                          }`}
+                        }`}
                       >
                         <div className="flex justify-between items-center">
                           <div>
@@ -471,10 +476,11 @@ export default function OnboardingPage() {
                             <div className="text-xs text-slate-500">{level.description}</div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${formData.preparationLevel === level.value
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              formData.preparationLevel === level.value
                                 ? "bg-primary border-primary"
                                 : "border-slate-200"
-                              }`}
+                            }`}
                           >
                             {formData.preparationLevel === level.value && (
                               <CheckCircle2 size={16} className="text-white" />

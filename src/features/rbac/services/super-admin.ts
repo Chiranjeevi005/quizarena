@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ROLES, type Role } from "./roles";
 import { hasRole, isSuperAdmin as checkIsSuperAdmin } from "./hierarchy";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export class SuperAdminSecurityError extends Error {
   constructor(

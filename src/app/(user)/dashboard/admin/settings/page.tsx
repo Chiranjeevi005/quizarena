@@ -9,7 +9,10 @@
  */
 
 import { requireAdmin, getCurrentRoleFromSession } from "@/features/rbac/services/guards";
-import { getSettingsDashboardData, getUnseededSettingsCount } from "@/features/settings/services/settings";
+import {
+  getSettingsDashboardData,
+  getUnseededSettingsCount,
+} from "@/features/settings/services/settings";
 import { SettingsPanel } from "@/features/settings/components/SettingsPanel";
 import { hasRole } from "@/features/rbac/services/hierarchy";
 import { ROLES } from "@/features/rbac/services/roles";

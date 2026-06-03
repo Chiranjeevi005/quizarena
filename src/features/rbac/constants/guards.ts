@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/auth/session';
-import { ROLE, type Role, toRole } from '@/features/rbac/constants/role-types';
-import { hasMinimumRole } from '@/features/rbac/constants/role-hierarchy';
+import { getCurrentUser } from "@/auth/session";
+import { ROLE, type Role, toRole } from "@/features/rbac/constants/role-types";
+import { hasMinimumRole } from "@/features/rbac/constants/role-hierarchy";
 
 export const MODERATOR_ROUTES = [
   "/moderator",

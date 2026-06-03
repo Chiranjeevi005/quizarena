@@ -11,7 +11,7 @@ import {
   ValidationMessage,
   BrandSection,
 } from "@/features/auth/components";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

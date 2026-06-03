@@ -28,7 +28,10 @@ export default function SettingsLoading() {
             </div>
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-100">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 rounded-xl border border-gray-100"
+                >
                   <div className="skeleton-shimmer w-48 h-5 rounded" />
                   <div className="skeleton-shimmer w-11 h-6 rounded-full" />
                 </div>
@@ -93,7 +96,7 @@ export default function SettingsLoading() {
                 </div>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col">
                 <div className="skeleton-shimmer w-28 h-6 rounded-full mb-4" />
@@ -112,7 +115,7 @@ export default function SettingsLoading() {
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <div className="rounded-xl p-6 h-full flex flex-col border border-gray-100 bg-gray-50/50">
                   <div className="skeleton-shimmer w-36 h-4 rounded mb-4" />
@@ -143,10 +146,13 @@ export default function SettingsLoading() {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border gap-4 ${i === 3 ? 'bg-red-50/50 border-red-100' : 'bg-gray-50 border-gray-100'}`}>
+                <div
+                  key={i}
+                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border gap-4 ${i === 3 ? "bg-red-50/50 border-red-100" : "bg-gray-50 border-gray-100"}`}
+                >
                   <div className="w-full sm:w-auto flex-1">
                     <div className="skeleton-shimmer w-32 h-5 rounded mb-1.5" />
                     <div className="skeleton-shimmer w-64 h-4 rounded" />

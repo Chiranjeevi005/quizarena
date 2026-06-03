@@ -12,7 +12,10 @@ import {
 import { QuestionStatusBadge } from "./QuestionStatusBadge";
 import { QuestionCodeBadge } from "./QuestionCodeBadge";
 import { DIFFICULTY_CONFIG } from "@/features/admin/services/question-bank/constants";
-import { getAvailableTransitions, getTransitionAction } from "@/features/admin/services/question-bank/governance";
+import {
+  getAvailableTransitions,
+  getTransitionAction,
+} from "@/features/admin/services/question-bank/governance";
 import {
   CheckCircle2,
   User,

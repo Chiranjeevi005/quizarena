@@ -44,9 +44,7 @@ export function PremiumCompetitions() {
               <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold rounded uppercase tracking-wider">
                 <Crown className="w-3.5 h-3.5" /> Premium
               </span>
-              <span className="text-xs font-mono font-bold text-gray-400">
-                {event.difficulty}
-              </span>
+              <span className="text-xs font-mono font-bold text-gray-400">{event.difficulty}</span>
             </div>
 
             <h3 className="text-2xl font-black text-white mb-6 leading-tight">{event.title}</h3>

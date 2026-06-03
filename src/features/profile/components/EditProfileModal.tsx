@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Check } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { updateProfileAction, updateAvatarAction } from "@/features/user/services/account";
 import { AvatarIdentity } from "@/shared/components/AvatarIdentity";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
   const [name, setName] = useState(user.name || "");
   const [username, setUsername] = useState(user.username || "");
   const [avatarMode, setAvatarMode] = useState<"google" | "monogram">(
-    user.image?.endsWith("#monogram") ? "monogram" : (user.image ? "google" : "monogram")
+    user.image?.endsWith("#monogram") ? "monogram" : user.image ? "google" : "monogram"
   );
   const [isSaving, setIsSaving] = useState(false);
 
@@ -34,6 +34,7 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
 
   const handleSave = async () => {
     setIsSaving(true);
+    const toastId = notify.loading("Updating Profile...");
     try {
       // 1. Update Name and Username
       const profileResult = await updateProfileAction({
@@ -42,7 +43,7 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
       });
 
       if (!profileResult.success) {
-        toast.error(profileResult.error || "Failed to update profile");
+        notify.error(profileResult.error || "Failed to update profile", { id: toastId });
         setIsSaving(false);
         return;
       }
@@ -67,11 +68,16 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
         image: newImage,
       });
 
-      toast.success("Profile updated successfully!");
-      router.refresh(); // Refresh server component data
+      notify.success("Profile Saved", {
+        id: toastId,
+        description: "Your profile changes are now live.",
+      });
       onClose();
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      notify.error("Update Failed", {
+        id: toastId,
+        description: error.message || "An unexpected error occurred.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -98,7 +104,11 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
             <AvatarIdentity
               name={name || "Aspirant"}
               username={username || "aspirant"}
-              image={avatarMode === "google" && user.image ? user.image.replace("#monogram", "") : undefined}
+              image={
+                avatarMode === "google" && user.image
+                  ? user.image.replace("#monogram", "")
+                  : undefined
+              }
               examCategory={user.examCategory}
               rankTier="BRONZE"
               size={80}
@@ -135,20 +145,22 @@ export function EditProfileModal({ isOpen, onClose, user, isGoogleUser }: EditPr
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setAvatarMode("google")}
-                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${avatarMode === "google"
+                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      avatarMode === "google"
                         ? "bg-primary/5 border-primary text-primary"
                         : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
-                      }`}
+                    }`}
                   >
                     {avatarMode === "google" && <Check className="w-4 h-4" />}
                     Google Photo
                   </button>
                   <button
                     onClick={() => setAvatarMode("monogram")}
-                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${avatarMode === "monogram"
+                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      avatarMode === "monogram"
                         ? "bg-primary/5 border-primary text-primary"
                         : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
-                      }`}
+                    }`}
                   >
                     {avatarMode === "monogram" && <Check className="w-4 h-4" />}
                     Monogram

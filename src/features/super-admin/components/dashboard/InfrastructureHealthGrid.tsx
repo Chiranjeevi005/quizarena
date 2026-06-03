@@ -1,7 +1,7 @@
 import type { InfrastructureHealthData } from "@/types/super-admin-dashboard";
 import { Server, CheckCircle2, AlertTriangle, XCircle, Clock } from "lucide-react";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 interface InfrastructureHealthGridProps {
   data: InfrastructureHealthData;

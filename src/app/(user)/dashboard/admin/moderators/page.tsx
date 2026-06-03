@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { requireAdmin } from "@/features/rbac/services/guards";
-import { getModerators, getModeratorStats } from "@/features/super-admin/services/moderator-management";
+import {
+  getModerators,
+  getModeratorStats,
+} from "@/features/super-admin/services/moderator-management";
 import { Users, Search, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 
 interface SearchParams {

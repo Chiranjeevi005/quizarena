@@ -1,14 +1,14 @@
 "use server";
 
-import { prisma } from '@/lib/prisma';
-import { requireAuth } from '@/lib/session-utils';
+import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/session-utils";
 import {
   calculateReadinessScore,
   evaluateParticipationGaps,
   calculateDisciplineIndex,
   generateDeterministicInsights,
   IntelligenceInsight,
-} from '@/lib/intelligence-engine';
+} from "@/lib/intelligence-engine";
 
 export async function syncPerformanceIntelligence() {
   const user = await requireAuth();

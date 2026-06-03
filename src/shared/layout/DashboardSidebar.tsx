@@ -85,7 +85,7 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                   <p className="text-xs text-gray-500 truncate">{user?.username || "Aspirant"}</p>
                   {(user as any)?.examCategory && (
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/10 text-primary uppercase tracking-wider whitespace-nowrap">
-                      {(user as any).examCategory.replace('_', ' ')}
+                      {(user as any).examCategory.replace("_", " ")}
                     </span>
                   )}
                 </div>
@@ -191,7 +191,7 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                       <p className="text-xs text-gray-500">{user?.username || "Aspirant"}</p>
                       {(user as any)?.examCategory && (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/10 text-primary uppercase tracking-wider whitespace-nowrap">
-                          {(user as any).examCategory.replace('_', ' ')}
+                          {(user as any).examCategory.replace("_", " ")}
                         </span>
                       )}
                     </div>

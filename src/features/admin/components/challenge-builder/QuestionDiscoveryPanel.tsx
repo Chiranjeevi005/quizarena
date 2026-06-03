@@ -7,7 +7,7 @@ import {
   addQuestionToChallenge,
   removeQuestionFromChallenge,
 } from "@/features/admin/services/challenge-builder";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 
@@ -25,7 +25,7 @@ export default function QuestionDiscoveryPanel({ challenge }: { challenge: any }
       const res = await searchApprovedQuestions({ search, limit: 20 });
       setQuestions(res.questions);
     } catch (error) {
-      toast.error("Failed to fetch questions");
+      notify.error("Failed to fetch questions");
     } finally {
       setLoading(false);
     }
@@ -39,21 +39,32 @@ export default function QuestionDiscoveryPanel({ challenge }: { challenge: any }
 
   const handleAdd = async (qId: string) => {
     setAddingId(qId);
-    const res = await addQuestionToChallenge({ challengeId: challenge.id, questionId: qId });
-    setAddingId(null);
-    if (res.success) {
-      toast.success("Question added");
-    } else {
-      toast.error(res.error || "Failed to add question");
+    const toastId = notify.loading("Adding Question...");
+    try {
+      const res = await addQuestionToChallenge({ challengeId: challenge.id, questionId: qId });
+      if (res.success) {
+        notify.success("Question added", { id: toastId });
+      } else {
+        notify.error(res.error || "Failed to add question", { id: toastId });
+      }
+    } catch {
+      notify.error("Failed to add question", { id: toastId });
+    } finally {
+      setAddingId(null);
     }
   };
 
   const handleRemove = async (qId: string) => {
-    const res = await removeQuestionFromChallenge({ challengeId: challenge.id, questionId: qId });
-    if (res.success) {
-      toast.success("Question removed");
-    } else {
-      toast.error(res.error || "Failed to remove question");
+    const toastId = notify.loading("Removing Question...");
+    try {
+      const res = await removeQuestionFromChallenge({ challengeId: challenge.id, questionId: qId });
+      if (res.success) {
+        notify.success("Question removed", { id: toastId });
+      } else {
+        notify.error(res.error || "Failed to remove question", { id: toastId });
+      }
+    } catch {
+      notify.error("Failed to remove question", { id: toastId });
     }
   };
 

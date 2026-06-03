@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ChallengeBuilderOrchestrator from "@/components/admin/challenge-builder/ChallengeBuilderOrchestrator";
+import ChallengeBuilderOrchestrator from "@/features/admin/components/challenge-builder/ChallengeBuilderOrchestrator";
 
 export default async function ChallengeBuilderPage({
   params,

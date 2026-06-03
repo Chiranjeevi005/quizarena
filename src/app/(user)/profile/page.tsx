@@ -5,8 +5,8 @@
  */
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
-import { prisma } from "@/lib/prisma";
+import { ROUTES } from "@/constants/routes";
+import { ProfileService } from "@/features/user/services/profile.service";
 
 import { ProfileHero } from "@/features/profile/components/ProfileHero";
 import { PreparationPreferences } from "@/features/profile/components/PreparationPreferences";
@@ -23,9 +23,7 @@ export default async function ProfilePage() {
   }
 
   // Fetch full user details from the database
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  });
+  const user = await ProfileService.getFullProfile(session.user.id);
 
   if (!user) {
     redirect(ROUTES.AUTH.SIGN_IN);

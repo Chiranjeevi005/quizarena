@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { ActivityType, AchievementType, InviteStatus, ParticipationType } from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
-import { getPerformanceOverview } from '@/features/analytics/services/performance';
+import { getPerformanceOverview } from "@/features/analytics/services/performance";
 
 // ============================================================================
 // TYPES

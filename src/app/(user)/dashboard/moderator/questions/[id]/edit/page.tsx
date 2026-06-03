@@ -1,15 +1,15 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import {
   getQuestionById,
   moveToReview,
   approveQuestion,
   rejectQuestion,
   archiveQuestion,
-} from '@/features/admin/services/question-management';
-import { requireMinimumRole } from '@/features/rbac/components/RoleGuard';
-import { ROLE as ROLES } from '@/features/rbac/constants/role-types';
+} from "@/features/admin/services/question-management";
+import { requireMinimumRole } from "@/features/rbac/services/guards";
+import { ROLE as ROLES } from "@/features/rbac/constants/role-types";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES = {
@@ -238,7 +238,7 @@ async function QuestionEditContent({ questionId }: { questionId: string }) {
 
 async function updateQuestionStatus(data: { id: string; newStatus: string }) {
   "use server";
-  const { updateQuestionStatus } = await import("@/actions/manage/question-management");
+  const { updateQuestionStatus } = await import("@/features/admin/services/question-management");
   return updateQuestionStatus(data);
 }
 

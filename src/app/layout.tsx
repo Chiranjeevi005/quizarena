@@ -8,6 +8,7 @@ import { getServerSession } from "@/lib/session-utils";
 import { Footer } from "@/shared/layout/Footer";
 
 import { MaintenanceFallback } from "@/shared/components/maintenance-fallback";
+import { NotificationCenter } from "@/shared/components/feedback/NotificationCenter";
 import { getPlatformState } from "@/features/super-admin/services/infrastructure/platform-controls";
 
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken" });
@@ -92,6 +93,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
           {/* Global Footer - Visible only when not logged in and not on auth pages */}
           {!isLoggedIn && !isOnboarding && !isAuthPage && <Footer />}
+
+          {/* Global Notification Center */}
+          <NotificationCenter />
         </SecureClientAuthProvider>
       </body>
     </html>

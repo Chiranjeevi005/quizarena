@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getQuestionById, getQuestionAuditHistory } from "@/actions/question-bank";
-import { QuestionDetailView } from '@/features/admin/components/question-bank/QuestionDetailView';
-import { QuestionAuditTimeline } from '@/features/admin/components/question-bank/QuestionAuditTimeline';
+import { getQuestionById, getQuestionAuditHistory } from "@/features/admin/services/question-bank";
+import { QuestionDetailView } from "@/features/admin/components/question-bank/QuestionDetailView";
+import { QuestionAuditTimeline } from "@/features/admin/components/question-bank/QuestionAuditTimeline";
 import { auth } from "@/auth/auth";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { ArrowLeft } from "lucide-react";
 
 import type { Metadata } from "next";

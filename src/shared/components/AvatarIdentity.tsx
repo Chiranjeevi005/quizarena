@@ -47,7 +47,7 @@ export function AvatarIdentity({
 }: AvatarIdentityProps) {
   const isMonogramPref = image?.endsWith("#monogram");
   const actualImage = image?.replace("#monogram", "");
-  
+
   // We only consider the image valid if it's a Google Profile photo
   const isGoogle = !!actualImage && actualImage.includes("googleusercontent.com");
 
@@ -84,7 +84,12 @@ export function AvatarIdentity({
       >
         {isGoogle && !isMonogramPref ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={actualImage!} alt={name || "Avatar"} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          <img
+            src={actualImage!}
+            alt={name || "Avatar"}
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+          />
         ) : (
           <span>{initials}</span>
         )}

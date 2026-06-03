@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import {
   getChallengeById,
   getChallengeQuestions,
@@ -11,9 +11,9 @@ import {
   moveToReview,
   publishChallenge,
   archiveChallenge,
-} from '@/features/challenges/services/challenge-management';
-import { requireMinimumRole } from '@/features/rbac/components/RoleGuard';
-import { ROLE as ROLES } from '@/features/rbac/constants/role-types';
+} from "@/features/challenges/services/challenge-management";
+import { requireMinimumRole } from "@/features/rbac/services/guards";
+import { ROLE as ROLES } from "@/features/rbac/constants/role-types";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES = {
@@ -459,7 +459,8 @@ async function QuestionSelector({ challengeId }: { challengeId: string }) {
 
 async function updateChallengeStatus(data: { id: string; newStatus: string }) {
   "use server";
-  const { updateChallengeStatus } = await import("@/actions/manage/challenge-management");
+  const { updateChallengeStatus } =
+    await import("@/features/challenges/services/challenge-management");
   return updateChallengeStatus(data);
 }
 

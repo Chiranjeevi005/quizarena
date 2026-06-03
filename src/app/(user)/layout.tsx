@@ -6,10 +6,12 @@
  */
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { DashboardShell } from "@/shared/layout/DashboardShell";
-import { getPerformanceOverview, getCompetitivePosition } from "@/features/analytics/services/performance";
-import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
+import { UserStats } from "@/shared/layout/UserStats";
+import { UserStatsSkeleton } from "@/shared/layout/UserStatsSkeleton";
+import { ProfileService } from "@/features/user/services/profile.service";
 
 export default async function UserAppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -28,26 +30,23 @@ export default async function UserAppLayout({ children }: { children: React.Reac
     redirect("/onboarding");
   }
 
-  let currentStreak = 0;
-  let currentRank: number | null = null;
   let freshUser = null;
 
   if (session.user?.id) {
-    freshUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { examCategory: true, name: true, image: true, username: true }
-    });
-  }
-
-  if (isNotAdmin && session.user.id) {
-    const performance = await getPerformanceOverview(session.user.id);
-    const position = await getCompetitivePosition(session.user.id);
-    if (performance) currentStreak = performance.currentStreak;
-    if (position) currentRank = position.globalRank;
+    freshUser = await ProfileService.getShellProfile(session.user.id);
   }
 
   return (
-    <DashboardShell currentStreak={currentStreak} currentRank={currentRank} freshUser={freshUser}>
+    <DashboardShell
+      freshUser={freshUser}
+      userStatsNode={
+        isNotAdmin && session.user.id ? (
+          <Suspense fallback={<UserStatsSkeleton />}>
+            <UserStats userId={session.user.id} />
+          </Suspense>
+        ) : null
+      }
+    >
       {children}
     </DashboardShell>
   );

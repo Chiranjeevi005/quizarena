@@ -4,7 +4,7 @@ import { SeasonalBanner } from "./SeasonalBanner";
 import { EventCountdown } from "./EventCountdown";
 import { TournamentProgress } from "./TournamentProgress";
 import { SeasonalLeaderboard } from "./SeasonalLeaderboard";
-import { TournamentWithDetails } from '@/types/tournaments';
+import { TournamentWithDetails } from "@/types/tournaments";
 
 interface TournamentDashboardProps {
   tournament: TournamentWithDetails;

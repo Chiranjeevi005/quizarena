@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireAdmin } from '@/features/rbac/components/RoleGuard';
-import { getModeratorProfile, addModeratorNote } from '@/features/super-admin/services/moderator-management';
+import { requireAdmin } from "@/features/rbac/services/guards";
+import {
+  getModeratorProfile,
+  addModeratorNote,
+} from "@/features/super-admin/services/moderator-management";
 import { ArrowLeft, Calendar, PlayCircle, MessageSquare, TrendingUp, Users } from "lucide-react";
 import { ModeratorProfileActions } from "./ModeratorProfileActions";
 

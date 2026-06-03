@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser, getSession } from '@/auth/session';
-import { ROLE, type Role, toRole } from '@/features/rbac/constants/role-types';
-import { hasMinimumRole, hasRole, hasPermission } from '@/features/rbac/constants/role-hierarchy';
+import { getCurrentUser, getSession } from "@/auth/session";
+import { ROLE, type Role, toRole } from "@/features/rbac/constants/role-types";
+import { hasMinimumRole, hasRole, hasPermission } from "@/features/rbac/constants/role-hierarchy";
 
 export type AuthorizationResult =
   | { success: true; user: Awaited<ReturnType<typeof getCurrentUser>> }

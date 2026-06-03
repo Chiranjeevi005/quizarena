@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { getQuestions } from "@/features/admin/services/question-management";
 import { COMMON_SUBJECTS } from "@/lib/validations/question";
 import { cn } from "@/lib/utils";

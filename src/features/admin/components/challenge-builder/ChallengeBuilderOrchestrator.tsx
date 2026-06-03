@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ChevronRight, Save } from "lucide-react";
 import { saveChallengeDraft } from "@/features/admin/services/challenge-builder";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import QuestionDiscoveryPanel from "./QuestionDiscoveryPanel";
 import BalancingMetrics from "./BalancingMetrics";
 import DraggableQuestionList from "./DraggableQuestionList";
@@ -26,13 +26,19 @@ export default function ChallengeBuilderOrchestrator({ challenge }: { challenge:
 
   const handleSaveDraft = async () => {
     setIsSaving(true);
-    const res = await saveChallengeDraft(challenge.id);
-    setIsSaving(false);
-    if (res.success) {
-      toast.success("Draft saved successfully");
-      router.push("/dashboard/admin/challenges");
-    } else {
-      toast.error(res.error || "Failed to save draft");
+    const toastId = notify.loading("Saving Draft...");
+    try {
+      const res = await saveChallengeDraft(challenge.id);
+      if (res.success) {
+        notify.success("Draft saved successfully", { id: toastId });
+        router.push("/dashboard/admin/challenges");
+      } else {
+        notify.error(res.error || "Failed to save draft", { id: toastId });
+      }
+    } catch {
+      notify.error("Failed to save draft", { id: toastId });
+    } finally {
+      setIsSaving(false);
     }
   };
 

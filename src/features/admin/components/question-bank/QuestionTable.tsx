@@ -2,7 +2,7 @@ import Link from "next/link";
 import { QuestionStatusBadge } from "./QuestionStatusBadge";
 import { QuestionCodeBadge } from "./QuestionCodeBadge";
 import { DIFFICULTY_CONFIG } from "@/features/admin/services/question-bank/constants";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import type { QuestionBankItem } from "@/features/admin/services/question-bank";
 
 interface QuestionTableProps {

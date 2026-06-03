@@ -10,9 +10,10 @@
 
 import { redirect } from "next/navigation";
 import { auth } from "@/auth/auth";
-import { ROUTES } from '@/constants/routes';
-import { startChallenge, getAttemptAnswers } from "@/actions/challenge";
-import { ExamShell } from "@/components/exam/ExamShell";
+import { ROUTES } from "@/constants/routes";
+import { getChallengeBySlug } from "@/features/challenges/services/challenge";
+import { ExamShell } from "@/features/exam/components/ExamShell";
+import { startChallenge, getAttemptAnswers } from "@/features/challenges/services/challenge";
 import type { ExamInitData, ExamQuestion } from "@/types/exam";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
@@ -85,10 +86,10 @@ export default async function ChallengePage({ params }: ChallengePageProps) {
   }
 
   // 5. Build serializable exam questions
-  const examQuestions: ExamQuestion[] = result.challenge.questions.map((q) => ({
+  const examQuestions: ExamQuestion[] = result.challenge.questions.map((q: any) => ({
     questionId: q.questionId,
     question: q.question,
-    options: q.options.map((opt) => ({
+    options: q.options.map((opt: any) => ({
       id: opt.id,
       text: opt.text,
       displayLabel: opt.displayLabel,

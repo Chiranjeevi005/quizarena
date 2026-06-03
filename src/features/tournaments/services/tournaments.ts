@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from '@/lib/prisma';
-import { withAuth, withAdmin } from '@/lib/auth-utils';
-import { calculateAggregateTournamentStats } from '@/lib/tournament-engine';
-import { SeasonStatus, TournamentStatus } from '@/generated/prisma';
+import { prisma } from "@/lib/prisma";
+import { withAuth, withAdmin } from "@/lib/auth-utils";
+import { calculateAggregateTournamentStats } from "@/lib/tournament-engine";
+import { SeasonStatus, TournamentStatus } from "@/generated/prisma";
 
 export async function createSeason(data: {
   name: string;

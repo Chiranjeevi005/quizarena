@@ -1,5 +1,5 @@
 import { requireSuperAdmin } from "@/features/rbac/services/super-admin";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import {
   getRoleOverviewStats,
   getPromotableUsers,

@@ -7,7 +7,7 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 interface ErrorBoundaryState {
   hasError: boolean;

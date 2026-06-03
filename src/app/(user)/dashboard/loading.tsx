@@ -18,7 +18,11 @@ export default function DashboardLoading() {
             <div className="skeleton-shimmer-dark w-64 md:w-80 h-10 md:h-11 rounded-xl" />
             <div className="flex flex-wrap items-center gap-2.5">
               {[104, 104, 128, 136].map((w, i) => (
-                <div key={i} className="skeleton-shimmer-dark rounded-lg h-[26px]" style={{ width: w }} />
+                <div
+                  key={i}
+                  className="skeleton-shimmer-dark rounded-lg h-[26px]"
+                  style={{ width: w }}
+                />
               ))}
             </div>
           </div>
@@ -88,7 +92,10 @@ export default function DashboardLoading() {
         <div className="arena-glass rounded-2xl overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center justify-between md:flex-col md:items-start md:justify-center p-6 md:p-8">
+              <div
+                key={i}
+                className="flex items-center justify-between md:flex-col md:items-start md:justify-center p-6 md:p-8"
+              >
                 <div className="skeleton-shimmer-dark w-24 h-3 rounded mb-0 md:mb-4" />
                 <div className="skeleton-shimmer-dark w-10 md:w-16 h-8 md:h-12 rounded-lg" />
               </div>
@@ -106,9 +113,9 @@ export default function DashboardLoading() {
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 flex flex-col items-center justify-center text-center h-[140px]">
-           <div className="skeleton-shimmer w-10 h-10 rounded-xl mb-3" />
-           <div className="skeleton-shimmer w-40 h-4 rounded mb-1" />
-           <div className="skeleton-shimmer w-56 h-3 rounded" />
+          <div className="skeleton-shimmer w-10 h-10 rounded-xl mb-3" />
+          <div className="skeleton-shimmer w-40 h-4 rounded mb-1" />
+          <div className="skeleton-shimmer w-56 h-3 rounded" />
         </div>
       </div>
 

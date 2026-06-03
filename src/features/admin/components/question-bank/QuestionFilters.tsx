@@ -1,4 +1,7 @@
-import { QUESTION_CATEGORIES, COMMON_SUBJECTS } from "@/features/admin/services/question-bank/constants";
+import {
+  QUESTION_CATEGORIES,
+  COMMON_SUBJECTS,
+} from "@/features/admin/services/question-bank/constants";
 import { QUESTION_DIFFICULTIES, QUESTION_STATUSES } from "@/lib/validations/question";
 import { Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";

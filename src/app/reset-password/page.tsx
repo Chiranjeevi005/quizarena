@@ -12,7 +12,7 @@ import {
   BrandSection,
   PasswordField,
 } from "@/features/auth/components";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 function ResetPasswordForm() {
   const router = useRouter();

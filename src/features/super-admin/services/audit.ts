@@ -8,7 +8,7 @@
  * Future-ready for: persistent audit DB table, compliance exports, security intelligence.
  */
 
-import { createAuditLog } from './audit/index';
+import { createAuditLog } from "./audit/index";
 import type { AuditSeverity } from "@/generated/prisma";
 import type { Role } from "@/features/rbac/services/roles";
 

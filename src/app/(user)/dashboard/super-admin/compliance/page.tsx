@@ -20,7 +20,7 @@ import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
 import { logSuperAdminAudit } from "@/features/super-admin/services/audit";
 import { getCompliancePageData } from "@/features/super-admin/services/compliance";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { ComplianceOverviewCards } from "@/features/super-admin/components/compliance/ComplianceOverviewCards";
 import { GovernanceTimelinePanel } from "@/features/super-admin/components/compliance/GovernanceTimelinePanel";
 import { SecurityForensicsPanel } from "@/features/super-admin/components/compliance/SecurityForensicsPanel";

@@ -1,7 +1,7 @@
 import type { SecuritySnapshotData } from "@/types/super-admin-dashboard";
 import { ShieldAlert, Fingerprint, Users, Activity, Lock } from "lucide-react";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export function SecuritySnapshot({ data }: { data: SecuritySnapshotData }) {
   let threatColor = "text-emerald-400";

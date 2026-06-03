@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getQuestionById } from "@/actions/question-bank";
-import { QuestionAuthoringWizard } from '@/features/admin/components/question-bank/authoring/QuestionAuthoringWizard';
+import { getQuestionById } from "@/features/admin/services/question-bank";
+import { QuestionAuthoringWizard } from "@/features/admin/components/question-bank/authoring/QuestionAuthoringWizard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -35,7 +35,7 @@ async function EditQuestionContent({ questionId }: { questionId: string }) {
     marks: question.marks,
     negativeMarks: question.negativeMarks,
     tags: question.tags,
-    options: question.options.map((opt) => ({
+    options: question.options.map((opt: any) => ({
       id: opt.id,
       optionText: opt.optionText,
       isCorrect: opt.isCorrect,

@@ -15,7 +15,7 @@ import {
   generateOperationalInsights,
   type OperationalIntelligenceData,
   type StrategicIntelligenceData,
-} from './intelligence/index';
+} from "./intelligence/index";
 
 /**
  * Get operational intelligence for ADMIN level.

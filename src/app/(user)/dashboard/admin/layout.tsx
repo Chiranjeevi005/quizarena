@@ -11,7 +11,7 @@ import {
   ShieldAlert,
   BookOpen,
 } from "lucide-react";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin("/dashboard");

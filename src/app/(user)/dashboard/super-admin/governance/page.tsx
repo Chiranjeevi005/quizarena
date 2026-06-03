@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
 import { logSuperAdminAudit } from "@/features/super-admin/services/audit";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import Link from "next/link";
 import { Crown, Shield, Users, ArrowRight, Lock, BarChart3 } from "lucide-react";
 

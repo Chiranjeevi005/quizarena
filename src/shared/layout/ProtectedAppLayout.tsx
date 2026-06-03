@@ -14,7 +14,6 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "@/shared/layout/Navbar";
 import { MobileNav } from "@/shared/layout/MobileNav";
 import { Footer } from "@/shared/layout/Footer";
-import { Toaster } from "react-hot-toast";
 import type { Session } from "next-auth";
 
 interface ProtectedAppLayoutProps {
@@ -47,27 +46,6 @@ export function ProtectedAppLayout({ session, children }: ProtectedAppLayoutProp
           </motion.div>
         </AnimatePresence>
       </main>
-
-      {/* Global Notifications */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#1a1a2e",
-            color: "#fff",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "12px",
-            padding: "12px 20px",
-          },
-          success: {
-            iconTheme: { primary: "#22c55e", secondary: "#fff" },
-          },
-          error: {
-            iconTheme: { primary: "#ef4444", secondary: "#fff" },
-          },
-        }}
-      />
 
       {/* Footer */}
       <Footer />

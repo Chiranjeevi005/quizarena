@@ -38,10 +38,12 @@ export function RecentCompetitions() {
           <div key={event.id} className="relative pl-6">
             {/* Timeline node */}
             <div className="absolute w-3 h-3 bg-gray-200 rounded-full left-[-7px] top-1.5 border-2 border-white"></div>
-            
+
             <div className="flex items-start justify-between">
               <div>
-                <h4 className="text-sm font-bold text-gray-900 mb-1 leading-tight">{event.title}</h4>
+                <h4 className="text-sm font-bold text-gray-900 mb-1 leading-tight">
+                  {event.title}
+                </h4>
                 <div className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5 text-xs font-bold text-primary">
                     <Award className="w-3.5 h-3.5" /> Rank #{event.rank}
@@ -54,9 +56,12 @@ export function RecentCompetitions() {
         ))}
       </div>
       <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-         <Link href="/dashboard/analytics" className="text-xs font-bold text-gray-500 hover:text-primary transition-colors">
-            Show More
-         </Link>
+        <Link
+          href="/dashboard/analytics"
+          className="text-xs font-bold text-gray-500 hover:text-primary transition-colors"
+        >
+          Show More
+        </Link>
       </div>
     </div>
   );

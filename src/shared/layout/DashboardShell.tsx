@@ -36,14 +36,13 @@ import { logOutAction } from "@/features/user/services/account";
 
 interface DashboardShellProps {
   children: React.ReactNode;
-  currentStreak?: number;
-  currentRank?: number | null;
   freshUser?: {
     name: string | null;
     image: string | null;
     username: string | null;
     examCategory: string | null;
   } | null;
+  userStatsNode?: React.ReactNode;
 }
 
 const userNavItems = [
@@ -91,7 +90,11 @@ function getNavItemsForRole(role: string | undefined) {
   }
 }
 
-export function DashboardShell({ children, currentStreak, currentRank, freshUser }: DashboardShellProps) {
+export function DashboardShell({
+  children,
+  userStatsNode,
+  freshUser,
+}: DashboardShellProps) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
@@ -110,7 +113,8 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
     name: freshUser?.name !== undefined ? freshUser.name : user?.name,
     image: freshUser?.image !== undefined ? freshUser.image : user?.image,
     username: freshUser?.username !== undefined ? freshUser.username : user?.username,
-    examCategory: freshUser?.examCategory !== undefined ? freshUser.examCategory : (user as any)?.examCategory,
+    examCategory:
+      freshUser?.examCategory !== undefined ? freshUser.examCategory : (user as any)?.examCategory,
   };
 
   // ── Super Admin Isolation flag ─────────────────────────────────────────
@@ -192,7 +196,10 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
           <span className="w-3.5 h-[2px] bg-current rounded-full transition-all group-hover:w-5"></span>
           <span className="w-5 h-[2px] bg-current rounded-full transition-all group-hover:w-5"></span>
         </button>
-        <Link href="/dashboard/home" className="flex items-center justify-center hover:opacity-80 transition-opacity">
+        <Link
+          href="/dashboard/home"
+          className="flex items-center justify-center hover:opacity-80 transition-opacity"
+        >
           <Image
             src="/logo-header.png"
             alt="QuizArena"
@@ -203,23 +210,16 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
             unoptimized
           />
         </Link>
-        <Link href="/profile" className="shrink-0 group hover:opacity-80 transition-opacity mt-1 mr-2">
+        <Link
+          href="/profile"
+          className="shrink-0 group hover:opacity-80 transition-opacity mt-1 mr-2"
+        >
           <AvatarIdentity
             name={mergedUser?.name}
             username={mergedUser?.username}
             image={mergedUser?.image}
             examCategory={mergedUser?.examCategory}
-            rankTier={
-              currentRank
-                ? currentRank <= 10
-                  ? "DIAMOND"
-                  : currentRank <= 50
-                    ? "GOLD"
-                    : currentRank <= 100
-                      ? "SILVER"
-                      : "BRONZE"
-                : "BRONZE"
-            }
+            rankTier="BRONZE"
             size={36}
             className="group-hover:shadow-md transition-all duration-300"
           />
@@ -258,17 +258,7 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
               username={mergedUser?.username}
               image={mergedUser?.image}
               examCategory={mergedUser?.examCategory}
-              rankTier={
-                currentRank
-                  ? currentRank <= 10
-                    ? "DIAMOND"
-                    : currentRank <= 50
-                      ? "GOLD"
-                      : currentRank <= 100
-                        ? "SILVER"
-                        : "BRONZE"
-                  : "BRONZE"
-              }
+              rankTier="BRONZE"
               size={52}
               className="group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300"
             />
@@ -286,16 +276,7 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
                   </span>
                 )}
               </div>
-              {role === ROLES.USER && (
-                <div className="flex items-center gap-1.5 mt-1 overflow-hidden">
-                  <span className="flex items-center whitespace-nowrap gap-1 px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded text-[10px] font-bold border border-orange-100">
-                    <Flame className="w-3 h-3 shrink-0" /> {currentStreak || 0} Streak
-                  </span>
-                  <span className="flex items-center whitespace-nowrap gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold border border-blue-100 truncate">
-                    <Trophy className="w-3 h-3 shrink-0" /> {currentRank ? `Rank #${currentRank}` : "Unranked"}
-                  </span>
-                </div>
-              )}
+              {role === ROLES.USER && userStatsNode}
             </div>
           </Link>
         </div>
@@ -377,7 +358,11 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
-                <Link href="/dashboard/home" onClick={() => setSidebarOpen(false)} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <Link
+                  href="/dashboard/home"
+                  onClick={() => setSidebarOpen(false)}
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                >
                   <Image
                     src="/logo-header.png"
                     alt="QuizArena"
@@ -412,17 +397,7 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
                     username={mergedUser?.username}
                     image={mergedUser?.image}
                     examCategory={mergedUser?.examCategory}
-                    rankTier={
-                      currentRank
-                        ? currentRank <= 10
-                          ? "DIAMOND"
-                          : currentRank <= 50
-                            ? "GOLD"
-                            : currentRank <= 100
-                              ? "SILVER"
-                              : "BRONZE"
-                        : "BRONZE"
-                    }
+                    rankTier="BRONZE"
                     size={52}
                     className="group-hover:shadow-md group-hover:-translate-y-0.5 transition-all duration-300"
                   />
@@ -440,17 +415,7 @@ export function DashboardShell({ children, currentStreak, currentRank, freshUser
                         </span>
                       )}
                     </div>
-                    {role === ROLES.USER && (
-                      <div className="flex items-center gap-1.5 mt-1 overflow-hidden">
-                        <span className="flex items-center whitespace-nowrap gap-1 px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded text-[10px] font-bold border border-orange-100">
-                          <Flame className="w-3 h-3 shrink-0" /> {currentStreak || 0} Streak
-                        </span>
-                        <span className="flex items-center whitespace-nowrap gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold border border-blue-100 truncate">
-                          <Trophy className="w-3 h-3 shrink-0" />{" "}
-                          {currentRank ? `Rank #${currentRank}` : "Unranked"}
-                        </span>
-                      </div>
-                    )}
+                    {role === ROLES.USER && userStatsNode}
                   </div>
                 </Link>
               </div>

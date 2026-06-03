@@ -3,7 +3,10 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ROLES, type Role } from "@/features/rbac/services/roles";
-import { getEmptyStateMessage, type EmptyStateCategory } from "@/features/rbac/services/ui-visibility";
+import {
+  getEmptyStateMessage,
+  type EmptyStateCategory,
+} from "@/features/rbac/services/ui-visibility";
 import { FileQuestion, FolderOpen, ClipboardList, DollarSign } from "lucide-react";
 
 interface RoleAwareEmptyStateProps {

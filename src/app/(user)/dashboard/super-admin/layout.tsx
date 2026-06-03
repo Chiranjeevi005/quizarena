@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
 import { SuperAdminShell } from "@/features/super-admin/components/SuperAdminShell";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   // DB-authoritative sovereignty check — fail-closed

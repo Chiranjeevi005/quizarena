@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { GripVertical } from "lucide-react";
 import { reorderChallengeQuestions } from "@/features/admin/services/challenge-builder";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 
 export default function DraggableQuestionList({ challenge }: { challenge: any }) {
   const [items, setItems] = useState(challenge.questions);
@@ -40,17 +40,22 @@ export default function DraggableQuestionList({ challenge }: { challenge: any })
     if (draggedIdx === null) return;
     setDraggedIdx(null);
 
-    // Save new order to backend
     const questionIds = items.map((item: any) => item.questionId);
     setIsSaving(true);
-    const res = await reorderChallengeQuestions({ challengeId: challenge.id, questionIds });
-    setIsSaving(false);
-
-    if (!res.success) {
-      toast.error(res.error || "Failed to save order");
+    const toastId = notify.loading("Saving Order...");
+    try {
+      const res = await reorderChallengeQuestions({ challengeId: challenge.id, questionIds });
+      if (!res.success) {
+        notify.error(res.error || "Failed to save order", { id: toastId });
+        setItems(challenge.questions); // revert
+      } else {
+        notify.success("Order saved", { id: toastId });
+      }
+    } catch {
+      notify.error("Failed to save order", { id: toastId });
       setItems(challenge.questions); // revert
-    } else {
-      toast.success("Order saved");
+    } finally {
+      setIsSaving(false);
     }
   };
 

@@ -4,7 +4,7 @@
  */
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { ROLE as ROLES } from "@/features/rbac/constants/role-types";
 import { UserDashboardView } from "@/features/dashboard/components/user/UserDashboard";
 import { AdminDashboardView } from "@/features/dashboard/components/admin/AdminDashboard";

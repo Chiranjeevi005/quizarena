@@ -32,9 +32,7 @@ export function ChallengeGridClient({ challenges }: ChallengeGridClientProps) {
         <p className="text-gray-500 text-sm mb-4">
           New national competitions are published regularly.
         </p>
-        <button
-          className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-200 transition-colors"
-        >
+        <button className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-bold rounded-lg hover:bg-gray-200 transition-colors">
           Notify Me
         </button>
       </div>
@@ -59,18 +57,19 @@ export function ChallengeGridClient({ challenges }: ChallengeGridClientProps) {
                 {challenge.difficulty}
               </span>
             </div>
-            
+
             {/* Middle */}
             <div className="flex-1">
               <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                 {challenge.title}
               </h3>
-              
+
               <div className="mb-4">
                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                   {challenge.category
-                    ? EXAM_CATEGORY_LABELS[challenge.category as keyof typeof EXAM_CATEGORY_LABELS] ||
-                      challenge.category
+                    ? EXAM_CATEGORY_LABELS[
+                        challenge.category as keyof typeof EXAM_CATEGORY_LABELS
+                      ] || challenge.category
                     : "General Competition"}
                 </span>
               </div>
@@ -90,7 +89,8 @@ export function ChallengeGridClient({ challenges }: ChallengeGridClientProps) {
                     {challenge.participantsCount ||
                       (challenge.id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
                         400) +
-                        100} Participants
+                        100}{" "}
+                    Participants
                   </span>
                 </div>
               </div>
@@ -105,12 +105,15 @@ export function ChallengeGridClient({ challenges }: ChallengeGridClientProps) {
                 <Shield className="w-3.5 h-3.5 text-blue-500" /> Leaderboard Points
               </div>
               <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
-                <span className="w-3.5 h-3.5 flex items-center justify-center bg-gray-200 rounded-full text-[8px]">₹</span> Entry: Free
+                <span className="w-3.5 h-3.5 flex items-center justify-center bg-gray-200 rounded-full text-[8px]">
+                  ₹
+                </span>{" "}
+                Entry: Free
               </div>
             </div>
 
             <button className="w-full flex items-center justify-center gap-2 bg-primary/10 text-primary border border-primary/20 py-3 rounded-lg font-bold text-sm group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(37,99,235,0.3)] transition-all mt-auto">
-               Join Challenge
+              Join Challenge
             </button>
           </div>
         ))}

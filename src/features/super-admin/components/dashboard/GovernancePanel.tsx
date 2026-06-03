@@ -1,7 +1,7 @@
 import type { GovernanceStatusData } from "@/types/super-admin-dashboard";
 import { Crown, Users, Activity, History } from "lucide-react";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export function GovernancePanel({ data }: { data: GovernanceStatusData }) {
   return (

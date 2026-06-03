@@ -10,7 +10,7 @@
  */
 import { getServerSession } from "@/lib/session-utils";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { ProtectedAppLayout } from "@/shared/layout/ProtectedAppLayout";
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {

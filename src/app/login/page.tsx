@@ -17,7 +17,7 @@ import {
   AuthFooterLink,
   BrandSection,
 } from "@/features/auth/components";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 function LoginForm() {
   const searchParams = useSearchParams();

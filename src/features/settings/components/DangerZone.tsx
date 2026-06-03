@@ -1,53 +1,82 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, Trash2, Download, LogOut, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { deleteAccountAction, logOutAction } from "@/features/user/services/account";
 
 export function DangerZone() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [pendingToast, setPendingToast] = useState<{ id: string; title: string; desc?: string; reload?: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!isPending && pendingToast) {
+      notify.success(pendingToast.title, {
+        id: pendingToast.id,
+        description: pendingToast.desc,
+      });
+      if (pendingToast.reload) {
+        window.location.href = "/";
+      }
+      setPendingToast(null);
+    }
+  }, [isPending, pendingToast]);
 
   const expectedConfirmText = "DELETE";
 
   const handleDelete = (e: React.FormEvent) => {
     e.preventDefault();
     if (confirmText !== expectedConfirmText) {
-      toast.error(`Please type ${expectedConfirmText} to confirm`);
+      notify.error(`Please type ${expectedConfirmText} to confirm`);
       return;
     }
 
-    // Since server action expects "{username}/delete", we need to override the logic or modify the server action. 
-    // Wait, the instruction said "Type DELETE before continuing", but the server action expects `username/delete`. 
-    // I will modify the input to just send `expectedConfirmText` to the action as whatever the action expects, 
-    // or just pass `session.user.username + '/delete'` to the action so it passes.
     const actionPayload = session?.user?.username ? `${session.user.username}/delete` : "DELETE";
 
+    const toastId = notify.loading("Deleting Account...");
     startTransition(async () => {
       try {
         const result = await deleteAccountAction(actionPayload);
         if (result.success) {
-          toast.success("Account deleted successfully");
-          signOut({ callbackUrl: "/" });
+          setPendingToast({
+            id: toastId,
+            title: "Account Deleted",
+            desc: "Your account and all associated data have been permanently removed.",
+            reload: true,
+          });
         } else {
-          toast.error(result.error || "Failed to delete account");
+          notify.error("Deletion Failed", {
+            id: toastId,
+            description: result.error || "We couldn't delete your account. Please try again.",
+          });
         }
       } catch (err) {
-        toast.error("Failed to delete account");
+        notify.error("Deletion Failed", {
+          id: toastId,
+          description: "An unexpected error occurred. Please try again.",
+        });
       }
     });
   };
 
   const handleLogOut = () => {
+    const toastId = notify.loading("Logging out...");
     startTransition(async () => {
       try {
         await logOutAction();
+        setPendingToast({
+          id: toastId,
+          title: "Logged out successfully",
+          reload: true,
+        });
       } catch (err) {
-        // proceed to sign out even if logging fails
+        notify.error("Sign out encountered an issue", { id: toastId });
       } finally {
         signOut({ callbackUrl: "/login" });
       }
@@ -65,9 +94,7 @@ export function DangerZone() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-navy tracking-tight">Account Controls</h3>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Manage account ownership and data.
-              </p>
+              <p className="text-sm text-gray-500 mt-0.5">Manage account ownership and data.</p>
             </div>
           </div>
         </div>
@@ -145,8 +172,8 @@ export function DangerZone() {
             </div>
             <div className="p-6">
               <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                This action is <span className="font-bold text-red-600">irreversible</span>. It
-                will delete your account, session, and all preferences.
+                This action is <span className="font-bold text-red-600">irreversible</span>. It will
+                delete your account, session, and all preferences.
               </p>
 
               <form onSubmit={handleDelete} className="space-y-4">

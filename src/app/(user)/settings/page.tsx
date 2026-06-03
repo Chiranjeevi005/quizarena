@@ -1,7 +1,7 @@
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
-import { ROUTES } from '@/constants/routes';
-import { prisma } from "@/lib/prisma";
+import { ROUTES } from "@/constants/routes";
+import { ProfileService } from "@/features/user/services/profile.service";
 
 import { NotificationsReminders } from "@/features/settings/components/NotificationsReminders";
 import { SecuritySettings } from "@/features/settings/components/SecuritySettings";
@@ -21,10 +21,7 @@ export default async function SettingsPage() {
   }
 
   // Fetch full user details from the database
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: { accounts: true, sessions: true }
-  });
+  const user = await ProfileService.getSettingsProfile(session.user.id);
 
   if (!user) {
     redirect(ROUTES.AUTH.SIGN_IN);

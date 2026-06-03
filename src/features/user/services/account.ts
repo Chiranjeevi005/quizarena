@@ -216,18 +216,19 @@ export async function updateNotificationPrefsAction(prefs: Record<string, boolea
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { notificationPrefs: true }
+    select: { notificationPrefs: true },
   });
 
-  const currentPrefs = typeof user?.notificationPrefs === 'object' && user?.notificationPrefs !== null
-    ? user.notificationPrefs as Record<string, boolean>
-    : {
-        dailyReminder: true,
-        challengeAlerts: true,
-        rankUpdates: true,
-        competitionAnnouncements: true,
-        streakProtectionAlert: true,
-      };
+  const currentPrefs =
+    typeof user?.notificationPrefs === "object" && user?.notificationPrefs !== null
+      ? (user.notificationPrefs as Record<string, boolean>)
+      : {
+          dailyReminder: true,
+          challengeAlerts: true,
+          rankUpdates: true,
+          competitionAnnouncements: true,
+          streakProtectionAlert: true,
+        };
 
   const updatedPrefs = { ...currentPrefs, ...prefs };
 
@@ -245,27 +246,29 @@ export async function updateNotificationPrefsAction(prefs: Record<string, boolea
 export async function signOutOtherDevicesAction() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  
+
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
-  
+  const sessionToken =
+    cookieStore.get("authjs.session-token")?.value ||
+    cookieStore.get("__Secure-authjs.session-token")?.value;
+
   if (sessionToken) {
     await prisma.session.deleteMany({
       where: {
         userId: session.user.id,
         sessionToken: {
-          not: sessionToken
-        }
-      }
+          not: sessionToken,
+        },
+      },
     });
   } else {
     await prisma.session.deleteMany({
       where: {
-        userId: session.user.id
-      }
+        userId: session.user.id,
+      },
     });
   }
-  
+
   return { success: true };
 }

@@ -2,7 +2,10 @@
 
 import { ArrowRight, Brain, AlertTriangle, AlertCircle, CheckCircle, Info } from "lucide-react";
 import Link from "next/link";
-import type { IntelligenceInsight, OperationalStatus } from "@/features/analytics/services/intelligence/types";
+import type {
+  IntelligenceInsight,
+  OperationalStatus,
+} from "@/features/analytics/services/intelligence/types";
 
 interface InsightEngineListProps {
   insights: IntelligenceInsight[];

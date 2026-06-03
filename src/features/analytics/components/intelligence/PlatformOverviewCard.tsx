@@ -1,7 +1,10 @@
 "use client";
 
 import { Activity, Users, FileText, AlertCircle, TrendingUp } from "lucide-react";
-import type { PlatformOverview, OperationalStatus } from "@/features/analytics/services/intelligence/types";
+import type {
+  PlatformOverview,
+  OperationalStatus,
+} from "@/features/analytics/services/intelligence/types";
 
 interface PlatformOverviewCardProps {
   data: PlatformOverview;

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { BookOpen, Target, Save } from "lucide-react";
 import type { User as PrismaUser, ExamCategory, PreparationLevel } from "@/generated/prisma";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { updatePreferencesAction } from "@/features/user/services/account";
 
 interface PreparationPreferencesProps {
@@ -11,6 +12,7 @@ interface PreparationPreferencesProps {
 }
 
 export function PreparationPreferences({ user }: PreparationPreferencesProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [examCategory, setExamCategory] = useState<ExamCategory | "">(user.examCategory || "");
   const [preparationLevel, setPreparationLevel] = useState<PreparationLevel | "">(
@@ -22,9 +24,21 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
   const [recommendationEngine, setRecommendationEngine] = useState<boolean>(
     (user as any).recommendationEngine ?? true
   );
+  const [pendingToast, setPendingToast] = useState<{ id: string; title: string; desc?: string } | null>(null);
+
+  useEffect(() => {
+    if (!isPending && pendingToast) {
+      notify.success(pendingToast.title, {
+        id: pendingToast.id,
+        description: pendingToast.desc,
+      });
+      setPendingToast(null);
+    }
+  }, [isPending, pendingToast]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    const toastId = notify.loading("Updating Preferences...");
     startTransition(async () => {
       try {
         const result = await updatePreferencesAction({
@@ -34,12 +48,17 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
           recommendationEngine,
         });
         if (result.success) {
-          toast.success("Preferences updated successfully");
+          router.refresh();
+          setPendingToast({
+            id: toastId,
+            title: "Preferences Updated",
+            desc: "Your preparation settings have been saved.",
+          });
         } else {
-          toast.error("Failed to update preferences");
+          notify.error("Failed to update preferences", { id: toastId });
         }
       } catch (error) {
-        toast.error("Failed to update preferences");
+        notify.error("Failed to update preferences", { id: toastId });
       }
     });
   };
@@ -72,10 +91,11 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
                   key={exam.value}
                   type="button"
                   onClick={() => setExamCategory(exam.value as ExamCategory)}
-                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all ${examCategory === exam.value
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all ${
+                    examCategory === exam.value
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
-                    }`}
+                  }`}
                 >
                   {exam.label}
                 </button>
@@ -98,10 +118,11 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
                   key={level.value}
                   type="button"
                   onClick={() => setPreparationLevel(level.value as PreparationLevel)}
-                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all text-left flex justify-between items-center ${preparationLevel === level.value
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all text-left flex justify-between items-center ${
+                    preparationLevel === level.value
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
-                    }`}
+                  }`}
                 >
                   {level.label}
                   {preparationLevel === level.value && (
@@ -125,10 +146,11 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
                   key={goal}
                   type="button"
                   onClick={() => setDailyPracticeGoal(goal)}
-                  className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all text-center ${dailyPracticeGoal === goal
+                  className={`py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all text-center ${
+                    dailyPracticeGoal === goal
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-gray-100 bg-gray-50 text-gray-600 hover:border-green-200"
-                    }`}
+                  }`}
                 >
                   {goal} Qs
                 </button>
@@ -153,12 +175,14 @@ export function PreparationPreferences({ user }: PreparationPreferencesProps) {
               <button
                 type="button"
                 onClick={() => setRecommendationEngine(!recommendationEngine)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ease-in-out ${recommendationEngine ? 'bg-green-500' : 'bg-gray-200'
-                  }`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 ease-in-out ${
+                  recommendationEngine ? "bg-green-500" : "bg-gray-200"
+                }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition duration-150 ease-in-out ${recommendationEngine ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition duration-150 ease-in-out ${
+                    recommendationEngine ? "translate-x-6" : "translate-x-1"
+                  }`}
                 />
               </button>
             </div>

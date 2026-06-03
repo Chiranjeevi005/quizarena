@@ -1,6 +1,9 @@
 import { Shield, EyeOff, Ban } from "lucide-react";
 import { useState } from "react";
-import { pauseChallengeVisibility, disableChallengeAccess } from "@/features/admin/services/live-operations";
+import {
+  pauseChallengeVisibility,
+  disableChallengeAccess,
+} from "@/features/admin/services/live-operations";
 
 interface GovernanceActionsProps {
   challengeId: string;

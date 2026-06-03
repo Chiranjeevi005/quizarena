@@ -8,7 +8,7 @@ export function CompetitionStatusBar() {
       <div className="flex items-center gap-6 divide-x divide-gray-100 w-full sm:w-auto">
         <div className="flex items-center gap-3 pr-6">
           <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center">
-             <Activity className="w-4 h-4 text-emerald-600" />
+            <Activity className="w-4 h-4 text-emerald-600" />
           </div>
           <div>
             <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Live</div>
@@ -18,7 +18,7 @@ export function CompetitionStatusBar() {
 
         <div className="flex items-center gap-3 px-6">
           <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-             <CalendarDays className="w-4 h-4 text-blue-600" />
+            <CalendarDays className="w-4 h-4 text-blue-600" />
           </div>
           <div>
             <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Upcoming</div>
@@ -28,17 +28,19 @@ export function CompetitionStatusBar() {
 
         <div className="hidden md:flex items-center gap-3 px-6">
           <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
-             <Trophy className="w-4 h-4 text-amber-600" />
+            <Trophy className="w-4 h-4 text-amber-600" />
           </div>
           <div>
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Your Rank</div>
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Your Rank
+            </div>
             <div className="text-sm font-black text-gray-900">Unranked</div>
           </div>
         </div>
 
         <div className="hidden lg:flex items-center gap-3 pl-6">
           <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
-             <Flame className="w-4 h-4 text-orange-500" />
+            <Flame className="w-4 h-4 text-orange-500" />
           </div>
           <div>
             <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Streak</div>

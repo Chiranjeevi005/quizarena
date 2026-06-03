@@ -4,7 +4,7 @@ import { auth } from "@/auth/auth";
 import { prisma } from "@/lib/prisma";
 import { hasMinimumRole } from "@/features/rbac/constants/role-hierarchy";
 import { ROLE } from "@/features/rbac/constants/role-types";
-import { logModerationAction } from './audit/index';
+import { logModerationAction } from "./audit/index";
 
 async function validateAdminAccess() {
   const session = await auth();

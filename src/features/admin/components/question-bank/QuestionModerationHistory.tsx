@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getQuestionAuditHistory, type QuestionAuditWithActor } from "@/features/admin/services/question-bank";
+import {
+  getQuestionAuditHistory,
+  type QuestionAuditWithActor,
+} from "@/features/admin/services/question-bank";
 import { History, Loader2, User, Clock, AlertCircle } from "lucide-react";
 
 export function QuestionModerationHistory({ questionId }: { questionId: string }) {

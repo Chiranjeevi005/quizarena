@@ -44,9 +44,7 @@ export function UpcomingEvents() {
               <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded uppercase tracking-wider">
                 Upcoming
               </span>
-              <span className="text-xs font-mono font-bold text-gray-500">
-                {event.difficulty}
-              </span>
+              <span className="text-xs font-mono font-bold text-gray-500">{event.difficulty}</span>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-3">{event.title}</h3>
             <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500 mt-1">
@@ -70,7 +68,9 @@ export function UpcomingEvents() {
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            <Bell className={`w-4 h-4 ${notifiedEvents[event.id] ? "fill-emerald-700 text-emerald-700" : ""}`} />
+            <Bell
+              className={`w-4 h-4 ${notifiedEvents[event.id] ? "fill-emerald-700 text-emerald-700" : ""}`}
+            />
             {notifiedEvents[event.id] ? "Notification Set" : "Notify Me"}
           </button>
         </div>

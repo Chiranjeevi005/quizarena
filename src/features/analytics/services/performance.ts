@@ -283,42 +283,20 @@ export async function getAnalyticsIntelligence(userId: string): Promise<Analytic
 // ============================================================================
 
 export async function getPerformanceOverview(userId: string): Promise<PerformanceOverview> {
-  const profile = await prisma.userPerformanceProfile.findUnique({
-    where: { userId },
-  });
-
-  // Get current best rank across any category
-  const bestRankEntry = await prisma.leaderboardEntry.findFirst({
-    where: { userId },
-    orderBy: { rank: "asc" },
-  });
-
-  if (!profile) {
-    return {
-      currentStreak: 0,
-      longestStreak: 0,
-      totalAttempts: 0,
-      completedAttempts: 0,
-      averageScore: 0,
-      averageAccuracy: 0,
-      totalAnswered: 0,
-      strongestCategory: null,
-      weakestCategory: null,
-      rank: bestRankEntry?.rank || null,
-    };
-  }
+  const { AnalyticsService } = await import("@/features/analytics/services/analytics.service");
+  const snapshot = await AnalyticsService.getPerformanceSnapshot(userId);
 
   return {
-    currentStreak: profile.currentStreak,
-    longestStreak: profile.longestStreak,
-    totalAttempts: profile.totalAttempts,
-    completedAttempts: profile.completedAttempts,
-    averageScore: profile.averageScore,
-    averageAccuracy: profile.averageAccuracy,
-    totalAnswered: profile.totalAnswered,
-    strongestCategory: profile.strongestCategory,
-    weakestCategory: profile.weakestCategory,
-    rank: bestRankEntry?.rank || null,
+    currentStreak: snapshot.currentStreak,
+    longestStreak: snapshot.highestStreak,
+    totalAttempts: snapshot.totalAttempts,
+    completedAttempts: snapshot.competitionsPlayed, // Legacy mapping
+    averageScore: 0, // Legacy field, not used in critical UI
+    averageAccuracy: snapshot.overallAccuracy,
+    totalAnswered: 0, // Legacy field, not used in critical UI
+    strongestCategory: snapshot.bestCategory,
+    weakestCategory: snapshot.weakestCategory,
+    rank: snapshot.currentRank,
   };
 }
 
@@ -397,6 +375,8 @@ export async function detectWeakAreas(userId: string): Promise<WeakArea[]> {
 }
 
 export async function getCompetitivePosition(userId: string): Promise<CompetitivePosition> {
+  const { LeaderboardService } = await import("@/features/analytics/services/leaderboard.service");
+
   // Best rank entry gives us our "Global" best if not filtering by category
   const bestRankEntry = await prisma.leaderboardEntry.findFirst({
     where: { userId },
@@ -406,9 +386,7 @@ export async function getCompetitivePosition(userId: string): Promise<Competitiv
   // Calculate approximate percentile based on total users on leaderboard
   let percentile = 0;
   if (bestRankEntry && bestRankEntry.rank > 0) {
-    const totalUsers = await prisma.leaderboardEntry.count({
-      where: { challengeId: bestRankEntry.challengeId },
-    });
+    const totalUsers = await LeaderboardService.getChallengeParticipantCount(bestRankEntry.challengeId);
     if (totalUsers > 1) {
       percentile = Math.max(0, Math.round(100 - (bestRankEntry.rank / totalUsers) * 100));
     }
@@ -609,6 +587,10 @@ export async function updatePerformanceAggregations(userId: string, attemptId: s
       });
     }
   });
+
+  // Generate the snapshot for O(1) reads
+  const { AnalyticsService } = await import("@/features/analytics/services/analytics.service");
+  await AnalyticsService.updateSnapshotAfterEvaluation(userId);
 
   revalidatePath("/dashboard/home");
   revalidatePath("/analytics");

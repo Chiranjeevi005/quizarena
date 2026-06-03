@@ -1,4 +1,4 @@
-import { TournamentLeaderboardWithUser } from '@/types/tournaments';
+import { TournamentLeaderboardWithUser } from "@/types/tournaments";
 import { Trophy, Medal, Award } from "lucide-react";
 
 interface SeasonalLeaderboardProps {

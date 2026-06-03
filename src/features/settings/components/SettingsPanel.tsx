@@ -8,7 +8,8 @@
  * and audit history display.
  */
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Settings2,
   Trophy,
@@ -21,14 +22,14 @@ import {
   AlertTriangle,
   CheckCircle2,
 } from "lucide-react";
-import toast from "react-hot-toast";
+import { notify } from "@/shared/components/feedback/notify";
 import { SettingCard } from "./SettingCard";
 import { ConfirmationModal } from "./ConfirmationModal";
 import {
   updatePlatformSetting,
-  updatePlatformSetting,
+  togglePlatformSetting,
   seedDefaultSettings,
-} from '@/features/settings/services/settings/index';
+} from "@/features/settings/services/settings";
 import {
   SETTING_CATEGORIES,
   CATEGORY_LABELS,
@@ -96,21 +97,36 @@ export function SettingsPanel({
     return (settings[cat]?.length ?? 0) > 0;
   });
 
+  const [pendingToast, setPendingToast] = useState<{ id: string; title: string; desc?: string; reload?: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!isPending && pendingToast) {
+      notify.success(pendingToast.title, {
+        id: pendingToast.id,
+        description: pendingToast.desc,
+      });
+      if (pendingToast.reload) {
+        window.location.reload();
+      }
+      setPendingToast(null);
+    }
+  }, [isPending, pendingToast]);
+
   // ─── Handlers ─────────────────────────────────────────────
 
   const handleUpdate = useCallback(async (key: string, value: JsonValue, reason?: string) => {
+    const toastId = notify.loading("Updating Setting...");
     startTransition(async () => {
       const valueType = getSettingValueType(key);
 
       let result;
       if (valueType === "boolean" && reason === undefined) {
-        result = await updatePlatformSetting(key);
+        result = await togglePlatformSetting(key);
       } else {
         result = await updatePlatformSetting(key, value, reason);
       }
 
       if (result.success) {
-        toast.success("Setting updated successfully");
         // Optimistic update
         setSettings((prev) => {
           const updated = { ...prev };
@@ -121,8 +137,13 @@ export function SettingsPanel({
           }
           return updated;
         });
+        setPendingToast({
+          id: toastId,
+          title: "Setting Updated",
+          desc: "The platform configuration has been saved.",
+        });
       } else {
-        toast.error(result.error ?? "Failed to update setting");
+        notify.error(result.error ?? "Failed to update setting", { id: toastId });
       }
     });
   }, []);
@@ -156,15 +177,19 @@ export function SettingsPanel({
   );
 
   const handleSeed = useCallback(async () => {
+    const toastId = notify.loading("Seeding Settings...");
     startTransition(async () => {
       const result = await seedDefaultSettings();
       if (result.success) {
-        toast.success(`Seeded ${result.created ?? 0} default settings`);
         setUnseededCount(0);
-        // Refresh the page to get new settings
-        window.location.reload();
+        setPendingToast({
+          id: toastId,
+          title: "Settings Initialized",
+          desc: `${result.created ?? 0} default settings have been seeded.`,
+          reload: true,
+        });
       } else {
-        toast.error(result.error ?? "Failed to seed settings");
+        notify.error(result.error ?? "Failed to seed settings", { id: toastId });
       }
     });
   }, []);

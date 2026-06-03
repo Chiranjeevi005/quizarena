@@ -16,7 +16,10 @@ interface RecommendedChallengeCTAProps {
   label?: string;
 }
 
-export function RecommendedChallengeCTA({ challenge, label = "Begin Training Session" }: RecommendedChallengeCTAProps) {
+export function RecommendedChallengeCTA({
+  challenge,
+  label = "Begin Training Session",
+}: RecommendedChallengeCTAProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

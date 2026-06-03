@@ -28,7 +28,10 @@ import {
   LifeBuoy,
   BrainCircuit,
 } from "lucide-react";
-import { SUPER_ADMIN_PATHS, SUPER_ADMIN_NAV_SECTIONS } from "@/features/super-admin/services/routes";
+import {
+  SUPER_ADMIN_PATHS,
+  SUPER_ADMIN_NAV_SECTIONS,
+} from "@/features/super-admin/services/routes";
 
 // ─── Icon Map ─────────────────────────────────────────────────────────────────
 

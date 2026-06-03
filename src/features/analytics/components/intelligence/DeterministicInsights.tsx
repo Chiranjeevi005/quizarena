@@ -1,6 +1,6 @@
 "use client";
 
-import { IntelligenceInsight } from '@/lib/intelligence-engine';
+import { IntelligenceInsight } from "@/lib/intelligence-engine";
 import { TrendingUp, TrendingDown, Activity, AlertCircle } from "lucide-react";
 
 interface DeterministicInsightsProps {

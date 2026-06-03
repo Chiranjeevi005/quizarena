@@ -127,7 +127,8 @@ export const authConfig = {
       if (trigger === "update" && session) {
         // The payload from update(data) might be passed directly as session or wrapped in session.user
         const data = session.user || session;
-        if (data.onboardingCompleted !== undefined) token.onboardingCompleted = data.onboardingCompleted;
+        if (data.onboardingCompleted !== undefined)
+          token.onboardingCompleted = data.onboardingCompleted;
         if (data.examCategory !== undefined) token.examCategory = data.examCategory;
         if (data.preparationLevel !== undefined) token.preparationLevel = data.preparationLevel;
         if (data.username !== undefined) token.username = data.username;

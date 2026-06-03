@@ -10,7 +10,7 @@
 import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
 import { logSuperAdminAudit } from "@/features/super-admin/services/audit";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 import { Sliders, ToggleLeft, Wrench, Layers, ArrowRight, Lock, AlertTriangle } from "lucide-react";
 
 export const metadata = {

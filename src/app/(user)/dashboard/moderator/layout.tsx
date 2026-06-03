@@ -1,7 +1,7 @@
 import { requireMinimumRole } from "@/features/rbac/services/guards";
 import { ROLES } from "@/features/rbac/services/roles";
 import Link from "next/link";
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from "@/constants/routes";
 
 export default async function ModeratorDashboardLayout({
   children,
