@@ -76,6 +76,11 @@ model User {
   dismissedIssues           OperationalIssue[]                @relation("IssueDismissedBy")
   assignedIssues            OperationalIssue[]                @relation("IssueAssignedTo")
   operationalIssueAudits    OperationalIssueAudit[]           @relation("OperationalAuditActor")
+  createdCompetitions       Competition[]                     @relation("CompetitionCreatedBy")
+  updatedCompetitions       Competition[]                     @relation("CompetitionUpdatedBy")
+  CompetitionAudit          CompetitionAudit[]
+  builderRevisions          BuilderRevision[]
+  builderLocks              BuilderLock[]
 
   @@index([email])
   @@index([username])
@@ -194,6 +199,7 @@ enum AuditEntityType {
   SETTINGS
   SECURITY
   FINANCIAL
+  COMPETITION
 }
 
 model AuditLog {
@@ -627,6 +633,7 @@ model Question {
   flags                    QuestionFlag[]
   recommendationDismissals QuestionRecommendationDismissal[]
   operationalIssues        OperationalIssue[]
+  competitions             CompetitionQuestion[]
 
   @@index([questionCode])
   @@index([category])
@@ -703,17 +710,17 @@ model QuestionAuditLog {
 }
 
 model QuestionGovernanceAudit {
-  id            String         @id @default(cuid())
+  id            String        @id @default(cuid())
   questionId    String
   action        String
-  reason        String?        @db.Text
+  reason        String?       @db.Text
   adminId       String?
   triggerSource TriggerSource
 
   previousState LifecycleState?
   newState      LifecycleState
 
-  timestamp     DateTime       @default(now())
+  timestamp DateTime @default(now())
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   admin    User?    @relation(fields: [adminId], references: [id], onDelete: SetNull)
@@ -1759,30 +1766,30 @@ model OperationalRule {
 }
 
 model OperationalIssue {
-  id               String                   @id @default(cuid())
-  issueFingerprint String                   @unique
+  id               String                    @id @default(cuid())
+  issueFingerprint String                    @unique
   questionId       String
   issueType        String
   severity         OperationalIssueSeverity
   previousSeverity OperationalIssueSeverity?
-  status           OperationalIssueStatus   @default(OPEN)
-  priority         OperationalIssueSeverity @default(LOW)
-  
+  status           OperationalIssueStatus    @default(OPEN)
+  priority         OperationalIssueSeverity  @default(LOW)
+
   detectedAt      DateTime  @default(now())
   lastEvaluatedAt DateTime  @default(now())
   resolvedAt      DateTime?
-  
-  dismissedById   String?
-  dismissedAt     DateTime?
-  
-  assignedToId    String?
-  dueDate         DateTime?
-  
-  resolutionNotes String?   @db.Text
 
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  dismissedBy User?    @relation("IssueDismissedBy", fields: [dismissedById], references: [id], onDelete: SetNull)
-  assignedTo  User?    @relation("IssueAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  dismissedById String?
+  dismissedAt   DateTime?
+
+  assignedToId String?
+  dueDate      DateTime?
+
+  resolutionNotes String? @db.Text
+
+  question    Question                @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  dismissedBy User?                   @relation("IssueDismissedBy", fields: [dismissedById], references: [id], onDelete: SetNull)
+  assignedTo  User?                   @relation("IssueAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
   audits      OperationalIssueAudit[]
 
   @@index([questionId])
@@ -1809,4 +1816,312 @@ model OperationalIssueAudit {
   @@index([actorId])
   @@index([action])
   @@map("operational_issue_audits")
+}
+
+// ─── Competition Domain ─────────────────────────────────────
+
+enum CompetitionType {
+  OPEN_PRACTICE
+  FREE_CHALLENGE
+  PAID_CHALLENGE
+  MOCK_TEST
+  TOURNAMENT
+}
+
+enum CompetitionStatus {
+  DRAFT
+  READY
+  SCHEDULED
+  LIVE
+  COMPLETED
+  EXPIRED
+  ARCHIVED
+}
+
+enum CompetitionVisibility {
+  PUBLIC
+  PRIVATE
+  INVITE_ONLY
+}
+
+enum CompetitionAuditAction {
+  CREATED
+  UPDATED
+  QUESTIONS_ATTACHED
+  QUESTIONS_DETACHED
+  QUESTIONS_REORDERED
+  RULES_CONFIGURED
+  ELIGIBILITY_CONFIGURED
+  ECONOMICS_CONFIGURED
+  SECTIONS_CONFIGURED
+  VALIDATED
+  VALIDATION_FAILED
+  MARKED_READY
+  PUBLISHED
+  SCHEDULED
+  WENT_LIVE
+  COMPLETED
+  EXPIRED
+  ARCHIVED
+  RESTORED
+  CLONED
+  VERSION_CREATED
+  PURGED
+}
+
+model Competition {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String? @db.Text
+
+  // Classification
+  competitionType CompetitionType
+  status          CompetitionStatus     @default(DRAFT)
+  visibility      CompetitionVisibility @default(PUBLIC)
+  exam            ExamCategory?
+  difficulty      ChallengeDifficulty   @default(MEDIUM)
+  language        String                @default("en")
+
+  // Core metrics (denormalized for fast queries)
+  durationMinutes Int
+  totalQuestions  Int @default(0)
+  maximumMarks    Int @default(0)
+
+  // Versioning
+  version                 Int     @default(1)
+  isLatestVersion         Boolean @default(true)
+  clonedFromCompetitionId String?
+
+  // Scheduling
+  startsAt    DateTime?
+  endsAt      DateTime?
+  publishedAt DateTime?
+
+  // Audit trail
+  createdById String?
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // ─── Relations ──────────────────────────────────
+  createdBy  User?         @relation("CompetitionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy  User?         @relation("CompetitionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  clonedFrom Competition?  @relation("CompetitionClones", fields: [clonedFromCompetitionId], references: [id], onDelete: SetNull)
+  clones     Competition[] @relation("CompetitionClones")
+
+  // Sub-configurations
+  config      CompetitionConfig?
+  economics   CompetitionEconomics?
+  eligibility CompetitionEligibility?
+
+  // Content
+  sections   CompetitionSection[]
+  questions  CompetitionQuestion[]
+  auditTrail CompetitionAudit[]
+  revisions  BuilderRevision[]
+  locks      BuilderLock[]
+
+  @@index([slug])
+  @@index([competitionType])
+  @@index([status])
+  @@index([visibility])
+  @@index([exam])
+  @@index([difficulty])
+  @@index([startsAt])
+  @@index([endsAt])
+  @@index([createdById])
+  @@index([createdAt])
+  @@index([status, competitionType])
+  @@index([status, visibility])
+  @@index([isLatestVersion])
+  @@index([clonedFromCompetitionId])
+  @@map("competitions")
+}
+
+model CompetitionConfig {
+  id            String @id @default(cuid())
+  competitionId String @unique
+
+  // Rules (versioned JSON — structured via TypeScript interface)
+  rules        Json?
+  rulesVersion Int   @default(1)
+
+  // Behavior flags
+  negativeMarkingEnabled  Boolean @default(false)
+  negativeMarkPerQuestion Float   @default(0)
+  passingMarks            Int?
+  allowRetake             Boolean @default(false)
+  randomizeQuestions      Boolean @default(false)
+  randomizeOptions        Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId])
+  @@map("competition_configs")
+}
+
+model CompetitionEconomics {
+  id            String @id @default(cuid())
+  competitionId String @unique
+
+  entryFee   Float  @default(0)
+  rewardPool Float  @default(0)
+  currency   String @default("INR")
+
+  // Future: prize distribution, sponsor metadata
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId])
+  @@map("competition_economics")
+}
+
+model CompetitionEligibility {
+  id            String @id @default(cuid())
+  competitionId String @unique
+
+  // Eligibility criteria (versioned JSON — structured via TypeScript interface)
+  criteria           Json?
+  eligibilityVersion Int   @default(1)
+
+  maxParticipants Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId])
+  @@map("competition_eligibility")
+}
+
+model CompetitionSection {
+  id            String @id @default(cuid())
+  competitionId String
+
+  title        String
+  slug         String
+  description  String? @db.Text
+  instructions String? @db.Text
+  displayOrder Int     @default(0)
+
+  // Section-level overrides
+  durationMinutes Int?
+  totalQuestions  Int     @default(0)
+  maximumMarks    Int     @default(0)
+  passingMarks    Int?
+  isMandatory     Boolean @default(true)
+  allowNavigation Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  competition Competition           @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  questions   CompetitionQuestion[]
+
+  @@unique([competitionId, slug])
+  @@index([competitionId])
+  @@index([displayOrder])
+  @@map("competition_sections")
+}
+
+model CompetitionQuestion {
+  id            String  @id @default(cuid())
+  competitionId String
+  questionId    String
+  sectionId     String?
+
+  // Ordering
+  displayOrder Int @default(0)
+  sectionOrder Int @default(0)
+
+  // Scoring
+  marks          Int   @default(1)
+  negativeMarks  Float @default(0)
+  questionWeight Float @default(1.0)
+
+  // Overrides
+  difficultyOverride ChallengeDifficulty?
+  timeLimitOverride  Int? // seconds — overrides competition-level timer for this question
+
+  // Flags
+  isOptional  Boolean @default(false)
+  isBonus     Boolean @default(false)
+  isMandatory Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  competition Competition         @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  question    Question            @relation(fields: [questionId], references: [id])
+  section     CompetitionSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  @@unique([competitionId, questionId])
+  @@index([competitionId])
+  @@index([questionId])
+  @@index([sectionId])
+  @@index([displayOrder])
+  @@map("competition_questions")
+}
+
+model CompetitionAudit {
+  id            String                 @id @default(cuid())
+  competitionId String
+  action        CompetitionAuditAction
+  actorId       String?
+  previousState CompetitionStatus?
+  newState      CompetitionStatus?
+  reason        String?                @db.Text
+  metadata      Json?
+  createdAt     DateTime               @default(now())
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  actor       User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([competitionId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([competitionId, createdAt(sort: Desc)])
+  @@map("competition_audits")
+}
+
+model BuilderRevision {
+  id            String   @id @default(cuid())
+  competitionId String
+  revisionNumber Int
+  actorId       String?
+  summary       String?  @db.Text
+  snapshot      Json
+  createdAt     DateTime @default(now())
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  actor       User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@unique([competitionId, revisionNumber])
+  @@index([competitionId])
+  @@index([createdAt])
+  @@map("builder_revisions")
+}
+
+model BuilderLock {
+  id            String   @id @default(cuid())
+  competitionId String   @unique
+  userId        String
+  expiresAt     DateTime
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId])
+  @@index([expiresAt])
+  @@map("builder_locks")
 }

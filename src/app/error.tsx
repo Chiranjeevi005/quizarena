@@ -31,7 +31,10 @@ export default function Error({
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
-            onClick={() => reset()}
+            onClick={() => {
+              reset();
+              window.location.reload();
+            }}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
           >
             Try again

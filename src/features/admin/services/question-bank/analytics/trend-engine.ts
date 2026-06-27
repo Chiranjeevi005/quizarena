@@ -100,12 +100,12 @@ export function computeConfidenceScore(stats: {
   // Consistency score (0-100)
   // A success rate near 50% is maximally informative; very high or very low rates
   // might still be consistent — so we measure stability from trend instead
-  const consistencyScore = stats.successRateTrend === "STABLE" ? 100 : stats.successRateTrend === "UP" ? 70 : 40;
+  const consistencyScore =
+    stats.successRateTrend === "STABLE" ? 100 : stats.successRateTrend === "UP" ? 70 : 40;
 
   // Report rate inverse (0-100)
   // Lower report rate = higher score
-  const reportRate =
-    stats.timesAttempted > 0 ? stats.reportCount / stats.timesAttempted : 0;
+  const reportRate = stats.timesAttempted > 0 ? stats.reportCount / stats.timesAttempted : 0;
   const reportScore = Math.max(0, 100 - reportRate * 2000); // 5% report rate = 0
 
   // Difficulty stability (0-100)
@@ -121,11 +121,11 @@ export function computeConfidenceScore(stats: {
 
   const confidence = Math.round(
     volumeScore * CONFIDENCE_WEIGHTS.ATTEMPT_VOLUME +
-    consistencyScore * CONFIDENCE_WEIGHTS.CONSISTENCY +
-    reportScore * CONFIDENCE_WEIGHTS.REPORT_RATE_INVERSE +
-    difficultyScore * CONFIDENCE_WEIGHTS.DIFFICULTY_STABILITY +
-    usageScore * CONFIDENCE_WEIGHTS.USAGE_STABILITY +
-    sampleScore * CONFIDENCE_WEIGHTS.SAMPLE_SIZE
+      consistencyScore * CONFIDENCE_WEIGHTS.CONSISTENCY +
+      reportScore * CONFIDENCE_WEIGHTS.REPORT_RATE_INVERSE +
+      difficultyScore * CONFIDENCE_WEIGHTS.DIFFICULTY_STABILITY +
+      usageScore * CONFIDENCE_WEIGHTS.USAGE_STABILITY +
+      sampleScore * CONFIDENCE_WEIGHTS.SAMPLE_SIZE
   );
 
   return Math.min(100, Math.max(0, confidence));

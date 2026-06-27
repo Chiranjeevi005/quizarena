@@ -9,7 +9,10 @@ interface OperationsCenterClientProps {
   initialIssues: any[];
 }
 
-export function OperationsCenterClient({ initialMetrics, initialIssues }: OperationsCenterClientProps) {
+export function OperationsCenterClient({
+  initialMetrics,
+  initialIssues,
+}: OperationsCenterClientProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [issues, setIssues] = useState(initialIssues);
   const [metrics, setMetrics] = useState(initialMetrics);
@@ -55,19 +58,15 @@ export function OperationsCenterClient({ initialMetrics, initialIssues }: Operat
     <div className="space-y-8">
       <section>
         <h2 className="text-xl font-bold mb-4 tracking-tight">Question Operations Center</h2>
-        <PrimaryOperationalCards 
-          metrics={metrics} 
-          onSelectFilter={handleSelectFilter} 
-          activeFilter={activeFilter} 
+        <PrimaryOperationalCards
+          metrics={metrics}
+          onSelectFilter={handleSelectFilter}
+          activeFilter={activeFilter}
         />
       </section>
 
       <section>
-        <OperationalQueueTable 
-          issues={issues} 
-          onRefresh={refreshAll} 
-          isLoading={isLoading} 
-        />
+        <OperationalQueueTable issues={issues} onRefresh={refreshAll} isLoading={isLoading} />
       </section>
     </div>
   );

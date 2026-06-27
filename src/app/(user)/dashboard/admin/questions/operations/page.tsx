@@ -1,5 +1,8 @@
 import React from "react";
-import { getOperationsDashboardMetrics, getOperationalIssues } from "@/features/admin/services/questions/operations/service";
+import {
+  getOperationsDashboardMetrics,
+  getOperationalIssues,
+} from "@/features/admin/services/questions/operations/service";
 import { OperationsCenterClient } from "@/features/admin/components/question-bank/operations/OperationsCenterClient";
 
 export const metadata = {
@@ -10,7 +13,7 @@ export const metadata = {
 export default async function OperationsCenterPage() {
   const [metrics, { issues }] = await Promise.all([
     getOperationsDashboardMetrics(),
-    getOperationalIssues({ take: 50 })
+    getOperationalIssues({ take: 50 }),
   ]);
 
   return (

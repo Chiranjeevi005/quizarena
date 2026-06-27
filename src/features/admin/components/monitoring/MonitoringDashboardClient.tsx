@@ -52,9 +52,37 @@ function formatLastUpdated(date: Date): string {
   });
 }
 
+function parseMonitoringDates(data: MonitoringDashboardData): MonitoringDashboardData {
+  // Convert ISO string dates from JSON payload back to Date objects
+  return {
+    ...data,
+    jobs: data.jobs.map((job) => ({
+      ...job,
+      lastExecution: job.lastExecution ? new Date(job.lastExecution) : null,
+      nextScheduled: job.nextScheduled ? new Date(job.nextScheduled) : null,
+    })),
+    alerts: data.alerts.map((alert) => ({
+      ...alert,
+      timestamp: new Date(alert.timestamp),
+    })),
+    failures: data.failures.map((failure) => ({
+      ...failure,
+      timestamp: new Date(failure.timestamp),
+      resolvedAt: failure.resolvedAt ? new Date(failure.resolvedAt) : undefined,
+    })),
+    activityFeed: data.activityFeed.map((activity) => ({
+      ...activity,
+      timestamp: new Date(activity.timestamp),
+    })),
+    lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : new Date(),
+  };
+}
+
 export function MonitoringDashboardClient({ initialData }: MonitoringDashboardClientProps) {
   const [activeTab, setActiveTab] = useState<MonitoringTab>(getInitialTab);
-  const [data, setData] = useState<MonitoringDashboardData>(initialData);
+  const [data, setData] = useState<MonitoringDashboardData>(() =>
+    parseMonitoringDates(initialData)
+  );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
@@ -71,7 +99,7 @@ export function MonitoringDashboardClient({ initialData }: MonitoringDashboardCl
     try {
       const { getMonitoringDashboardData } = await import("@/features/admin/services/monitoring");
       const freshData = await getMonitoringDashboardData();
-      setData(freshData);
+      setData(parseMonitoringDates(freshData));
       setLastRefreshed(new Date());
     } catch (error) {
       console.error("Failed to refresh monitoring data:", error);
@@ -88,7 +116,7 @@ export function MonitoringDashboardClient({ initialData }: MonitoringDashboardCl
       {/* Dashboard Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-gradient-to-br from-[#0A1C40] to-[#2471e7] rounded-xl">
+          <div className="p-2.5 bg-linear-to-br from-[#0A1C40] to-secondary rounded-xl">
             <Activity className="w-5 h-5 text-white" />
           </div>
           <div>

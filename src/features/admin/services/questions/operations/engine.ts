@@ -7,7 +7,7 @@ import { processDetectedIssues } from "./generator";
  */
 export async function runOperationsEvaluation() {
   const startTime = Date.now();
-  
+
   // 1. Evaluate questions against rules
   const detectedIssues = await evaluateQuestions();
 

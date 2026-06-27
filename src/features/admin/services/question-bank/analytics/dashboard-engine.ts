@@ -51,17 +51,19 @@ export async function getIntelligenceDashboardMetrics(): Promise<IntelligenceDas
     }),
 
     // Difficulty drift: actual differs from configured, sufficient data
-    prisma.questionUsageStats.count({
-      where: {
-        timesAttempted: { gte: MIN_ATTEMPTS },
-        actualDifficulty: { not: null },
-        NOT: {
-          question: {
-            difficulty: { equals: undefined }, // handled via raw query below
+    prisma.questionUsageStats
+      .count({
+        where: {
+          timesAttempted: { gte: MIN_ATTEMPTS },
+          actualDifficulty: { not: null },
+          NOT: {
+            question: {
+              difficulty: { equals: undefined }, // handled via raw query below
+            },
           },
         },
-      },
-    }).catch(() => 0), // Fallback: compute via raw query
+      })
+      .catch(() => 0), // Fallback: compute via raw query
 
     // High reports
     prisma.questionUsageStats.count({
@@ -286,9 +288,7 @@ export async function getQuestionsByIntelligenceFilter(
  * Get ALL question IDs matching an intelligence filter.
  * Useful for intersecting with other filters.
  */
-export async function getAllQuestionIdsByIntelligenceFilter(
-  filter: string
-): Promise<string[]> {
+export async function getAllQuestionIdsByIntelligenceFilter(filter: string): Promise<string[]> {
   if (filter === "DIFFICULTY_DRIFT") {
     try {
       const driftIds = await prisma.$queryRaw<{ questionId: string }[]>`
@@ -339,10 +339,16 @@ export async function getAllQuestionIdsByIntelligenceFilter(
       where = { timesAttempted: { lt: MIN_ATTEMPTS } };
       break;
     case "TOO_EASY":
-      where = { timesAttempted: { gte: MIN_ATTEMPTS }, successRate: { gte: FLAG_THRESHOLDS.TOO_EASY_SR } };
+      where = {
+        timesAttempted: { gte: MIN_ATTEMPTS },
+        successRate: { gte: FLAG_THRESHOLDS.TOO_EASY_SR },
+      };
       break;
     case "TOO_HARD":
-      where = { timesAttempted: { gte: MIN_ATTEMPTS }, successRate: { lte: FLAG_THRESHOLDS.TOO_HARD_SR } };
+      where = {
+        timesAttempted: { gte: MIN_ATTEMPTS },
+        successRate: { lte: FLAG_THRESHOLDS.TOO_HARD_SR },
+      };
       break;
     default:
       return [];
@@ -355,4 +361,3 @@ export async function getAllQuestionIdsByIntelligenceFilter(
 
   return stats.map((s) => s.questionId);
 }
-

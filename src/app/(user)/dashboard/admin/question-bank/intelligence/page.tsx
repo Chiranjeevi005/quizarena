@@ -48,16 +48,14 @@ function PrimaryCard({
       <div className="flex items-start justify-between mb-4">
         <div className={`p-2.5 rounded-xl bg-white/80 border ${borderColor}`}>{icon}</div>
         {count > 0 && (
-          <span className={`text-3xl font-black ${textColor}`}>
-            {count.toLocaleString()}
-          </span>
+          <span className={`text-3xl font-black ${textColor}`}>{count.toLocaleString()}</span>
         )}
       </div>
       <p className={`text-sm font-bold ${textColor}`}>{title}</p>
-      {count === 0 && (
-        <p className="text-xs text-gray-400 mt-1">None detected</p>
-      )}
-      <div className={`absolute bottom-3 right-4 text-xs font-medium ${textColor} opacity-0 group-hover:opacity-100 transition-opacity`}>
+      {count === 0 && <p className="text-xs text-gray-400 mt-1">None detected</p>}
+      <div
+        className={`absolute bottom-3 right-4 text-xs font-medium ${textColor} opacity-0 group-hover:opacity-100 transition-opacity`}
+      >
         View →
       </div>
     </Link>
@@ -129,8 +127,12 @@ async function IntelligenceContent() {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Questions Tracked</p>
-          <p className="text-2xl font-black text-gray-900">{metrics.totalTracked.toLocaleString()}</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+            Questions Tracked
+          </p>
+          <p className="text-2xl font-black text-gray-900">
+            {metrics.totalTracked.toLocaleString()}
+          </p>
         </div>
       </div>
 

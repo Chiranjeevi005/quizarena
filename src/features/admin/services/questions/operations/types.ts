@@ -1,7 +1,7 @@
-import type { 
-  OperationalIssueSeverity, 
-  OperationalIssueStatus, 
-  OperationalAuditAction 
+import type {
+  OperationalIssueSeverity,
+  OperationalIssueStatus,
+  OperationalAuditAction,
 } from "@/generated/prisma";
 
 export interface OperationalRuleConfig {

@@ -82,8 +82,7 @@ export function detectDifficultyDrift(
   const actualIdx = difficultyOrder.indexOf(actualDifficulty);
   const configIdx = configuredOrder[configuredDifficulty] ?? 2;
 
-  const direction =
-    actualIdx < configIdx ? "EASIER_THAN_EXPECTED" : "HARDER_THAN_EXPECTED";
+  const direction = actualIdx < configIdx ? "EASIER_THAN_EXPECTED" : "HARDER_THAN_EXPECTED";
 
   // Severity based on distance
   const distance = Math.abs(actualIdx - configIdx);
@@ -129,11 +128,7 @@ export async function getQuestionDifficultyAnalysis(questionId: string) {
   }
 
   const actualDifficulty = classifyActualDifficulty(stats.successRate);
-  const drift = detectDifficultyDrift(
-    question.difficulty,
-    stats.successRate,
-    stats.timesAttempted
-  );
+  const drift = detectDifficultyDrift(question.difficulty, stats.successRate, stats.timesAttempted);
 
   return {
     configuredDifficulty: question.difficulty,

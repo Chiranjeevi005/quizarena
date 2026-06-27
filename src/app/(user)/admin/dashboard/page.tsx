@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { ROLE as ROLES } from "@/features/rbac/constants/role-types";
 import { AdminDashboardView } from "@/features/dashboard/components/admin/AdminDashboard";
+import { AdminWorkspaceGuard } from "@/components/guards/AdminWorkspaceGuard";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -20,5 +21,9 @@ export default async function AdminDashboardPage() {
     redirect("/dashboard/home");
   }
 
-  return <AdminDashboardView />;
+  return (
+    <AdminWorkspaceGuard userId={session.user.id!} role={role}>
+      <AdminDashboardView />
+    </AdminWorkspaceGuard>
+  );
 }

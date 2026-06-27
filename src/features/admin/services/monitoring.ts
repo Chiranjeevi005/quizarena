@@ -488,14 +488,15 @@ async function getTrends(): Promise<{
 export async function getMonitoringDashboardData(): Promise<MonitoringDashboardData> {
   await requireAdmin("/dashboard");
 
-  const [health, jobs, alerts, failures, activityFeed, trends] = await Promise.all([
-    computeHealthMetrics(),
-    getBackgroundJobs(),
-    getSystemAlerts(),
-    getFailureRecords(),
-    getActivityFeed(),
-    getTrends(),
-  ]);
+  // Run data fetchers in small batches of 2 to balance speed vs connection pool safety.
+  // Each sub-function has its own internal Promise.all (~4-10 queries). Running all 6
+  // in parallel caused 45+ simultaneous DB connections, exhausting Supabase's pool.
+  // Batches of 2 keep peak concurrency around ~8-10 queries, well within limits.
+  const [health, jobs] = await Promise.all([computeHealthMetrics(), getBackgroundJobs()]);
+
+  const [alerts, failures] = await Promise.all([getSystemAlerts(), getFailureRecords()]);
+
+  const [activityFeed, trends] = await Promise.all([getActivityFeed(), getTrends()]);
 
   return {
     health,

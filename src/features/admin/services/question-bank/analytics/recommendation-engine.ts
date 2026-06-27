@@ -9,11 +9,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { isBefore, subDays } from "date-fns";
-import {
-  MIN_ATTEMPTS,
-  FLAG_THRESHOLDS,
-  type DynamicQuestionFlag,
-} from "./constants";
+import { MIN_ATTEMPTS, FLAG_THRESHOLDS, type DynamicQuestionFlag } from "./constants";
 import { classifyActualDifficulty, detectDifficultyDrift } from "./difficulty-engine";
 import { computeConfidenceScore } from "./trend-engine";
 
@@ -69,15 +65,13 @@ export function generateDynamicFlags(
   }
 
   // Skip rate
-  const skipRate =
-    stats.timesAttempted > 0 ? stats.skippedAttempts / stats.timesAttempted : 0;
+  const skipRate = stats.timesAttempted > 0 ? stats.skippedAttempts / stats.timesAttempted : 0;
   if (skipRate >= FLAG_THRESHOLDS.HIGH_SKIP_RATE) {
     flags.push("HIGH_SKIP_RATE");
   }
 
   // Report rate
-  const reportRate =
-    stats.timesAttempted > 0 ? stats.reportCount / stats.timesAttempted : 0;
+  const reportRate = stats.timesAttempted > 0 ? stats.reportCount / stats.timesAttempted : 0;
   if (reportRate >= FLAG_THRESHOLDS.HIGH_REPORT_RATE) {
     flags.push("HIGH_REPORT_RATE");
   }
@@ -134,9 +128,7 @@ export function generateDynamicFlags(
  * Generate actionable recommendations for a question.
  * Checks dismissed recommendations and excludes them.
  */
-export async function generateRecommendations(
-  questionId: string
-): Promise<Recommendation[]> {
+export async function generateRecommendations(questionId: string): Promise<Recommendation[]> {
   const question = await prisma.question.findUnique({
     where: { id: questionId },
     include: {
@@ -153,16 +145,10 @@ export async function generateRecommendations(
   }
 
   const recommendations: Recommendation[] = [];
-  const dismissedTypes = question.recommendationDismissals.map(
-    (d) => d.recommendationType
-  );
+  const dismissedTypes = question.recommendationDismissals.map((d) => d.recommendationType);
 
   // Difficulty drift recommendation
-  const drift = detectDifficultyDrift(
-    question.difficulty,
-    stats.successRate,
-    stats.timesAttempted
-  );
+  const drift = detectDifficultyDrift(question.difficulty, stats.successRate, stats.timesAttempted);
   if (drift.hasDrift && !dismissedTypes.includes("DIFFICULTY_DRIFT")) {
     const actual = classifyActualDifficulty(stats.successRate);
     recommendations.push({
@@ -174,10 +160,7 @@ export async function generateRecommendations(
   }
 
   // Declining performance
-  if (
-    stats.successRateTrend === "DOWN" &&
-    !dismissedTypes.includes("DECLINING_PERFORMANCE")
-  ) {
+  if (stats.successRateTrend === "DOWN" && !dismissedTypes.includes("DECLINING_PERFORMANCE")) {
     recommendations.push({
       type: "DECLINING_PERFORMANCE",
       title: "Performance Declining",
@@ -189,10 +172,7 @@ export async function generateRecommendations(
 
   // High skip rate
   const skipRate = stats.skippedAttempts / stats.timesAttempted;
-  if (
-    skipRate >= FLAG_THRESHOLDS.HIGH_SKIP_RATE &&
-    !dismissedTypes.includes("HIGH_SKIP_RATE")
-  ) {
+  if (skipRate >= FLAG_THRESHOLDS.HIGH_SKIP_RATE && !dismissedTypes.includes("HIGH_SKIP_RATE")) {
     recommendations.push({
       type: "HIGH_SKIP_RATE",
       title: "High Skip Rate",
@@ -231,10 +211,7 @@ export async function generateRecommendations(
   }
 
   // Too easy
-  if (
-    stats.successRate >= FLAG_THRESHOLDS.TOO_EASY_SR &&
-    !dismissedTypes.includes("TOO_EASY")
-  ) {
+  if (stats.successRate >= FLAG_THRESHOLDS.TOO_EASY_SR && !dismissedTypes.includes("TOO_EASY")) {
     recommendations.push({
       type: "TOO_EASY",
       title: "Question May Be Too Easy",
@@ -244,10 +221,7 @@ export async function generateRecommendations(
   }
 
   // Too hard
-  if (
-    stats.successRate <= FLAG_THRESHOLDS.TOO_HARD_SR &&
-    !dismissedTypes.includes("TOO_HARD")
-  ) {
+  if (stats.successRate <= FLAG_THRESHOLDS.TOO_HARD_SR && !dismissedTypes.includes("TOO_HARD")) {
     recommendations.push({
       type: "TOO_HARD",
       title: "Question May Be Too Hard",

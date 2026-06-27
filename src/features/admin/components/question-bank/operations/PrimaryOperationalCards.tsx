@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import { 
-  AlertTriangle, 
-  HelpCircle, 
-  FileText, 
-  Copy, 
-  Activity, 
-  Clock, 
+import {
+  AlertTriangle,
+  HelpCircle,
+  FileText,
+  Copy,
+  Activity,
+  Clock,
   CheckCircle,
-  EyeOff
+  EyeOff,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -31,7 +31,11 @@ interface PrimaryOperationalCardsProps {
   activeFilter?: string | null;
 }
 
-export function PrimaryOperationalCards({ metrics, onSelectFilter, activeFilter }: PrimaryOperationalCardsProps) {
+export function PrimaryOperationalCards({
+  metrics,
+  onSelectFilter,
+  activeFilter,
+}: PrimaryOperationalCardsProps) {
   const cards = [
     {
       id: "MISSING_EXPLANATION",
@@ -103,7 +107,7 @@ export function PrimaryOperationalCards({ metrics, onSelectFilter, activeFilter 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
-        <Card 
+        <Card
           key={card.id}
           className={cn(
             "transition-all cursor-pointer hover:shadow-md border",
@@ -118,20 +122,23 @@ export function PrimaryOperationalCards({ metrics, onSelectFilter, activeFilter 
           }}
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {card.title}
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
             {card.icon}
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{card.count}</div>
-            <p className={cn(
-              "text-xs mt-1 font-semibold",
-              card.severity === "CRITICAL" ? "text-red-600" :
-              card.severity === "HIGH" ? "text-orange-600" :
-              card.severity === "SUCCESS" ? "text-green-600" :
-              "text-muted-foreground"
-            )}>
+            <p
+              className={cn(
+                "text-xs mt-1 font-semibold",
+                card.severity === "CRITICAL"
+                  ? "text-red-600"
+                  : card.severity === "HIGH"
+                    ? "text-orange-600"
+                    : card.severity === "SUCCESS"
+                      ? "text-green-600"
+                      : "text-muted-foreground"
+              )}
+            >
               {card.isInformational ? "System Maintained" : `${card.severity} PRIORITY`}
             </p>
           </CardContent>

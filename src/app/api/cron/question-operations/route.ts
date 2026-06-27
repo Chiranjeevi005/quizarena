@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     // 1. Verify cron secret to ensure only authorized schedulers can trigger
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
-    
+
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -22,12 +22,14 @@ export async function GET(request: Request) {
       data: result,
       message: `Processed ${result.processed} questions. New Issues: ${result.newIssues}. Auto-resolved: ${result.autoResolved}. Duration: ${result.durationMs}ms`,
     });
-
   } catch (error) {
     console.error("[CRON_OPERATIONS_ERROR]", error);
-    return NextResponse.json({ 
-      error: "Internal Server Error", 
-      details: error instanceof Error ? error.message : "Unknown error" 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }

@@ -68,6 +68,17 @@ export const ROUTES = {
     QUESTIONS_ARCHIVE: "/dashboard/admin/questions/archive",
     QUESTIONS_IMPORT_JOBS: "/dashboard/admin/questions/import-jobs",
     QUESTIONS_OPERATIONS: "/dashboard/admin/questions/operations",
+
+    // ─── COMPETITION STUDIO ──────────────────────────────────
+    COMPETITIONS: "/admin/dashboard/competitions",
+    COMPETITION_CREATE: "/admin/dashboard/competitions/create",
+    COMPETITION_OVERVIEW: (id: string) => `/admin/dashboard/competitions/${id}/overview`,
+    COMPETITION_QUESTIONS: (id: string) => `/admin/dashboard/competitions/${id}/questions`,
+    COMPETITION_BUILDER: (id: string) => `/admin/dashboard/competitions/${id}/builder`,
+    COMPETITION_RULES: (id: string) => `/admin/dashboard/competitions/${id}/rules`,
+    COMPETITION_PUBLISH: (id: string) => `/admin/dashboard/competitions/${id}/publish`,
+    COMPETITION_ANALYTICS: (id: string) => `/admin/dashboard/competitions/${id}/analytics`,
+    COMPETITION_HISTORY: (id: string) => `/admin/dashboard/competitions/${id}/history`,
   },
 
   // ─── SUPER ADMIN ROUTES ─────────────────────────────────────────

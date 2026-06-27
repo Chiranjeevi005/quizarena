@@ -57,7 +57,9 @@ function DataQualityBadge({ quality }: { quality: string }) {
   };
   const c = config[quality] || config.INSUFFICIENT;
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${c.bg} ${c.text}`}>
+    <span
+      className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${c.bg} ${c.text}`}
+    >
       {c.label}
     </span>
   );
@@ -73,7 +75,9 @@ function ConfidenceGauge({ score, label }: { score: number; label: string }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Confidence</span>
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Confidence
+        </span>
         <span className="text-sm font-bold text-gray-900">{score}/100</span>
       </div>
       <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
@@ -165,7 +169,11 @@ function OverviewTab({ intelligence }: { intelligence: QuestionIntelligence }) {
           label="Reports"
           value={usageStats.reportCount}
           trend={usageStats.reportsTrend}
-          icon={usageStats.reportCount > 3 ? <AlertTriangle className="w-4 h-4 text-amber-400" /> : undefined}
+          icon={
+            usageStats.reportCount > 3 ? (
+              <AlertTriangle className="w-4 h-4 text-amber-400" />
+            ) : undefined
+          }
         />
       </div>
 
@@ -201,15 +209,21 @@ function OverviewTab({ intelligence }: { intelligence: QuestionIntelligence }) {
 
       <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100">
         <div className="text-center">
-          <p className="text-lg font-bold text-emerald-600">{usageStats.correctAttempts.toLocaleString()}</p>
+          <p className="text-lg font-bold text-emerald-600">
+            {usageStats.correctAttempts.toLocaleString()}
+          </p>
           <p className="text-[10px] font-bold text-gray-400 uppercase">Correct</p>
         </div>
         <div className="text-center">
-          <p className="text-lg font-bold text-rose-600">{usageStats.incorrectAttempts.toLocaleString()}</p>
+          <p className="text-lg font-bold text-rose-600">
+            {usageStats.incorrectAttempts.toLocaleString()}
+          </p>
           <p className="text-[10px] font-bold text-gray-400 uppercase">Incorrect</p>
         </div>
         <div className="text-center">
-          <p className="text-lg font-bold text-gray-500">{usageStats.skippedAttempts.toLocaleString()}</p>
+          <p className="text-lg font-bold text-gray-500">
+            {usageStats.skippedAttempts.toLocaleString()}
+          </p>
           <p className="text-[10px] font-bold text-gray-400 uppercase">Skipped</p>
         </div>
       </div>
@@ -272,8 +286,8 @@ function DifficultyTab({ intelligence }: { intelligence: QuestionIntelligence })
                 Difficulty Drift — {difficulty.drift.severity}
               </p>
               <p className={`text-sm ${driftBadge.text} opacity-80 mt-0.5`}>
-                Question is {difficulty.drift.direction?.replace(/_/g, " ").toLowerCase()}.
-                Success rate: {(usageStats.successRate * 100).toFixed(1)}%
+                Question is {difficulty.drift.direction?.replace(/_/g, " ").toLowerCase()}. Success
+                rate: {(usageStats.successRate * 100).toFixed(1)}%
               </p>
             </div>
           </div>
@@ -286,9 +300,17 @@ function DifficultyTab({ intelligence }: { intelligence: QuestionIntelligence })
         </p>
         <div className="space-y-2">
           {(["short", "medium", "long"] as const).map((window) => (
-            <div key={window} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+            <div
+              key={window}
+              className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg"
+            >
               <span className="text-xs font-medium text-gray-600">
-                {trends.windows[window === "short" ? "SHORT" : window === "medium" ? "MEDIUM" : "LONG"]}d
+                {
+                  trends.windows[
+                    window === "short" ? "SHORT" : window === "medium" ? "MEDIUM" : "LONG"
+                  ]
+                }
+                d
               </span>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -311,7 +333,9 @@ function DifficultyTab({ intelligence }: { intelligence: QuestionIntelligence })
 
 function TimingTab({ intelligence }: { intelligence: QuestionIntelligence }) {
   const { usageStats } = intelligence;
-  const isConfusing = usageStats.medianTimeSpent > 0 && usageStats.averageTimeSpent > usageStats.medianTimeSpent * 1.5;
+  const isConfusing =
+    usageStats.medianTimeSpent > 0 &&
+    usageStats.averageTimeSpent > usageStats.medianTimeSpent * 1.5;
 
   return (
     <div className="space-y-5">
@@ -330,13 +354,17 @@ function TimingTab({ intelligence }: { intelligence: QuestionIntelligence }) {
 
       <div className="grid grid-cols-3 gap-3">
         <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-100 text-center">
-          <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Fastest</p>
+          <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">
+            Fastest
+          </p>
           <p className="text-lg font-bold text-emerald-700">
             {usageStats.fastestTime != null ? `${usageStats.fastestTime}s` : "—"}
           </p>
         </div>
         <div className="p-3 bg-rose-50/50 rounded-lg border border-rose-100 text-center">
-          <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider mb-1">Slowest</p>
+          <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider mb-1">
+            Slowest
+          </p>
           <p className="text-lg font-bold text-rose-700">
             {usageStats.slowestTime != null ? `${usageStats.slowestTime}s` : "—"}
           </p>
@@ -355,8 +383,9 @@ function TimingTab({ intelligence }: { intelligence: QuestionIntelligence }) {
           <div>
             <p className="text-sm font-semibold text-amber-800">Possible Confusing Question</p>
             <p className="text-sm text-amber-700 mt-0.5">
-              Average time ({usageStats.averageTimeSpent.toFixed(1)}s) is significantly higher than median (
-              {usageStats.medianTimeSpent.toFixed(1)}s), indicating some users struggle significantly.
+              Average time ({usageStats.averageTimeSpent.toFixed(1)}s) is significantly higher than
+              median ({usageStats.medianTimeSpent.toFixed(1)}s), indicating some users struggle
+              significantly.
             </p>
           </div>
         </div>
@@ -390,7 +419,8 @@ function BenchmarksTab({ intelligence }: { intelligence: QuestionIntelligence })
       <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
         <Info className="w-5 h-5 text-gray-400 shrink-0" />
         <p className="text-sm text-gray-500">
-          No peer data available for benchmarking. Ensure questions share common metadata (topic, subject, exam).
+          No peer data available for benchmarking. Ensure questions share common metadata (topic,
+          subject, exam).
         </p>
       </div>
     );
@@ -401,15 +431,38 @@ function BenchmarksTab({ intelligence }: { intelligence: QuestionIntelligence })
       {benchmarkItems.map(({ data, label }) => {
         if (!data) return null;
         const perfConfig = {
-          ABOVE_AVERAGE: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", label: "Above Average", icon: <TrendingUp className="w-4 h-4" /> },
-          AVERAGE: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", label: "Average", icon: <Minus className="w-4 h-4" /> },
-          BELOW_AVERAGE: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-700", label: "Below Average", icon: <TrendingDown className="w-4 h-4" /> },
+          ABOVE_AVERAGE: {
+            bg: "bg-emerald-50",
+            border: "border-emerald-200",
+            text: "text-emerald-700",
+            label: "Above Average",
+            icon: <TrendingUp className="w-4 h-4" />,
+          },
+          AVERAGE: {
+            bg: "bg-blue-50",
+            border: "border-blue-200",
+            text: "text-blue-700",
+            label: "Average",
+            icon: <Minus className="w-4 h-4" />,
+          },
+          BELOW_AVERAGE: {
+            bg: "bg-rose-50",
+            border: "border-rose-200",
+            text: "text-rose-700",
+            label: "Below Average",
+            icon: <TrendingDown className="w-4 h-4" />,
+          },
         }[data.performance];
 
         return (
-          <div key={label} className={`p-4 rounded-xl border ${perfConfig.bg} ${perfConfig.border}`}>
+          <div
+            key={label}
+            className={`p-4 rounded-xl border ${perfConfig.bg} ${perfConfig.border}`}
+          >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{data.scope}</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                {data.scope}
+              </p>
               <div className={`flex items-center gap-1 text-xs font-bold ${perfConfig.text}`}>
                 {perfConfig.icon}
                 {perfConfig.label}
@@ -417,14 +470,20 @@ function BenchmarksTab({ intelligence }: { intelligence: QuestionIntelligence })
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase mb-0.5">This Question</p>
-                <p className="text-lg font-bold text-gray-900">{(data.questionSuccessRate * 100).toFixed(1)}%</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase mb-0.5">
+                  This Question
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  {(data.questionSuccessRate * 100).toFixed(1)}%
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold text-gray-400 uppercase mb-0.5">
                   Peer Avg ({data.peerCount} questions)
                 </p>
-                <p className="text-lg font-bold text-gray-600">{(data.peerAverage * 100).toFixed(1)}%</p>
+                <p className="text-lg font-bold text-gray-600">
+                  {(data.peerAverage * 100).toFixed(1)}%
+                </p>
               </div>
             </div>
           </div>
@@ -448,15 +507,32 @@ function RecommendationsTab({
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <CheckCircle2 className="w-10 h-10 text-emerald-400 mb-3" />
         <p className="text-sm font-semibold text-gray-700">No Recommendations</p>
-        <p className="text-xs text-gray-500 mt-1">This question is performing within expected parameters.</p>
+        <p className="text-xs text-gray-500 mt-1">
+          This question is performing within expected parameters.
+        </p>
       </div>
     );
   }
 
   const severityConfig = {
-    INFO: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", icon: <Info className="w-5 h-5 text-blue-500" /> },
-    WARNING: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", icon: <AlertTriangle className="w-5 h-5 text-amber-500" /> },
-    CRITICAL: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-700", icon: <Zap className="w-5 h-5 text-rose-500" /> },
+    INFO: {
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      text: "text-blue-700",
+      icon: <Info className="w-5 h-5 text-blue-500" />,
+    },
+    WARNING: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-700",
+      icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
+    },
+    CRITICAL: {
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      text: "text-rose-700",
+      icon: <Zap className="w-5 h-5 text-rose-500" />,
+    },
   };
 
   return (

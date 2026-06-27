@@ -42,7 +42,9 @@ async function QuestionDetailContent({ questionId }: { questionId: string }) {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Question Details</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Governance, performance intelligence, and usage metrics</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Governance, performance intelligence, and usage metrics
+            </p>
           </div>
         </div>
       </div>

@@ -12,9 +12,10 @@ import {
   BookOpen,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
+import { AdminWorkspaceGuard } from "@/components/guards/AdminWorkspaceGuard";
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
-  await requireAdmin("/dashboard");
+  const user = await requireAdmin("/dashboard");
 
   const navItems = [
     { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
@@ -28,8 +29,10 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC]">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
-    </div>
+    <AdminWorkspaceGuard userId={user?.id ?? "unknown"} role={user?.role ?? "ADMIN"}>
+      <div className="min-h-screen bg-[#F8F9FC]">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
+      </div>
+    </AdminWorkspaceGuard>
   );
 }

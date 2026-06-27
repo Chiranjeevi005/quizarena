@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,11 @@ interface OperationalQueueTableProps {
   isLoading: boolean;
 }
 
-export function OperationalQueueTable({ issues, onRefresh, isLoading }: OperationalQueueTableProps) {
+export function OperationalQueueTable({
+  issues,
+  onRefresh,
+  isLoading,
+}: OperationalQueueTableProps) {
   const [selectedIssueIds, setSelectedIssueIds] = useState<Set<string>>(new Set());
   const [inspectIssueId, setInspectIssueId] = useState<string | null>(null);
 
@@ -29,7 +33,7 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
     if (selectedIssueIds.size === issues.length && issues.length > 0) {
       setSelectedIssueIds(new Set());
     } else {
-      setSelectedIssueIds(new Set(issues.map(i => i.id)));
+      setSelectedIssueIds(new Set(issues.map((i) => i.id)));
     }
   };
 
@@ -45,25 +49,39 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case "CRITICAL": return <Badge variant="destructive">CRITICAL</Badge>;
-      case "HIGH": return <Badge className="bg-orange-500 hover:bg-orange-600">HIGH</Badge>;
-      case "MEDIUM": return <Badge className="bg-blue-500 hover:bg-blue-600">MEDIUM</Badge>;
-      case "LOW": return <Badge variant="secondary">LOW</Badge>;
-      default: return <Badge variant="outline">{severity}</Badge>;
+      case "CRITICAL":
+        return <Badge variant="destructive">CRITICAL</Badge>;
+      case "HIGH":
+        return <Badge className="bg-orange-500 hover:bg-orange-600">HIGH</Badge>;
+      case "MEDIUM":
+        return <Badge className="bg-blue-500 hover:bg-blue-600">MEDIUM</Badge>;
+      case "LOW":
+        return <Badge variant="secondary">LOW</Badge>;
+      default:
+        return <Badge variant="outline">{severity}</Badge>;
     }
   };
 
   const getSuggestedAction = (issueType: string) => {
     switch (issueType) {
-      case "MISSING_EXPLANATION": return "Add Explanation";
-      case "MISSING_TOPIC": return "Assign Topic";
-      case "DUPLICATE_CANDIDATE": return "Review & Merge";
-      case "LOW_CONFIDENCE": return "Review Data Quality";
-      case "HIGH_REPORTS": return "Inspect Feedback";
-      case "UNUSED": return "Include in Pools";
-      case "OUTDATED": return "Refresh Content";
-      case "NO_ATTEMPTS": return "Promote Question";
-      default: return "Inspect";
+      case "MISSING_EXPLANATION":
+        return "Add Explanation";
+      case "MISSING_TOPIC":
+        return "Assign Topic";
+      case "DUPLICATE_CANDIDATE":
+        return "Review & Merge";
+      case "LOW_CONFIDENCE":
+        return "Review Data Quality";
+      case "HIGH_REPORTS":
+        return "Inspect Feedback";
+      case "UNUSED":
+        return "Include in Pools";
+      case "OUTDATED":
+        return "Refresh Content";
+      case "NO_ATTEMPTS":
+        return "Promote Question";
+      default:
+        return "Inspect";
     }
   };
 
@@ -76,10 +94,18 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
             <span className="text-sm text-muted-foreground self-center mr-2">
               {selectedIssueIds.size} selected
             </span>
-            <Button variant="outline" size="sm">Archive</Button>
-            <Button variant="outline" size="sm">Assign Topic</Button>
-            <Button variant="outline" size="sm">Dismiss</Button>
-            <Button variant="default" size="sm">Bulk Resolve</Button>
+            <Button variant="outline" size="sm">
+              Archive
+            </Button>
+            <Button variant="outline" size="sm">
+              Assign Topic
+            </Button>
+            <Button variant="outline" size="sm">
+              Dismiss
+            </Button>
+            <Button variant="default" size="sm">
+              Bulk Resolve
+            </Button>
           </div>
         )}
       </div>
@@ -89,7 +115,7 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">
-                <Checkbox 
+                <Checkbox
                   checked={selectedIssueIds.size === issues.length && issues.length > 0}
                   onCheckedChange={toggleSelectAll}
                 />
@@ -119,12 +145,14 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
               issues.map((issue) => (
                 <TableRow key={issue.id}>
                   <TableCell>
-                    <Checkbox 
+                    <Checkbox
                       checked={selectedIssueIds.has(issue.id)}
                       onCheckedChange={() => toggleSelect(issue.id)}
                     />
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{issue.question.questionCode ?? issue.questionId.slice(0, 8)}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {issue.question.questionCode ?? issue.questionId.slice(0, 8)}
+                  </TableCell>
                   <TableCell className="font-medium">
                     {issue.issueType.replace(/_/g, " ")}
                   </TableCell>
@@ -152,9 +180,9 @@ export function OperationalQueueTable({ issues, onRefresh, isLoading }: Operatio
         </Table>
       </div>
 
-      <IssueDetailsDrawer 
-        issueId={inspectIssueId} 
-        open={!!inspectIssueId} 
+      <IssueDetailsDrawer
+        issueId={inspectIssueId}
+        open={!!inspectIssueId}
         onOpenChange={(open) => {
           if (!open) setInspectIssueId(null);
         }}

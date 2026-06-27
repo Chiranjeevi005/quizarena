@@ -13,7 +13,10 @@
  */
 
 import { NextResponse } from "next/server";
-import { runAnalyticsJob, type JobResult } from "@/features/admin/services/question-bank/analytics/job-runner";
+import {
+  runAnalyticsJob,
+  type JobResult,
+} from "@/features/admin/services/question-bank/analytics/job-runner";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

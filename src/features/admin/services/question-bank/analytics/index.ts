@@ -27,11 +27,7 @@ export {
 export { logQuestionAttempts, markQuestionsDirty } from "./attempt-tracker";
 
 // Usage aggregation
-export {
-  processPendingStats,
-  purgeOldAttemptLogs,
-  reprocessAllStats,
-} from "./usage-aggregator";
+export { processPendingStats, purgeOldAttemptLogs, reprocessAllStats } from "./usage-aggregator";
 
 // Difficulty engine
 export {

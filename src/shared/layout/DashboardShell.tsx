@@ -68,6 +68,12 @@ const adminNavItems = [
     icon: ShieldAlert,
     group: "OPERATIONS",
   },
+  {
+    href: "/admin/dashboard/competitions",
+    label: "Competitions",
+    icon: Trophy,
+    group: "OPERATIONS",
+  },
 
   {
     href: "/dashboard/admin/questions",
@@ -88,8 +94,6 @@ const adminNavItems = [
     icon: Activity,
     group: "INTELLIGENCE",
   },
-
-  { href: "/dashboard/admin/settings", label: "Settings", icon: Settings2, group: "PLATFORM" },
 ];
 
 const superAdminNavItems = [
@@ -97,7 +101,6 @@ const superAdminNavItems = [
   { href: "/dashboard/super-admin/monitoring", label: "Monitoring", icon: Activity },
   { href: "/dashboard/super-admin/intelligence", label: "Intelligence", icon: BarChart3 },
   { href: "/dashboard/super-admin/roles", label: "Role Management", icon: Shield },
-  { href: "/dashboard/super-admin/settings", label: "Platform Settings", icon: Settings2 },
 ];
 
 function getNavItemsForRole(role: string | undefined) {
@@ -126,6 +129,13 @@ export function DashboardShell({ children, userStatsNode, freshUser }: Dashboard
   const role = (user?.role as string) ?? ROLES.USER;
   const isNotAdmin = role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN;
   const navItems = getNavItemsForRole(role);
+
+  let settingsHref = "/settings";
+  if (role === ROLES.ADMIN) {
+    settingsHref = "/dashboard/admin/settings";
+  } else if (role === ROLES.SUPER_ADMIN) {
+    settingsHref = "/dashboard/super-admin/settings";
+  }
 
   const mergedUser = {
     ...user,
@@ -349,8 +359,8 @@ export function DashboardShell({ children, userStatsNode, freshUser }: Dashboard
         <div className="shrink-0 border-t border-gray-100 mt-auto">
           <div className="p-4 space-y-1">
             <Link
-              href="/settings"
-              onMouseEnter={() => router.prefetch("/settings")}
+              href={settingsHref}
+              onMouseEnter={() => router.prefetch(settingsHref)}
               className="group flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-xl text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-200 w-full"
             >
               <Settings className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
@@ -497,9 +507,9 @@ export function DashboardShell({ children, userStatsNode, freshUser }: Dashboard
               {/* Footer Actions */}
               <div className="p-4 border-t border-gray-100 shrink-0 space-y-1">
                 <Link
-                  href="/settings"
+                  href={settingsHref}
                   onClick={() => setSidebarOpen(false)}
-                  onMouseEnter={() => router.prefetch("/settings")}
+                  onMouseEnter={() => router.prefetch(settingsHref)}
                   className="group flex items-center gap-3 px-4 py-3 min-h-[48px] rounded-xl text-gray-500 hover:bg-gray-50 hover:text-navy transition-all duration-200 w-full"
                 >
                   <Settings className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />

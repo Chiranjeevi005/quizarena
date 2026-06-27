@@ -19,6 +19,7 @@ import { redirect } from "next/navigation";
 import { validateSuperAdmin } from "@/features/super-admin/services/governance";
 import { SuperAdminShell } from "@/features/super-admin/components/SuperAdminShell";
 import { ROUTES } from "@/constants/routes";
+import { AdminWorkspaceGuard } from "@/components/guards/AdminWorkspaceGuard";
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   // DB-authoritative sovereignty check — fail-closed
@@ -33,8 +34,10 @@ export default async function SuperAdminLayout({ children }: { children: React.R
   const context = result.context!;
 
   return (
-    <SuperAdminShell userEmail={context.email} userName="Super Admin" userImage={null}>
-      {children}
-    </SuperAdminShell>
+    <AdminWorkspaceGuard userId={context.userId} role={context.role}>
+      <SuperAdminShell userEmail={context.email} userName="Super Admin" userImage={null}>
+        {children}
+      </SuperAdminShell>
+    </AdminWorkspaceGuard>
   );
 }

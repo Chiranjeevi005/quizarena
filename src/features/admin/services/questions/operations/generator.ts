@@ -50,20 +50,24 @@ export async function processDetectedIssues(detectedIssues: DetectedIssue[]): Pr
       let severityIncreased = false;
 
       // Reopen if it was auto-resolved or resolved but detected again
-      if (existingIssue.status === "RESOLVED" || existingIssue.status === "AUTO_RESOLVED" || existingIssue.status === "DISMISSED") {
-         updates.status = "OPEN";
-         await logOperationalAudit({
-           issueId: existingIssue.id,
-           action: "REOPENED",
-           reason: `Re-detected by operations evaluator`,
-         });
+      if (
+        existingIssue.status === "RESOLVED" ||
+        existingIssue.status === "AUTO_RESOLVED" ||
+        existingIssue.status === "DISMISSED"
+      ) {
+        updates.status = "OPEN";
+        await logOperationalAudit({
+          issueId: existingIssue.id,
+          action: "REOPENED",
+          reason: `Re-detected by operations evaluator`,
+        });
       }
 
       // Check severity changes
       if (existingIssue.severity !== issue.severity) {
         updates.previousSeverity = existingIssue.severity;
         updates.severity = issue.severity;
-        
+
         // Severity mapping for comparison
         const severityScores = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
         if (severityScores[issue.severity] > severityScores[existingIssue.severity]) {
@@ -78,8 +82,8 @@ export async function processDetectedIssues(detectedIssues: DetectedIssue[]): Pr
 
       if (severityIncreased) {
         await logOperationalAudit({
-           issueId: existingIssue.id,
-           action: "SEVERITY_INCREASED",
+          issueId: existingIssue.id,
+          action: "SEVERITY_INCREASED",
         });
         await notifyIssue(existingIssue.id, "SEVERITY_INCREASED");
       }

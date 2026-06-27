@@ -77,8 +77,7 @@ export async function runAnalyticsJob(
     };
   } catch (error) {
     const durationMs = Date.now() - startTime;
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
     await prisma.analyticsJob.update({
       where: { id: job.id },

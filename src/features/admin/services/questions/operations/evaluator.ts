@@ -14,11 +14,14 @@ export async function evaluateQuestions(): Promise<DetectedIssue[]> {
   const rules = await prisma.operationalRule.findMany({
     where: { enabled: true },
   });
-  
-  const rulesMap = rules.reduce((acc, rule) => {
-    acc[rule.ruleKey] = rule;
-    return acc;
-  }, {} as Record<string, OperationalRuleConfig>);
+
+  const rulesMap = rules.reduce(
+    (acc, rule) => {
+      acc[rule.ruleKey] = rule;
+      return acc;
+    },
+    {} as Record<string, OperationalRuleConfig>
+  );
 
   const detectedIssues: DetectedIssue[] = [];
 
@@ -92,7 +95,7 @@ export async function evaluateQuestions(): Promise<DetectedIssue[]> {
       where: {
         OR: [
           { lastServedAt: null, timesAttempted: { gt: 0 } },
-          { lastServedAt: { lt: cutoffDate } }
+          { lastServedAt: { lt: cutoffDate } },
         ],
         question: { isActive: true },
       },
@@ -152,9 +155,16 @@ export async function evaluateQuestions(): Promise<DetectedIssue[]> {
     const cutoffDate = new Date(Date.now() - rulesMap["DUPLICATE_CANDIDATE"].threshold * 86400000);
     const recentlyUpdated = await prisma.question.findMany({
       where: { isActive: true, updatedAt: { gte: cutoffDate } },
-      select: { id: true, question: true, category: true, subject: true, explanation: true, options: true },
+      select: {
+        id: true,
+        question: true,
+        category: true,
+        subject: true,
+        explanation: true,
+        options: true,
+      },
     });
-    
+
     for (const q of recentlyUpdated) {
       const dupCheck = await checkForDuplicates({
         question: q.question,
@@ -163,13 +173,13 @@ export async function evaluateQuestions(): Promise<DetectedIssue[]> {
         explanation: q.explanation ?? "",
         options: q.options,
       });
-      
+
       if (dupCheck.status === "EXACT" || dupCheck.status === "SIMILAR") {
         detectedIssues.push({
           questionId: q.id,
           issueType: "DUPLICATE_CANDIDATE",
           severity: rulesMap["DUPLICATE_CANDIDATE"].severity,
-          details: { candidates: dupCheck.candidates.map(c => c.id) }
+          details: { candidates: dupCheck.candidates.map((c) => c.id) },
         });
       }
     }

@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import { getIssueDetails } from "@/features/admin/services/questions/operations/service";
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const issue = await getIssueDetails(id);

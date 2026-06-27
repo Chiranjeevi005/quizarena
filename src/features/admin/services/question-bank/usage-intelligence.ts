@@ -16,12 +16,23 @@
 
 import { prisma } from "@/lib/prisma";
 import { logQuestionAttempts as _logAttempts } from "./analytics/attempt-tracker";
-import { processPendingStats as _processPending, purgeOldAttemptLogs as _purge } from "./analytics/usage-aggregator";
+import {
+  processPendingStats as _processPending,
+  purgeOldAttemptLogs as _purge,
+} from "./analytics/usage-aggregator";
 import { generateDynamicFlags, generateRecommendations } from "./analytics/recommendation-engine";
-import { computeConfidenceScore, computeTrends, getConfidenceLabel } from "./analytics/trend-engine";
+import {
+  computeConfidenceScore,
+  computeTrends,
+  getConfidenceLabel,
+} from "./analytics/trend-engine";
 import { classifyActualDifficulty, detectDifficultyDrift } from "./analytics/difficulty-engine";
 import { getQuestionBenchmark } from "./analytics/benchmark-engine";
-import { MIN_ATTEMPTS, type DynamicQuestionFlag, type ActualDifficultyLevel } from "./analytics/constants";
+import {
+  MIN_ATTEMPTS,
+  type DynamicQuestionFlag,
+  type ActualDifficultyLevel,
+} from "./analytics/constants";
 import type { Recommendation } from "./analytics/recommendation-engine";
 import type { QuestionBenchmarks } from "./analytics/benchmark-engine";
 import type { TrendSummary } from "./analytics/trend-engine";
@@ -124,9 +135,7 @@ export async function getQuestionIntelligence(questionId: string): Promise<Quest
   );
 
   // Recommendations (gated by MIN_ATTEMPTS internally)
-  const recommendations = insufficientData
-    ? []
-    : await generateRecommendations(questionId);
+  const recommendations = insufficientData ? [] : await generateRecommendations(questionId);
 
   // Benchmarks (gated by MIN_ATTEMPTS internally)
   const benchmarks = insufficientData
@@ -137,14 +146,8 @@ export async function getQuestionIntelligence(questionId: string): Promise<Quest
   const trends = computeTrends(stats);
 
   // Difficulty analysis
-  const actualDifficulty = insufficientData
-    ? null
-    : classifyActualDifficulty(stats.successRate);
-  const drift = detectDifficultyDrift(
-    question.difficulty,
-    stats.successRate,
-    stats.timesAttempted
-  );
+  const actualDifficulty = insufficientData ? null : classifyActualDifficulty(stats.successRate);
+  const drift = detectDifficultyDrift(question.difficulty, stats.successRate, stats.timesAttempted);
 
   // Confidence (computed dynamically, never stored)
   const confidenceScore = computeConfidenceScore(stats);

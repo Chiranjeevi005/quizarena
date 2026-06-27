@@ -27,10 +27,7 @@ export interface QuestionBenchmarks {
   insufficientData: boolean;
 }
 
-function classifyPerformance(
-  questionRate: number,
-  peerAverage: number
-): BenchmarkPerformance {
+function classifyPerformance(questionRate: number, peerAverage: number): BenchmarkPerformance {
   const delta = questionRate - peerAverage;
   if (delta > 0.05) return "ABOVE_AVERAGE";
   if (delta < -0.05) return "BELOW_AVERAGE";
@@ -70,9 +67,7 @@ async function computePeerBenchmark(
  * Get benchmarks for a question against normalized peer groups.
  * Compares within: same topic, same subject, same exam category.
  */
-export async function getQuestionBenchmark(
-  questionId: string
-): Promise<QuestionBenchmarks> {
+export async function getQuestionBenchmark(questionId: string): Promise<QuestionBenchmarks> {
   const question = await prisma.question.findUnique({
     where: { id: questionId },
     include: { usageStats: true },
