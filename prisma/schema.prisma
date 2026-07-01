@@ -84,8 +84,6 @@ model User {
   createdCompetitions       Competition[]                     @relation("CompetitionCreatedBy")
   updatedCompetitions       Competition[]                     @relation("CompetitionUpdatedBy")
   CompetitionAudit          CompetitionAudit[]
-  builderRevisions          BuilderRevision[]
-  builderLocks              BuilderLock[]
   publishedVersions         CompetitionVersion[]              @relation("CompetitionVersionPublisher")
   createdSchedules          CompetitionSchedule[]             @relation("ScheduleCreatedBy")
   publishingLocks           PublishingLock[]                  @relation("PublishingLockUser")
@@ -2097,8 +2095,6 @@ model Competition {
   versions        CompetitionVersion[]
   schedule        CompetitionSchedule?
   publishingLock  PublishingLock?
-  revisions       BuilderRevision[]
-  locks           BuilderLock[]
   sessions        CompetitionSession[]
   attempts        CompetitionAttempt[]
   lifecycleAudits CompetitionLifecycleAudit[]
@@ -2319,37 +2315,7 @@ model BulkOperationJob {
   @@map("bulk_operation_jobs")
 }
 
-model BuilderRevision {
-  id             String   @id @default(cuid())
-  competitionId  String
-  revisionNumber Int
-  actorId        String?
-  summary        String?  @db.Text
-  snapshot       Json
-  createdAt      DateTime @default(now())
 
-  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  actor       User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
-
-  @@unique([competitionId, revisionNumber])
-  @@index([competitionId])
-  @@index([createdAt])
-  @@map("builder_revisions")
-}
-
-model BuilderLock {
-  id            String   @id @default(cuid())
-  competitionId String   @unique
-  userId        String
-  expiresAt     DateTime
-
-  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([competitionId])
-  @@index([expiresAt])
-  @@map("builder_locks")
-}
 
 enum ArtifactStatus {
   BUILDING
