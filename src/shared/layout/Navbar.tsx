@@ -31,7 +31,7 @@ export function Navbar({ session }: { session?: Session | null }) {
 
   if (isOnboarding || isAuthPage) return null;
 
-  const navItems = ["Challenges", "Rankings", "Intelligence", "Pricing"];
+  const navItems = ["Competitions", "Rankings", "Intelligence", "Pricing"];
 
   return (
     <header className="fixed top-0 inset-x-0 z-40 pointer-events-none">

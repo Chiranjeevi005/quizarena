@@ -27,7 +27,7 @@ interface DashboardSidebarProps {
 
 const navItems = [
   { href: "/dashboard/home", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/challenges", label: "Challenges", icon: Trophy },
+  { href: "/competitions", label: "Competitions", icon: Trophy },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -105,7 +105,7 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                   isActive
-                    ? item.label === "Challenges"
+                    ? item.label === "Competitions"
                       ? "bg-orange-50 text-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.15)] ring-1 ring-orange-200"
                       : "bg-primary/10 text-primary"
                     : "text-gray-600 hover:bg-gray-50 hover:text-navy"
@@ -113,11 +113,11 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                 title={collapsed ? item.label : undefined}
               >
                 <Icon
-                  className={`w-5 h-5 shrink-0 ${isActive ? (item.label === "Challenges" ? "text-orange-500 fill-orange-500/20 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)] scale-110 transition-all" : "text-primary") : ""}`}
+                  className={`w-5 h-5 shrink-0 ${isActive ? (item.label === "Competitions" ? "text-orange-500 fill-orange-500/20 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)] scale-110 transition-all" : "text-primary") : ""}`}
                 />
                 {!collapsed && (
                   <span
-                    className={`text-sm font-semibold ${isActive ? (item.label === "Challenges" ? "text-orange-600" : "text-primary") : ""}`}
+                    className={`text-sm font-semibold ${isActive ? (item.label === "Competitions" ? "text-orange-600" : "text-primary") : ""}`}
                   >
                     {item.label}
                   </span>
@@ -217,17 +217,17 @@ export function DashboardSidebar({ session, isOpen, onClose }: DashboardSidebarP
                       onClick={onClose}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         isActive
-                          ? item.label === "Challenges"
+                          ? item.label === "Competitions"
                             ? "bg-orange-50 text-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.15)] ring-1 ring-orange-200"
                             : "bg-primary/10 text-primary"
                           : "text-gray-600 hover:bg-gray-50 hover:text-navy"
                       }`}
                     >
                       <Icon
-                        className={`w-5 h-5 ${isActive ? (item.label === "Challenges" ? "text-orange-500 fill-orange-500/20 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)] scale-110 transition-all" : "text-primary") : ""}`}
+                        className={`w-5 h-5 ${isActive ? (item.label === "Competitions" ? "text-orange-500 fill-orange-500/20 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)] scale-110 transition-all" : "text-primary") : ""}`}
                       />
                       <span
-                        className={`text-sm font-semibold ${isActive ? (item.label === "Challenges" ? "text-orange-600" : "text-primary") : ""}`}
+                        className={`text-sm font-semibold ${isActive ? (item.label === "Competitions" ? "text-orange-600" : "text-primary") : ""}`}
                       >
                         {item.label}
                       </span>
