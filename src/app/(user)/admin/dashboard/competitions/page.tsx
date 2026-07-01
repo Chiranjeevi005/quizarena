@@ -14,12 +14,13 @@ import { Plus, Trophy, Clock, CalendarDays, MoreVertical, LayoutGrid } from "luc
 export default async function CompetitionsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const user = await requireAdmin();
   if (!user || !user.id) return null;
-  const page = Number(searchParams.page) || 1;
-  const search = typeof searchParams.search === "string" ? searchParams.search : undefined;
+  const resolvedParams = await searchParams;
+  const page = Number(resolvedParams.page) || 1;
+  const search = typeof resolvedParams.search === "string" ? resolvedParams.search : undefined;
 
   const result = await CompetitionService.getCompetitions({
     page,

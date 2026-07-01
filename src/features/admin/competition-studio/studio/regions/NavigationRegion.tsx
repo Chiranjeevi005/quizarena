@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import { ModuleRegistry } from '../registry/ModuleRegistry';
 import { useCompetitionStudioContext } from '../context/CompetitionStudioProvider';

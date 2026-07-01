@@ -11,11 +11,11 @@ import { CompetitionService } from "../../../services/competition.service";
  * Previews what would change if we roll back to a specific version.
  * Returns the diff between current LIVE state and the target version.
  */
-export async function previewRollback(competitionId: string, versionNumber: number) {
+export async function previewRollback(competitionId: string, version: number) {
   await requireAdmin();
   // Fetch target version
-  const targetVersion = await prisma.competitionVersion.findUnique({
-    where: { competitionId_versionNumber: { competitionId, versionNumber } },
+  const targetVersion = await prisma.competitionVersion.findFirst({
+    where: { competitionId, version },
   });
 
   if (!targetVersion) throw new Error("Version not found");
@@ -27,7 +27,7 @@ export async function previewRollback(competitionId: string, versionNumber: numb
   // Compute semantic diff between targetVersion.*Snapshot and currentLive.*Snapshot
   // For now, we return a simple mock of changes (in a real app, use deep object diffing)
   return {
-    targetVersionNumber: versionNumber,
+    targetVersionNumber: version,
     changes: [
       "Configuration differences found.",
       `Rolling back to state from ${targetVersion.publishedAt?.toLocaleDateString()}`,
@@ -39,12 +39,12 @@ export async function previewRollback(competitionId: string, versionNumber: numb
  * Rolls back to a previous version safely.
  * DOES NOT edit history. Creates a NEW version based on the old snapshot.
  */
-export async function rollbackCompetitionVersion(competitionId: string, versionNumber: number) {
+export async function rollbackCompetitionVersion(competitionId: string, version: number) {
   const user = await requireAdmin();
   if (!user) throw new Error("Unauthorized");
 
-  const targetVersion = await prisma.competitionVersion.findUnique({
-    where: { competitionId_versionNumber: { competitionId, versionNumber } },
+  const targetVersion = await prisma.competitionVersion.findFirst({
+    where: { competitionId, version },
   });
 
   if (!targetVersion) throw new Error("Version not found");
@@ -89,7 +89,7 @@ export async function rollbackCompetitionVersion(competitionId: string, versionN
     const newVersion = await createVersionSnapshot(
       updatedCompetition as any,
       user.id,
-      `Rolled back to version ${versionNumber}`,
+      `Rolled back to version ${version}`,
       tx
     );
 
@@ -99,7 +99,7 @@ export async function rollbackCompetitionVersion(competitionId: string, versionN
         competitionId,
         action: "ROLLBACK",
         actorId: user.id,
-        metadata: { fromVersion: versionNumber, toVersion: newVersion.versionNumber },
+        metadata: { fromVersion: version, toVersion: newVersion.version },
       },
     });
 
@@ -107,7 +107,7 @@ export async function rollbackCompetitionVersion(competitionId: string, versionN
     await tx.competition.update({
       where: { id: competitionId },
       data: {
-        version: newVersion.versionNumber,
+        version: newVersion.version,
       },
     });
   });
@@ -115,7 +115,7 @@ export async function rollbackCompetitionVersion(competitionId: string, versionN
   emitPublishingEvent({
     type: "VERSION_ROLLED_BACK",
     competitionId,
-    toVersion: versionNumber,
+    toVersion: version,
   });
 
   return { success: true };

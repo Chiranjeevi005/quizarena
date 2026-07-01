@@ -21,4 +21,7 @@ import './intelligence/kernel/AssessmentIntelligenceKernel';
 // Ensure Readiness registers itself
 import './readiness/kernel/CompetitionReadinessKernel';
 
+// Ensure Version Build registers itself
+import './versioning/kernel/VersionBuildKernel';
+
 // Other modules will be exported here as they are migrated.

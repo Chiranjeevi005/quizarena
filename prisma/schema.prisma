@@ -91,6 +91,15 @@ model User {
   publishingLocks           PublishingLock[]                  @relation("PublishingLockUser")
   competitionSessions       CompetitionSession[]
   competitionAttempts       CompetitionAttempt[]
+  VersionBuildAudit         VersionBuildAudit[]
+
+  initiatedDeployments PublishDeployment[] @relation("DeploymentInitiator")
+  deploymentAudits     DeploymentAudit[]   @relation("DeploymentAuditActor")
+  deploymentLocks      DeploymentLock[]    @relation("DeploymentLockUser")
+
+  ownedIncidents          PlatformIncident[]        @relation("IncidentOwner")
+  acknowledgedAlerts      PlatformAlert[]           @relation("AlertAcknowledger")
+  monitoringAudits        PlatformMonitoringAudit[] @relation("MonitoringAuditActor")
 
   @@index([email])
   @@index([username])
@@ -2093,6 +2102,12 @@ model Competition {
   sessions        CompetitionSession[]
   attempts        CompetitionAttempt[]
   lifecycleAudits CompetitionLifecycleAudit[]
+  deploymentLocks DeploymentLock[]
+
+  monitoringSnapshots   PlatformMonitoringSnapshot[]
+  incidents             PlatformIncident[]
+  alerts                PlatformAlert[]
+  operationalMetrics    PlatformOperationalMetric[]
 
   @@index([slug])
   @@index([competitionType])
@@ -2336,30 +2351,83 @@ model BuilderLock {
   @@map("builder_locks")
 }
 
+enum ArtifactStatus {
+  BUILDING
+  VERIFIED
+  READY
+  FAILED
+  SUPERSEDED
+}
+
 model CompetitionVersion {
   id            String @id @default(cuid())
   competitionId String
-  versionNumber Int
 
-  // Structured snapshot (NOT one huge JSON)
-  competitionSnapshot Json // Core competition fields
-  sectionsSnapshot    Json // Sections array
-  questionsSnapshot   Json // Question mappings array
-  rulesSnapshot       Json // Rules + config
-  configSnapshot      Json // Economics + eligibility
+  version         Int
+  semanticVersion String
+  schemaVersion   Int    @default(1) // Essential for snapshot evolution
 
-  changelog     String?   @db.Text
-  publishedAt   DateTime?
-  publishedById String?
-  isActive      Boolean   @default(false)
-  createdAt     DateTime  @default(now())
+  // Modular Snapshot Domains
+  competitionSnapshot Json
+  sectionsSnapshot    Json
+  questionsSnapshot   Json
+  rulesSnapshot       Json
+  configSnapshot      Json
 
+  // Security & Auditing
+  snapshotHash String // SHA-256 Hash of snapshot payload
+  manifestHash String // SHA-256 Hash of deployment manifest
+  artifactHash String // SHA-256 Hash of finalizing artifact
+  fingerprint  String // Unique artifact fingerprint
+
+  // Build Metrics
+  freezeDurationMs  Int?
+  buildStartedAt    DateTime?
+  buildCompletedAt  DateTime?
+  buildNumber       Int?
+  artifactSizeBytes Int?
+  manifestVersion   String?
+  reason            String?   @db.Text
+
+  // Lifecycle
+  artifactStatus ArtifactStatus @default(BUILDING)
+  changelog      String?        @db.Text
+  publishedAt    DateTime?
+  publishedById  String?
+  isActive       Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+
+  // Relations
   competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
   publishedBy User?       @relation("CompetitionVersionPublisher", fields: [publishedById], references: [id], onDelete: SetNull)
 
-  @@unique([competitionId, versionNumber])
+  // Version Graph
+  parentVersionId String?
+  parentVersion   CompetitionVersion?  @relation("VersionGraph", fields: [parentVersionId], references: [id], onDelete: SetNull)
+  childVersions   CompetitionVersion[] @relation("VersionGraph")
+
+  // Readiness
+  readinessSnapshotId String?
+  readinessSnapshot   ReadinessSnapshot? @relation(fields: [readinessSnapshotId], references: [id], onDelete: SetNull)
+
+  // Compatibility & Manifest
+  compatibilities VersionCompatibility[]
+  manifest        VersionManifest?
+
+  // Build Audit
+  buildAudits VersionBuildAudit[]
+
+  // Deployments
+  deployments     PublishDeployment[]
+  deploymentLocks DeploymentLock[]
+
+  monitoringSnapshot PlatformMonitoringSnapshot?
+
+  @@unique([competitionId, version])
   @@index([competitionId])
   @@index([isActive])
+  @@index([artifactStatus])
+  @@index([snapshotHash])
   @@map("competition_versions")
 }
 
@@ -2517,4 +2585,555 @@ model CompetitionSessionAuditLog {
 
   @@index([sessionId])
   @@map("competition_session_audit_logs")
+}
+
+model ReadinessSnapshot {
+  id            String @id @default(cuid())
+  competitionId String
+
+  score  Int
+  status String
+  report Json // The readiness report payload
+
+  createdAt DateTime @default(now())
+
+  versions CompetitionVersion[]
+
+  @@index([competitionId])
+  @@map("readiness_snapshots")
+}
+
+model VersionCompatibility {
+  id                   String @id @default(cuid())
+  competitionVersionId String
+
+  system  String // e.g. "RUNTIME", "LEADERBOARD", "REWARDS"
+  status  String // "COMPATIBLE", "PARTIALLY_COMPATIBLE", "BLOCKED"
+  details Json? // Validation details
+
+  createdAt DateTime @default(now())
+
+  version CompetitionVersion @relation(fields: [competitionVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionVersionId, system])
+  @@map("version_compatibilities")
+}
+
+model VersionManifest {
+  id                   String @id @default(cuid())
+  competitionVersionId String @unique
+
+  artifactId     String
+  schemaVersion  Int
+  manifestHash   String
+  snapshotHash   String
+  artifactHash   String
+  fingerprint    String
+  builderVersion String?
+  studioVersion  String?
+  healthScore    Float?
+
+  entityCount      Int @default(0)
+  questionCount    Int @default(0)
+  sectionCount     Int @default(0)
+  rewardCount      Int @default(0)
+  certificateCount Int @default(0)
+
+  runtimeVersion     String?
+  submissionVersion  String?
+  leaderboardVersion String?
+  analyticsVersion   String?
+
+  createdAt DateTime @default(now())
+
+  version CompetitionVersion @relation(fields: [competitionVersionId], references: [id], onDelete: Cascade)
+  deployments PublishDeployment[]
+
+  @@map("version_manifests")
+}
+
+model VersionBuildAudit {
+  id                   String @id @default(cuid())
+  competitionVersionId String
+
+  durationMs              Int
+  serializationDurationMs Int?
+  validationDurationMs    Int?
+  hashingDurationMs       Int?
+  registryDurationMs      Int?
+
+  builderId     String?
+  executionLogs Json?
+  buildResult   String
+  warnings      Json?
+  reason        String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  version CompetitionVersion @relation(fields: [competitionVersionId], references: [id], onDelete: Cascade)
+  builder User?              @relation(fields: [builderId], references: [id], onDelete: SetNull)
+
+  @@index([competitionVersionId])
+  @@map("version_build_audits")
+}
+
+// ─── Deployment Pipeline Engine ───────────────────────────────
+
+enum DeploymentStatus {
+  PLANNED
+  VALIDATING
+  EXECUTING
+  VERIFYING
+  ACTIVATING
+  COMPLETED
+  FAILED
+  ROLLED_BACK
+  CANCELLED
+}
+
+enum DeploymentStrategy {
+  ROLLING
+  BLUE_GREEN
+  DIRECT
+}
+
+enum DeploymentEnvironment {
+  LOCAL
+  STAGING
+  PRODUCTION
+}
+
+enum DeploymentStageType {
+  RUNTIME
+  LEADERBOARD
+  ANALYTICS
+  RESULTS
+  REWARDS
+  CERTIFICATES
+  LIFECYCLE
+  NOTIFICATIONS
+  CACHE
+  SEARCH_INDEX
+  AUDIT
+  OBSERVABILITY
+}
+
+enum StageStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  SKIPPED
+}
+
+enum DeploymentAuditAction {
+  PLANNED
+  STARTED
+  STAGE_STARTED
+  STAGE_COMPLETED
+  STAGE_FAILED
+  VERIFIED
+  ACTIVATED
+  COMPLETED
+  ROLLED_BACK
+  CANCELLED
+  RECOVERED
+}
+
+enum DeploymentHealthStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+  FAILED
+}
+
+enum DeploymentReason {
+  MANUAL
+  SCHEDULED
+  ROLLBACK
+  RECOVERY
+}
+
+enum DeploymentResult {
+  SUCCESS
+  PARTIAL_SUCCESS
+  FAILED
+}
+
+model PublishDeployment {
+  id                   String @id @default(cuid())
+  competitionVersionId String
+
+  deploymentNumber Int
+  status           DeploymentStatus
+  strategy         DeploymentStrategy
+  environment      DeploymentEnvironment
+  reason           DeploymentReason
+  deploymentResult DeploymentResult?
+
+  manifestId String?
+  pipelineVersion String @default("1.0.0")
+  builderVersion String?
+
+  queuePosition Int?
+  queuedAt      DateTime?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  
+  initiatedById String
+  rollbackDeploymentId String?
+
+  reasonNote String? @db.Text
+  metadata   Json?
+
+  version     CompetitionVersion @relation(fields: [competitionVersionId], references: [id], onDelete: Cascade)
+  initiatedBy User               @relation("DeploymentInitiator", fields: [initiatedById], references: [id])
+  manifest    VersionManifest?   @relation(fields: [manifestId], references: [id], onDelete: SetNull)
+
+  rollbackDeployment PublishDeployment?  @relation("RollbackDeployment", fields: [rollbackDeploymentId], references: [id])
+  rollbackChildren   PublishDeployment[] @relation("RollbackDeployment")
+
+  stages  DeploymentStage[]
+  audits  DeploymentAudit[]
+  health  DeploymentHealth?
+  metrics DeploymentMetrics?
+
+  @@unique([competitionVersionId, deploymentNumber])
+  @@index([competitionVersionId])
+  @@index([status])
+  @@index([environment])
+  @@map("publish_deployments")
+}
+
+model DeploymentStage {
+  id                  String @id @default(cuid())
+  publishDeploymentId String
+
+  stage      DeploymentStageType
+  status     StageStatus
+  durationMs Int?
+  retryCount Int @default(0)
+
+  logs Json?
+
+  deployment PublishDeployment @relation(fields: [publishDeploymentId], references: [id], onDelete: Cascade)
+
+  @@index([publishDeploymentId])
+  @@index([status])
+  @@map("deployment_stages")
+}
+
+model DeploymentAudit {
+  id                  String @id @default(cuid())
+  publishDeploymentId String
+  actorId             String?
+
+  action    DeploymentAuditAction
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  deployment PublishDeployment @relation(fields: [publishDeploymentId], references: [id], onDelete: Cascade)
+  actor      User?             @relation("DeploymentAuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([publishDeploymentId])
+  @@index([timestamp])
+  @@map("deployment_audits")
+}
+
+model DeploymentHealth {
+  id                  String @id @default(cuid())
+  publishDeploymentId String @unique
+
+  status DeploymentHealthStatus
+  score  Int
+
+  warnings Json?
+  errors   Json?
+  downstreamHealth Json?
+
+  durationMs Int?
+  retryCount Int @default(0)
+
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  deployment PublishDeployment @relation(fields: [publishDeploymentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("deployment_healths")
+}
+
+model DeploymentMetrics {
+  id                  String @id @default(cuid())
+  publishDeploymentId String @unique
+
+  planningMs     Int?
+  validationMs   Int?
+  executionMs    Int?
+  verificationMs Int?
+  activationMs   Int?
+  totalDurationMs Int?
+
+  deployment PublishDeployment @relation(fields: [publishDeploymentId], references: [id], onDelete: Cascade)
+
+  @@map("deployment_metrics")
+}
+
+model DeploymentLock {
+  id            String @id @default(cuid())
+  competitionId String @unique
+  versionId     String?
+  
+  userId String
+  reason String
+  isActive Boolean @default(true)
+
+  acquiredAt DateTime @default(now())
+  expiresAt  DateTime
+
+  competition Competition         @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  version     CompetitionVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  user        User                @relation("DeploymentLockUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId])
+  @@index([expiresAt])
+  @@map("deployment_locks")
+}
+
+// ─── Phase 08: Platform Operations & Monitoring Center ──────────
+
+enum PlatformComponentHealth {
+  EXCELLENT
+  HEALTHY
+  WARNING
+  CRITICAL
+  OFFLINE
+}
+
+enum WorkerStatus {
+  IDLE
+  PROCESSING
+  PAUSED
+  FAILED
+  DEAD
+}
+
+enum QueueStatus {
+  HEALTHY
+  BACKLOGGED
+  STALLED
+  FAILED
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  RECOVERED
+  RESOLVED
+  CLOSED
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+  FATAL
+}
+
+model MonitoringConfiguration {
+  id             String @id @default(cuid())
+  cpuWarning     Float  @default(70.0)
+  cpuCritical    Float  @default(90.0)
+  memoryWarning  Float  @default(80.0)
+  memoryCritical Float  @default(95.0)
+
+  alertDeduplicationWindowMs Int @default(60000)
+  retentionDays              Int @default(30)
+  
+  updatedAt DateTime @updatedAt
+  updatedBy String
+
+  @@map("monitoring_configurations")
+}
+
+model PlatformSystemHealth {
+  id String @id @default("global-health")
+  
+  overallScore Int @default(100)
+  
+  databaseHealth     PlatformComponentHealth
+  redisHealth        PlatformComponentHealth
+  storageHealth      PlatformComponentHealth
+  cronHealth         PlatformComponentHealth
+  authenticationHealth PlatformComponentHealth
+  paymentsHealth     PlatformComponentHealth
+
+  lastCheckedAt DateTime @default(now())
+
+  @@map("platform_system_health")
+}
+
+model WorkerHealth {
+  id   String @id @default(cuid())
+  name String @unique
+  
+  status       WorkerStatus
+  healthScore  Int          @default(100)
+  successRate  Float        @default(100.0)
+  
+  tasksProcessed Int @default(0)
+  tasksFailed    Int @default(0)
+  
+  lastHeartbeatAt DateTime @default(now())
+  uptimeMs        Int?
+  
+  @@index([status])
+  @@map("worker_health")
+}
+
+model QueueHealth {
+  id   String @id @default(cuid())
+  name String @unique
+  
+  status QueueStatus
+  
+  pendingCount    Int @default(0)
+  processingCount Int @default(0)
+  completedCount  Int @default(0)
+  failedCount     Int @default(0)
+  deadLetterCount Int @default(0)
+  retriesCount    Int @default(0)
+  
+  averageProcessingTimeMs Int?
+  
+  lastUpdatedAt DateTime @default(now())
+  
+  @@index([status])
+  @@map("queue_health")
+}
+
+model PlatformMonitoringSnapshot {
+  id                   String @id @default(cuid())
+  competitionVersionId String @unique
+  competitionId        String
+  
+  snapshotVersion String
+  pipelineVersion String
+  fingerprint     String
+  
+  healthScore Int @default(100)
+  
+  activeUsers    Int @default(0)
+  submissionRate Float @default(0)
+  completionRate Float @default(0)
+  averageDurationMs Int?
+
+  runtimeStatus      PlatformComponentHealth
+  deploymentStatus   PlatformComponentHealth
+  leaderboardStatus  PlatformComponentHealth
+  rewardStatus       PlatformComponentHealth
+  certificateStatus  PlatformComponentHealth
+  lifecycleStatus    PlatformComponentHealth
+
+  processingTimeMs Int
+
+  generatedAt DateTime @default(now())
+  
+  // Relations
+  version     CompetitionVersion @relation(fields: [competitionVersionId], references: [id], onDelete: Cascade)
+  competition Competition        @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@index([healthScore])
+  @@index([generatedAt])
+  @@map("platform_monitoring_snapshots")
+}
+
+model PlatformIncident {
+  id            String @id @default(cuid())
+  competitionId String?
+  
+  title       String
+  description String @db.Text
+  severity    AlertSeverity
+  status      IncidentStatus
+  
+  detectedAt   DateTime  @default(now())
+  resolvedAt   DateTime?
+  closedAt     DateTime?
+  durationMs   Int?
+  
+  ownerId      String?
+  resolutionNotes String? @db.Text
+  
+  // Relations
+  competition Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+  owner       User?        @relation("IncidentOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([severity])
+  @@index([detectedAt])
+  @@map("platform_incidents")
+}
+
+model PlatformAlert {
+  id            String @id @default(cuid())
+  competitionId String?
+  
+  type        String
+  message     String
+  severity    AlertSeverity
+  
+  occurrenceCount Int @default(1)
+  isAcknowledged  Boolean @default(false)
+  isResolved      Boolean @default(false)
+  isSuppressed    Boolean @default(false)
+  
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  
+  acknowledgedById String?
+  
+  // Relations
+  competition    Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+  acknowledgedBy User?        @relation("AlertAcknowledger", fields: [acknowledgedById], references: [id], onDelete: SetNull)
+
+  @@index([isResolved])
+  @@index([lastSeenAt])
+  @@index([severity])
+  @@map("platform_alerts")
+}
+
+model PlatformOperationalMetric {
+  id            String @id @default(cuid())
+  competitionId String
+  
+  metricKey   String
+  metricValue Float
+  dimensions  Json?
+  
+  timestamp DateTime @default(now())
+  
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId, metricKey])
+  @@index([timestamp])
+  @@map("platform_operational_metrics")
+}
+
+model PlatformMonitoringAudit {
+  id String @id @default(cuid())
+  
+  action   String
+  actorId  String?
+  targetId String?
+  metadata Json?
+  
+  timestamp DateTime @default(now())
+  
+  actor User? @relation("MonitoringAuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([timestamp])
+  @@map("platform_monitoring_audits")
 }
