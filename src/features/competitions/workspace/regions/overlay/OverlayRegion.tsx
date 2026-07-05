@@ -28,6 +28,11 @@ export function OverlayRegion() {
 
   const isSubmitting = status === "SUBMITTING";
 
+  const questions = useRuntimeState((s: any) => s.questions);
+  const answers = useRuntimeState((s: any) => s.answers);
+  const answeredCount = Object.keys(answers).length;
+  const unansweredCount = questions.length - answeredCount;
+
   if (!showSubmitConfirm && status !== "SUBMITTING") return null;
 
   return (
@@ -44,9 +49,34 @@ export function OverlayRegion() {
         ) : (
           <>
             <h3 className="text-xl font-bold text-white mb-3">Submit Assessment?</h3>
-            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-              Are you sure you want to submit your answers? You cannot change them after submission.
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-slate-400 text-sm">Total Questions</span>
+                <span className="font-bold text-white">{questions.length}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-slate-400 text-sm">Answered</span>
+                <span className="font-bold text-emerald-400">{answeredCount}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-sm">Unanswered</span>
+                <span className={`font-bold ${unansweredCount > 0 ? "text-red-400" : "text-slate-500"}`}>
+                  {unansweredCount}
+                </span>
+              </div>
+            </div>
+            
+            {unansweredCount > 0 && (
+              <p className="text-red-400 text-sm mb-6 flex items-start gap-2 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                <span className="font-bold mt-0.5">⚠️</span>
+                You have {unansweredCount} unanswered question{unansweredCount > 1 ? "s" : ""}. Are you sure you want to submit?
+              </p>
+            )}
+
+            <p className="text-slate-400 text-xs mb-6">
+              You cannot change your answers after submission.
             </p>
+
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowSubmitConfirm(false)}

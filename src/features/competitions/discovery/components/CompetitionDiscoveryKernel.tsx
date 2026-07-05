@@ -97,7 +97,7 @@ function CompetitionCard({ competition }: { competition: any }) {
   const isScheduled = competition.lifecycleState === "SCHEDULED";
   
   return (
-    <Link href={`/dashboard/competitions/${competition.id}`} className="group block">
+    <Link href={`/dashboard/competitions/${competition.slug}`} className="group block">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 relative h-full flex flex-col">
         {isLive && (
           <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1 bg-red-500 text-white rounded-full shadow-sm">

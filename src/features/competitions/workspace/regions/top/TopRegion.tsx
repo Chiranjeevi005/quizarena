@@ -84,6 +84,17 @@ export function TopRegion({ config }: TopRegionProps) {
               {formatTime(remainingSeconds)}
             </div>
           )}
+
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined" && (window as any).triggerSubmitModal) {
+                (window as any).triggerSubmitModal();
+              }
+            }}
+            className="hidden sm:flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors shadow-lg shadow-emerald-900/20"
+          >
+            Submit
+          </button>
         </div>
       </div>
 

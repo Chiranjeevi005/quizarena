@@ -83,6 +83,7 @@ export async function submitSession(sessionId: string) {
     return await prisma.$transaction(async (tx) => {
       const session = await tx.competitionSession.findUnique({
         where: { id: sessionId },
+        include: { answers: true }
       });
 
       if (!session) throw new Error("Session not found");
@@ -90,6 +91,23 @@ export async function submitSession(sessionId: string) {
         const existingAttempt = await tx.competitionAttempt.findUnique({ where: { sessionId } });
         return { success: true, data: { attemptId: existingAttempt?.id } };
       }
+
+      // Generate Immutable Snapshot of Answers & Timing
+      const evaluationSnapshot = {
+        questionOrder: session.questionOrder,
+        optionOrder: session.optionOrder,
+        answers: session.answers.map(a => ({
+          questionId: a.questionId,
+          selectedOptionId: a.selectedOptionId,
+          answeredAt: a.answeredAt,
+          isMarkedForReview: a.isMarkedForReview
+        })),
+        submittedAt: new Date().toISOString(),
+      };
+
+      const timeTakenInSeconds = Math.floor(
+        (new Date().getTime() - session.startedAt.getTime()) / 1000
+      );
 
       await tx.competitionSession.update({
         where: { id: sessionId },
@@ -101,6 +119,8 @@ export async function submitSession(sessionId: string) {
           sessionId,
           competitionId: session.competitionId,
           userId: session.userId,
+          timeTakenInSeconds,
+          evaluationSnapshot,
         },
       });
 
