@@ -47,8 +47,9 @@ interface DashboardShellProps {
 }
 
 const userNavItems = [
-  { href: "/dashboard/home", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/challenges", label: "Challenges", icon: Trophy },
+  { href: "/dashboard/home", label: "Workspace", icon: LayoutDashboard },
+  { href: "/dashboard/competitions", label: "Competitions", icon: Trophy },
+  { href: "/challenges", label: "Practice", icon: Target },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
