@@ -24,6 +24,9 @@ export const useWizardStore = create<WizardState>()(
         participation: {
           allowRetake: false,
         },
+        composer: {
+          sections: [],
+        },
       },
       savingState: "idle",
       lastSavedAt: null,
@@ -57,6 +60,15 @@ export const useWizardStore = create<WizardState>()(
           sessionVersion: state.sessionVersion + 1,
         })),
 
+      updateComposer: (data) =>
+        set((state) => ({
+          draftData: {
+            ...state.draftData,
+            composer: { ...state.draftData.composer, ...data },
+          },
+          sessionVersion: state.sessionVersion + 1,
+        })),
+
       setSavingState: (savingState: SavingState) =>
         set((state) => ({
           savingState,
@@ -84,6 +96,7 @@ export const useWizardStore = create<WizardState>()(
               calculatorAllowed: false,
             },
             participation: { allowRetake: false },
+            composer: { sections: [] },
           },
           savingState: "idle",
           lastSavedAt: null,

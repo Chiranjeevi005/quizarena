@@ -11,7 +11,7 @@ interface Props {
   onValidationChange: (isValid: boolean) => void;
 }
 
-export function CompetitionParticipationStep({ onValidationChange }: Props) {
+export function CompetitionAccessScheduleStep({ onValidationChange }: Props) {
   const { draftData, updateParticipation, setStep, incrementVersion } = useWizardStore();
 
   const form = useForm<CompetitionParticipationData>({

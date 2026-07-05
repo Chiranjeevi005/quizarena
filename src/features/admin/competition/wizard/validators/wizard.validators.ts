@@ -75,8 +75,41 @@ export const competitionParticipationSchema = z
     }
   );
 
+export const composerQuestionSchema = z.object({
+  id: z.string().optional(), // Draft local ID
+  questionId: z.string(),
+  displayOrder: z.number().default(0),
+  marks: z.number().default(1),
+  negativeMarks: z.number().default(0),
+  questionWeight: z.number().default(1.0),
+  isOptional: z.boolean().default(false),
+  isBonus: z.boolean().default(false),
+  isMandatory: z.boolean().default(true),
+});
+
+export const composerSectionSchema = z.object({
+  id: z.string().optional(), // Draft local ID
+  title: z.string().min(1, "Section title is required"),
+  slug: z.string().optional(),
+  description: z.string().optional(),
+  instructions: z.string().optional(),
+  displayOrder: z.number().default(0),
+  durationMinutes: z.number().optional().nullable(),
+  totalQuestions: z.number().default(0),
+  maximumMarks: z.number().default(0),
+  passingMarks: z.number().optional().nullable(),
+  isMandatory: z.boolean().default(true),
+  allowNavigation: z.boolean().default(true),
+  questions: z.array(composerQuestionSchema).default([]),
+});
+
+export const competitionComposerSchema = z.object({
+  sections: z.array(composerSectionSchema).default([]),
+});
+
 export const createDraftWizardSchema = z.object({
   basics: competitionBasicsSchema,
   config: competitionConfigSchema,
   participation: competitionParticipationSchema,
+  composer: competitionComposerSchema.optional(),
 });

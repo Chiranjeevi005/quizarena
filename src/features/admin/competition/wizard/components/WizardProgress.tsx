@@ -6,9 +6,13 @@ import { WizardStep } from "../types/wizard.types";
 
 const STEPS = [
   { id: 1, label: "Basics" },
-  { id: 2, label: "Configuration" },
-  { id: 3, label: "Participation" },
-  { id: 4, label: "Review" },
+  { id: 2, label: "Template" },
+  { id: 3, label: "Composer" },
+  { id: 4, label: "Access & Schedule" },
+  { id: 5, label: "Certificates" },
+  { id: 6, label: "Review" },
+  { id: 7, label: "Freeze" },
+  { id: 8, label: "Publish" },
 ];
 
 export function WizardProgress({ validSteps }: { validSteps: Record<WizardStep, boolean> }) {
@@ -45,7 +49,7 @@ export function WizardProgress({ validSteps }: { validSteps: Record<WizardStep, 
                 if (isClickable) setStep(step.id as WizardStep);
               }}
               disabled={!isClickable}
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300
+              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300
                 ${
                   isCurrent
                     ? "bg-orange-500 text-white ring-4 ring-orange-100"

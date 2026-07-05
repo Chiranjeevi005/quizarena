@@ -2,8 +2,9 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { QuestionSearchRepository } from '../repositories/QuestionSearchRepository';
+import { searchQuestionsAction } from '../actions/search.actions';
 import { QuestionSearchResultDTO } from '../services/SearchScoringEngine';
+import { useExplorerStore } from '../stores/useExplorerStore';
 
 /**
  * Question Grid
@@ -13,35 +14,55 @@ import { QuestionSearchResultDTO } from '../services/SearchScoringEngine';
 export const QuestionGrid: React.FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   
-  // This state would normally be managed by explorer.store.ts with useInfiniteQuery
+  const { filters, selectionBasket, toggleSelection, previewId, setPreviewId } = useExplorerStore();
+  
+  // This state would normally be managed by React Query. For simplicity we use effect.
   const [questions, setQuestions] = useState<QuestionSearchResultDTO[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock fetch on mount
   useEffect(() => {
-    const fetchInitial = async () => {
+    let isMounted = true;
+    const fetchQuestions = async () => {
       setIsLoading(true);
-      const res = await QuestionSearchRepository.searchQuestions({});
-      setQuestions(res);
-      setIsLoading(false);
+      const res = await searchQuestionsAction(filters);
+      if (isMounted && res.success && res.data) {
+        setQuestions(res.data);
+      }
+      if (isMounted) setIsLoading(false);
     };
-    fetchInitial();
-  }, []);
+    
+    // Debounce the fetch slightly to avoid rapid calls on typing
+    const timer = setTimeout(fetchQuestions, 300);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [filters]);
 
   const rowVirtualizer = useVirtualizer({
     count: questions.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100, // estimated height of QuestionRow in px
+    estimateSize: () => 90, // estimated height of QuestionRow in px
     overscan: 5,
   });
 
   return (
     <div 
       ref={parentRef} 
-      className="h-full w-full overflow-auto bg-gray-50 p-4 border rounded shadow-inner"
+      className="h-full w-full overflow-auto bg-gray-50 p-4 border border-gray-200 rounded-lg shadow-inner"
     >
       {isLoading && questions.length === 0 ? (
-        <div className="flex items-center justify-center h-full text-gray-500">Loading...</div>
+        <div className="flex items-center justify-center h-full text-gray-500">
+          <div className="animate-pulse flex items-center gap-2">
+             <div className="w-4 h-4 rounded-full bg-blue-500" />
+             Loading questions...
+          </div>
+        </div>
+      ) : questions.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-2">
+          <span className="text-4xl">🔍</span>
+          <p>No questions found matching your criteria.</p>
+        </div>
       ) : (
         <div
           style={{
@@ -52,6 +73,9 @@ export const QuestionGrid: React.FC = () => {
         >
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
             const question = questions[virtualRow.index];
+            const isSelected = selectionBasket.has(question.id);
+            const isPreviewing = previewId === question.id;
+            
             return (
               <div
                 key={virtualRow.index}
@@ -66,7 +90,14 @@ export const QuestionGrid: React.FC = () => {
                 className="py-1"
               >
                 {/* Question Row Component */}
-                <div className="bg-white border border-gray-200 rounded p-4 h-full flex items-center justify-between hover:border-blue-300 transition-colors cursor-pointer group">
+                <div 
+                  onClick={() => setPreviewId(question.id)}
+                  className={`border rounded p-4 h-full flex items-center justify-between transition-all cursor-pointer group ${
+                    isPreviewing 
+                      ? 'bg-blue-50 border-blue-400 shadow-sm ring-1 ring-blue-400' 
+                      : 'bg-white border-gray-200 hover:border-blue-300'
+                  }`}
+                >
                   <div className="flex flex-col overflow-hidden">
                     <span className="text-sm font-semibold text-gray-900 truncate">{question.title}</span>
                     <div className="flex items-center space-x-2 mt-1 text-xs text-gray-500">
@@ -79,9 +110,18 @@ export const QuestionGrid: React.FC = () => {
                       <span className="text-blue-600 font-medium">Fit: 96%</span>
                     </div>
                   </div>
-                  <button className="opacity-0 group-hover:opacity-100 px-3 py-1 bg-gray-100 hover:bg-blue-50 text-blue-600 text-xs font-medium rounded transition-all">
-                    Select
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); toggleSelection(question.id); }}
+                      className={`px-3 py-1 text-xs font-medium rounded transition-all ${
+                        isSelected 
+                          ? 'bg-green-600 text-white hover:bg-green-700' 
+                          : 'opacity-0 group-hover:opacity-100 bg-gray-100 hover:bg-blue-50 text-blue-600'
+                      }`}
+                    >
+                      {isSelected ? 'Added to Basket ✓' : 'Add to Basket'}
+                    </button>
+                  </div>
                 </div>
               </div>
             );
