@@ -1,6 +1,7 @@
 import { getLeaderboardPreview } from "@/features/competitions/experience/actions/landing.actions";
 import { Medal, User as UserIcon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface LeaderboardPreviewProps {
   slug: string;
@@ -54,7 +55,15 @@ export async function LeaderboardPreview({ slug }: LeaderboardPreviewProps) {
                 <span className="text-slate-400 font-bold w-4 text-center">{entry.rank}</span>
                 <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center overflow-hidden">
                   {entry.avatar ? (
-                    <img src={entry.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={entry.avatar}
+                        alt="Avatar"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
                   ) : (
                     <UserIcon className="w-4 h-4 text-slate-500" />
                   )}

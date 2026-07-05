@@ -50,7 +50,7 @@ export class CompetitionReadinessService {
         if (!section.title || section.title.trim() === "") {
           report.errors.push(`Section ${index + 1} is missing a title.`);
         }
-        
+
         const qCount = section.questions?.length || 0;
         totalQuestions += qCount;
 

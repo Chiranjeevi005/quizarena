@@ -15,7 +15,7 @@ export function CompetitionPublishStep() {
   const handlePublish = async () => {
     const slug = draftData.basics.slug || `draft-${sessionId}`;
     setIsPublishing(true);
-    
+
     try {
       const res = await publishCompetitionAction(slug);
       if (res.success && res.data) {
@@ -24,8 +24,10 @@ export function CompetitionPublishStep() {
       } else {
         toast.error(res.error || "Failed to publish competition.");
       }
-    } catch (err) {
-      toast.error("An unexpected error occurred during publishing.");
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "An unexpected error occurred during publishing."
+      );
     } finally {
       setIsPublishing(false);
     }
@@ -46,18 +48,21 @@ export function CompetitionPublishStep() {
         </div>
         <h2 className="text-3xl font-bold text-navy">Competition is Live!</h2>
         <p className="text-gray-600 max-w-lg mx-auto">
-          Your competition has been successfully indexed in the Discovery system and is ready for candidates.
+          Your competition has been successfully indexed in the Discovery system and is ready for
+          candidates.
         </p>
 
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 max-w-md mx-auto mt-8">
-          <label className="block text-sm font-semibold text-gray-700 text-left mb-2">Shareable Link</label>
+          <label className="block text-sm font-semibold text-gray-700 text-left mb-2">
+            Shareable Link
+          </label>
           <div className="flex">
-            <input 
-              readOnly 
-              value={metadata.shareableLink} 
+            <input
+              readOnly
+              value={metadata.shareableLink}
               className="flex-1 bg-white border border-gray-300 rounded-l-lg px-3 py-2 text-sm text-gray-600 outline-none"
             />
-            <button 
+            <button
               onClick={() => copyToClipboard(metadata.shareableLink)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg flex items-center gap-2 transition-colors"
             >
@@ -69,7 +74,7 @@ export function CompetitionPublishStep() {
 
         <div className="pt-8">
           <button
-            onClick={() => window.location.href = '/admin/dashboard/competitions'}
+            onClick={() => (window.location.href = "/admin/dashboard/competitions")}
             className="px-8 py-3 bg-navy text-white font-bold rounded-xl hover:bg-navy-light transition-colors"
           >
             Go to Competitions Dashboard

@@ -13,13 +13,13 @@ export const QuestionPreviewSidebar: React.FC = () => {
 
   useEffect(() => {
     if (!previewId) {
-      setQuestionDetail(null);
+      setTimeout(() => setQuestionDetail(null), 0);
       return;
     }
 
     // Mock fetching full details based on previewId
-    setIsLoading(true);
     const timer = setTimeout(() => {
+      setIsLoading(true);
       setQuestionDetail({
         id: previewId,
         title: "Sample Question Title for Preview",

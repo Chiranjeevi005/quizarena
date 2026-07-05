@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWizardStore } from "../context/useWizardStore";
 import { competitionBasicsSchema } from "../validators/wizard.validators";
@@ -37,10 +37,11 @@ export function CompetitionBasicsStep({ onValidationChange }: Props) {
 
   const {
     formState: { isValid, errors },
-    watch,
     setValue,
+    control,
   } = form;
-  const watchAll = watch();
+  const watchAll = useWatch({ control });
+  const watchAllString = JSON.stringify(watchAll);
 
   // Expose validation state to parent
   useEffect(() => {
@@ -50,13 +51,14 @@ export function CompetitionBasicsStep({ onValidationChange }: Props) {
   // Debounced Auto-save and Slug Check
   useEffect(() => {
     const timer = setTimeout(async () => {
-      updateBasics(watchAll);
+      const parsedWatchAll = JSON.parse(watchAllString);
+      updateBasics(parsedWatchAll);
 
       // Check slug uniqueness if title/slug changed
-      if (watchAll.slug && watchAll.slug.length >= 3) {
+      if (parsedWatchAll.slug && parsedWatchAll.slug.length >= 3) {
         setSlugChecking(true);
         try {
-          const res = await checkSlugAvailability(watchAll.slug);
+          const res = await checkSlugAvailability(parsedWatchAll.slug);
           setSlugAvailable(res.available);
           if (res.suggestions) setSlugSuggestions(res.suggestions);
         } catch (err) {
@@ -68,7 +70,7 @@ export function CompetitionBasicsStep({ onValidationChange }: Props) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [JSON.stringify(watchAll), updateBasics]);
+  }, [watchAllString, updateBasics]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

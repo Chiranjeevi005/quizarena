@@ -1,5 +1,6 @@
 import { LeaderboardReadModel } from "../../../read-model/LeaderboardReadModel";
 import { Trophy } from "lucide-react";
+import Image from "next/image";
 
 export function TopRankingsRegion({ data }: { data: LeaderboardReadModel }) {
   if (data.topRankings.length === 0) return null;
@@ -33,7 +34,9 @@ export function TopRankingsRegion({ data }: { data: LeaderboardReadModel }) {
             </div>
 
             {user.image ? (
-              <img src={user.image} alt="Avatar" className="w-20 h-20 rounded-full mb-4 z-10" />
+              <div className="relative w-20 h-20 rounded-full mb-4 z-10 overflow-hidden">
+                <Image src={user.image} alt="Avatar" fill className="object-cover" unoptimized />
+              </div>
             ) : (
               <div className="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center mb-4 z-10">
                 <span className="text-2xl font-bold text-slate-400">{user.name.charAt(0)}</span>

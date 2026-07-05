@@ -11,15 +11,15 @@ export async function freezeCompetitionAction(slug: string, userId: string) {
       where: { slug },
       select: { id: true },
     });
-    
+
     if (!competition) {
       return { success: false, error: "Competition not found by slug." };
     }
 
     const frozen = await freezeService.freezeCompetition(competition.id, userId);
     return { success: true, data: frozen };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to freeze competition:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
 }

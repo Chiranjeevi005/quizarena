@@ -52,7 +52,8 @@ export function CompetitionReviewStep() {
       <div className="mb-6 border-b border-gray-100 pb-6">
         <h2 className="text-2xl font-bold text-navy">Review & Create Draft</h2>
         <p className="text-gray-500 text-sm mt-1">
-          Verify all details and fix any readiness errors before persisting this competition to the database.
+          Verify all details and fix any readiness errors before persisting this competition to the
+          database.
         </p>
       </div>
 

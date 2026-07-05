@@ -14,7 +14,7 @@ export function CompetitionFreezeStep() {
   const handleFreeze = async () => {
     const slug = draftData.basics.slug || `draft-${sessionId}`;
     setIsFreezing(true);
-    
+
     try {
       // Mocking userId as "admin" for now, or you'd get it from a hook like useSession
       const res = await freezeCompetitionAction(slug, "admin");
@@ -24,8 +24,10 @@ export function CompetitionFreezeStep() {
       } else {
         toast.error(res.error || "Failed to freeze competition.");
       }
-    } catch (err) {
-      toast.error("An unexpected error occurred during freeze.");
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "An unexpected error occurred during freeze."
+      );
     } finally {
       setIsFreezing(false);
     }
@@ -55,7 +57,7 @@ export function CompetitionFreezeStep() {
             </ul>
           </div>
         </div>
-        
+
         <div className="mt-6 flex justify-end">
           <button
             onClick={handleFreeze}

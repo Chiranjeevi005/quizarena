@@ -1,5 +1,6 @@
 import { LeaderboardReadModel } from "../../../read-model/LeaderboardReadModel";
 import { Trophy, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import Image from "next/image";
 
 export function CurrentUserRegion({ data }: { data: LeaderboardReadModel }) {
   if (!data.currentUserPosition) return null;
@@ -10,11 +11,9 @@ export function CurrentUserRegion({ data }: { data: LeaderboardReadModel }) {
     <div className="bg-linear-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-4">
         {pos.image ? (
-          <img
-            src={pos.image}
-            alt="Avatar"
-            className="w-16 h-16 rounded-full border-2 border-blue-500"
-          />
+          <div className="relative w-16 h-16 rounded-full border-2 border-blue-500 overflow-hidden">
+            <Image src={pos.image} alt="Avatar" fill className="object-cover" unoptimized />
+          </div>
         ) : (
           <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center border-2 border-blue-500">
             <span className="text-xl font-bold text-slate-400">{pos.name.charAt(0)}</span>

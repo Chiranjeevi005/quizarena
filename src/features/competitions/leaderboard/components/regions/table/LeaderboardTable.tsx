@@ -1,5 +1,6 @@
 import { LeaderboardReadModel } from "../../../read-model/LeaderboardReadModel";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import Image from "next/image";
 
 export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
   if (data.paginatedRankings.length === 0) {
@@ -45,7 +46,15 @@ export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     {user.image ? (
-                      <img src={user.image} alt="Avatar" className="w-8 h-8 rounded-full" />
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                        <Image
+                          src={user.image}
+                          alt="Avatar"
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
                         <span className="text-xs font-bold text-slate-400">

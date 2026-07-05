@@ -32,7 +32,7 @@ export const WorkspaceModuleLoader: React.FC = () => {
   if (!activeModule) {
     return (
       <div className="flex items-center justify-center h-full w-full bg-gray-50 text-red-400">
-        <p>Module "{activeModuleId}" not found.</p>
+        <p>Module &quot;{activeModuleId}&quot; not found.</p>
       </div>
     );
   }

@@ -6,7 +6,11 @@ import { prisma } from "@/lib/prisma";
 
 const opsService = new CompetitionOperationsService();
 
-export async function updateCompetitionLifecycleAction(slug: string, newState: CompetitionLifecycle, userId: string) {
+export async function updateCompetitionLifecycleAction(
+  slug: string,
+  newState: CompetitionLifecycle,
+  userId: string
+) {
   try {
     const competition = await prisma.competition.findUnique({
       where: { slug },
@@ -19,8 +23,8 @@ export async function updateCompetitionLifecycleAction(slug: string, newState: C
 
     const updated = await opsService.updateLifecycleState(competition.id, newState, userId);
     return { success: true, data: updated };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to update lifecycle:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
 }

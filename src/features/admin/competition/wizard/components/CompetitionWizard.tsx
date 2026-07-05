@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// "use client" is preserved. no hooks needed here.
 import { useWizardStore } from "../context/useWizardStore";
 import { CompetitionWizardLayout } from "./CompetitionWizardLayout";
 import { WizardProgress } from "./WizardProgress";
@@ -15,36 +15,18 @@ import { CompetitionPublishStep } from "../steps/CompetitionPublishStep";
 
 export function CompetitionWizard() {
   const { currentStep, draftData } = useWizardStore();
-  const [validSteps, setValidSteps] = useState<Record<number, boolean>>({
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-    5: false,
-    6: false,
-    7: false,
-    8: false,
-  });
+  const isBasicsValid = draftData.basics?.title && draftData.basics?.competitionType ? true : false;
 
-  useEffect(() => {
-    // Dynamic validation
-    // In a real app we'd import the Zod schemas and validate draftData.
-    // For now we assume if a step is visited or has basic data it's "valid enough" to proceed for testing the flow,
-    // or we can strictly enforce it. Let's strictly enforce Basics.
-    const isBasicsValid =
-      draftData.basics?.title && draftData.basics?.competitionType ? true : false;
-
-    setValidSteps({
-      1: !!isBasicsValid,
-      2: true, // Template optional
-      3: true, // Composer can be empty initially
-      4: true,
-      5: true,
-      6: true,
-      7: true,
-      8: true,
-    });
-  }, [draftData]);
+  const validSteps: Record<number, boolean> = {
+    1: !!isBasicsValid,
+    2: true, // Template optional
+    3: true, // Composer can be empty initially
+    4: true,
+    5: true,
+    6: true,
+    7: true,
+    8: true,
+  };
 
   return (
     <CompetitionWizardLayout>

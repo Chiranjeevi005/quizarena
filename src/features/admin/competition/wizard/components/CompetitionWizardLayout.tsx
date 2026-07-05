@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WizardProgress } from "./WizardProgress";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
 import { UnsavedChangesDialog } from "./UnsavedChangesDialog";
@@ -13,6 +13,16 @@ export function CompetitionWizardLayout({ children }: { children: React.ReactNod
   const { currentStep, resetWizard } = useWizardStore();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  const handleCancel = React.useCallback(() => {
+    if (
+      confirm(
+        "Are you sure you want to exit? Your draft progress will be saved in your browser until you clear it."
+      )
+    ) {
+      router.push("/admin/dashboard/competitions");
+    }
+  }, [router]);
 
   // Handle hydration mismatch from Zustand persist
   useEffect(() => {
@@ -32,7 +42,7 @@ export function CompetitionWizardLayout({ children }: { children: React.ReactNod
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [handleCancel]);
 
   if (!mounted) {
     return (
@@ -41,16 +51,6 @@ export function CompetitionWizardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
-
-  const handleCancel = () => {
-    if (
-      confirm(
-        "Are you sure you want to exit? Your draft progress will be saved in your browser until you clear it."
-      )
-    ) {
-      router.push("/admin/dashboard/competitions");
-    }
-  };
 
   const handleReset = () => {
     if (

@@ -28,7 +28,7 @@ export function useValidation(
     } finally {
       setIsValidating(false);
     }
-  }, [competitionId]);
+  }, []);
 
   return {
     report,

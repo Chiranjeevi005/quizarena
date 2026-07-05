@@ -34,12 +34,18 @@ export function LiveOpsKernel({ competitionSlug, initialState }: LiveOpsKernelPr
 
   const getStatusColor = () => {
     switch (currentState) {
-      case "LIVE": return "bg-green-100 text-green-700 border-green-200";
-      case "PAUSED": return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "COMPLETED": return "bg-gray-100 text-gray-700 border-gray-200";
-      case "READY": return "bg-blue-100 text-blue-700 border-blue-200";
-      case "SCHEDULED": return "bg-purple-100 text-purple-700 border-purple-200";
-      default: return "bg-gray-100 text-gray-700 border-gray-200";
+      case "LIVE":
+        return "bg-green-100 text-green-700 border-green-200";
+      case "PAUSED":
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      case "COMPLETED":
+        return "bg-gray-100 text-gray-700 border-gray-200";
+      case "READY":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "SCHEDULED":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
@@ -54,20 +60,26 @@ export function LiveOpsKernel({ competitionSlug, initialState }: LiveOpsKernelPr
           {currentState}
         </div>
       </div>
-      
+
       <div className="p-6">
         <p className="text-sm text-gray-600 mb-6">
           Manually override the competition lifecycle. Use with caution.
         </p>
 
         <div className="flex flex-wrap gap-4">
-          {(currentState === "READY" || currentState === "SCHEDULED" || currentState === "PAUSED") && (
+          {(currentState === "READY" ||
+            currentState === "SCHEDULED" ||
+            currentState === "PAUSED") && (
             <button
               onClick={() => handleTransition(CompetitionLifecycle.LIVE)}
               disabled={isProcessing}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700 disabled:opacity-50 transition-colors"
             >
-              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+              {isProcessing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Play className="w-4 h-4" />
+              )}
               Force Start / Resume
             </button>
           )}
@@ -78,7 +90,11 @@ export function LiveOpsKernel({ competitionSlug, initialState }: LiveOpsKernelPr
               disabled={isProcessing}
               className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white font-bold rounded hover:bg-yellow-600 disabled:opacity-50 transition-colors"
             >
-              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />}
+              {isProcessing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Pause className="w-4 h-4" />
+              )}
               Force Pause
             </button>
           )}
@@ -89,13 +105,19 @@ export function LiveOpsKernel({ competitionSlug, initialState }: LiveOpsKernelPr
               disabled={isProcessing}
               className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-bold rounded hover:bg-red-700 disabled:opacity-50 transition-colors"
             >
-              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Square className="w-4 h-4" />}
+              {isProcessing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Square className="w-4 h-4" />
+              )}
               End Early
             </button>
           )}
 
           {currentState === "COMPLETED" && (
-            <p className="text-gray-500 text-sm font-semibold">Competition has ended. No further operations available.</p>
+            <p className="text-gray-500 text-sm font-semibold">
+              Competition has ended. No further operations available.
+            </p>
           )}
         </div>
       </div>

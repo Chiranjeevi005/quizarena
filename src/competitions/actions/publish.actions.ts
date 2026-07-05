@@ -11,15 +11,15 @@ export async function publishCompetitionAction(slug: string) {
       where: { slug },
       select: { id: true },
     });
-    
+
     if (!competition) {
       return { success: false, error: "Competition not found by slug." };
     }
 
     const metadata = await publishService.publishCompetition(competition.id);
     return { success: true, data: metadata };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to publish competition:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
 }

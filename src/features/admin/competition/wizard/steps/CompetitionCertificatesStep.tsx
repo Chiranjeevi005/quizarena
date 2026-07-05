@@ -31,7 +31,8 @@ export function CompetitionCertificatesStep() {
             <div>
               <span className="font-bold text-navy block">Issue Certificates</span>
               <span className="text-sm text-gray-500">
-                Automatically generate and distribute certificates to candidates based on their performance.
+                Automatically generate and distribute certificates to candidates based on their
+                performance.
               </span>
             </div>
           </label>
@@ -75,7 +76,8 @@ export function CompetitionCertificatesStep() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex gap-3">
                 <CheckCircle className="w-5 h-5 text-yellow-600 shrink-0" />
                 <p className="text-sm text-yellow-800">
-                  Certificates are securely generated and signed via the QuizArena Certificate Engine upon completion of a successful run.
+                  Certificates are securely generated and signed via the QuizArena Certificate
+                  Engine upon completion of a successful run.
                 </p>
               </div>
             </div>

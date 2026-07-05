@@ -34,7 +34,9 @@ export class CompetitionPublishService {
     ];
 
     if (!validStates.includes(competition.lifecycleState)) {
-      throw new Error(`Competition cannot be published from state: ${competition.lifecycleState}. Freeze the competition first.`);
+      throw new Error(
+        `Competition cannot be published from state: ${competition.lifecycleState}. Freeze the competition first.`
+      );
     }
 
     // Generate Shareable Link

@@ -7,6 +7,7 @@ import { IntelligenceReport } from "@/competitions/services/AssessmentAnalyticsS
 
 export const AssessmentIntelligenceKernel: React.FC = () => {
   const { draftData } = useWizardStore();
+  const draftDataStr = JSON.stringify(draftData);
   const [report, setReport] = useState<IntelligenceReport | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,7 +15,7 @@ export const AssessmentIntelligenceKernel: React.FC = () => {
     // Debounce the analytics request slightly so we don't spam the server on every drag
     const timeout = setTimeout(async () => {
       setIsLoading(true);
-      const result = await analyzeCompetitionDraftAction(draftData);
+      const result = await analyzeCompetitionDraftAction(JSON.parse(draftDataStr));
       if (result.success && result.data) {
         setReport(result.data);
       }
@@ -22,7 +23,7 @@ export const AssessmentIntelligenceKernel: React.FC = () => {
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [draftData.composer, draftData.config?.maximumMarks]); // Re-run when composer or max marks change
+  }, [draftDataStr]); // Re-run when draftData changes
 
   if (!report) {
     return (

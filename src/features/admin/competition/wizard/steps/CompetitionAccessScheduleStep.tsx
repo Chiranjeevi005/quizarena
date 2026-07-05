@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWizardStore } from "../context/useWizardStore";
 import { competitionParticipationSchema } from "../validators/wizard.validators";
@@ -28,10 +28,11 @@ export function CompetitionAccessScheduleStep({ onValidationChange }: Props) {
 
   const {
     formState: { isValid, errors },
-    watch,
     register,
+    control,
   } = form;
-  const watchAll = watch();
+  const watchAll = useWatch({ control });
+  const watchAllString = JSON.stringify(watchAll);
 
   useEffect(() => {
     onValidationChange(isValid);
@@ -42,7 +43,7 @@ export function CompetitionAccessScheduleStep({ onValidationChange }: Props) {
       updateParticipation(watchAll);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [JSON.stringify(watchAll), updateParticipation]);
+  }, [watchAllString, updateParticipation, watchAll]);
 
   const handleNext = () => {
     if (isValid) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWizardStore } from "../context/useWizardStore";
 import { competitionConfigSchema } from "../validators/wizard.validators";
@@ -35,10 +35,11 @@ export function CompetitionConfigurationStep({ onValidationChange }: Props) {
 
   const {
     formState: { isValid, errors },
-    watch,
     register,
+    control,
   } = form;
-  const watchAll = watch();
+  const watchAll = useWatch({ control });
+  const watchAllString = JSON.stringify(watchAll);
 
   useEffect(() => {
     onValidationChange(isValid);
@@ -49,7 +50,7 @@ export function CompetitionConfigurationStep({ onValidationChange }: Props) {
       updateConfig(watchAll);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [JSON.stringify(watchAll), updateConfig]);
+  }, [watchAllString, updateConfig, watchAll]);
 
   const handleNext = () => {
     if (isValid) {
@@ -63,7 +64,7 @@ export function CompetitionConfigurationStep({ onValidationChange }: Props) {
     setStep(1);
   };
 
-  const negativeMarkingEnabled = watch("negativeMarkingEnabled");
+  const negativeMarkingEnabled = useWatch({ control, name: "negativeMarkingEnabled" });
 
   // Helper for Toggle rendering
   const renderToggle = (id: keyof CompetitionConfigData, title: string, description: string) => (

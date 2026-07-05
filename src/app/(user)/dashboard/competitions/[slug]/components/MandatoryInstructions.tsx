@@ -18,8 +18,10 @@ export function MandatoryInstructions({ competitionId, version }: MandatoryInstr
   useEffect(() => {
     const isAccepted = localStorage.getItem(storageKey);
     if (isAccepted === "true") {
-      setAcknowledged(true);
-      setHasPreviouslyAccepted(true);
+      setTimeout(() => {
+        setAcknowledged(true);
+        setHasPreviouslyAccepted(true);
+      }, 0);
     }
   }, [storageKey]);
 

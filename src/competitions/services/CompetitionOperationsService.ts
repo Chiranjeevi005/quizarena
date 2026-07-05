@@ -3,10 +3,14 @@ import { CompetitionLifecycle } from "@/generated/prisma";
 
 export class CompetitionOperationsService {
   /**
-   * Updates the lifecycle state of a competition for operational purposes 
+   * Updates the lifecycle state of a competition for operational purposes
    * (e.g. Force Pause, Resume, End Early).
    */
-  async updateLifecycleState(competitionId: string, newState: CompetitionLifecycle, userId: string) {
+  async updateLifecycleState(
+    competitionId: string,
+    newState: CompetitionLifecycle,
+    userId: string
+  ) {
     const competition = await prisma.competition.findUnique({
       where: { id: competitionId },
     });
@@ -29,7 +33,7 @@ export class CompetitionOperationsService {
     };
 
     const allowed = validTransitions[competition.lifecycleState] || [];
-    
+
     if (!allowed.includes(newState)) {
       throw new Error(`Cannot transition from ${competition.lifecycleState} to ${newState}.`);
     }
