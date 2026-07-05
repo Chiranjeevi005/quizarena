@@ -57,7 +57,7 @@ export interface CompetitionResultReadModel {
   attemptId: string;
   competitionTitle: string;
   competitionSlug: string;
-  
+
   // Hero / Top Region
   status: "PASSED" | "FAILED" | "COMPLETED"; // Completed if no strict pass criteria
   score: number;
@@ -89,7 +89,7 @@ export interface CompetitionResultReadModel {
   // Insights & Recommendations
   insights: PerformanceInsight[];
   recommendations: RecommendationAction[];
-  
+
   // Action Region
   nextActions: NextAction[];
 }

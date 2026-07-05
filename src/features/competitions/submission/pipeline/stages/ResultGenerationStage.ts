@@ -13,7 +13,7 @@ export class ResultGenerationStage implements IPipelineStage {
     const scoreData = (context as any).scoreCalculation;
     const fraudData = context.fraudAssessment!;
     const session = context.session;
-    
+
     const timeTakenMs = Date.now() - new Date(session.startedAt).getTime();
 
     context.resultSnapshot = {
@@ -25,7 +25,7 @@ export class ResultGenerationStage implements IPipelineStage {
       percentage: scoreData.percentage,
       timeTakenInSeconds: Math.floor(timeTakenMs / 1000),
       fraudRisk: fraudData.risk,
-      competitionVersion: context.competition.versionId || "LATEST"
+      competitionVersion: context.competition.versionId || "LATEST",
     };
   }
 

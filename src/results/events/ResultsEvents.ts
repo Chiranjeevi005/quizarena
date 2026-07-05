@@ -5,20 +5,20 @@ export interface ResultsEvent {
 }
 
 export interface ResultGenerated extends ResultsEvent {
-  type: 'ResultGenerated';
+  type: "ResultGenerated";
 }
 
 export interface ResultViewed extends ResultsEvent {
-  type: 'ResultViewed';
+  type: "ResultViewed";
   userId: string;
 }
 
 export interface ResultExported extends ResultsEvent {
-  type: 'ResultExported';
+  type: "ResultExported";
   format: string;
 }
 
 export interface ResultShared extends ResultsEvent {
-  type: 'ResultShared';
+  type: "ResultShared";
   target: string;
 }

@@ -11,7 +11,10 @@ export function EligibilityPanel({ details }: EligibilityPanelProps) {
       <h2 className="text-xl font-bold text-white mb-6">Eligibility Requirements</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {details.map((detail, idx) => (
-          <div key={idx} className="flex items-start gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800/50">
+          <div
+            key={idx}
+            className="flex items-start gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800/50"
+          >
             {detail.status === "ELIGIBLE" ? (
               <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 shrink-0" />
             ) : detail.status === "NOT_ELIGIBLE" ? (
@@ -21,9 +24,7 @@ export function EligibilityPanel({ details }: EligibilityPanelProps) {
             )}
             <div>
               <p className="font-semibold text-slate-200">{detail.requirement}</p>
-              {detail.message && (
-                <p className="text-xs text-slate-400 mt-1">{detail.message}</p>
-              )}
+              {detail.message && <p className="text-xs text-slate-400 mt-1">{detail.message}</p>}
             </div>
           </div>
         ))}

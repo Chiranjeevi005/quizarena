@@ -1,4 +1,4 @@
-import { ArtifactStatus } from './ArtifactStatus';
+import { ArtifactStatus } from "./ArtifactStatus";
 
 export interface ArtifactManifest {
   schemaVersion: string;

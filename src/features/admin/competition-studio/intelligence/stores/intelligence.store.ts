@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { IntelligenceSnapshot } from '../services/DecisionPipeline';
-import { AssessmentRecommendation } from '../services/RecommendationEngine';
+import { create } from "zustand";
+import { IntelligenceSnapshot } from "../services/DecisionPipeline";
+import { AssessmentRecommendation } from "../services/RecommendationEngine";
 
 interface IntelligenceState {
   currentSnapshot: IntelligenceSnapshot | null;
@@ -13,12 +13,13 @@ interface IntelligenceState {
 export const useIntelligenceStore = create<IntelligenceState>((set) => ({
   currentSnapshot: null,
   activeRecommendations: [],
-  
+
   setSnapshot: (snapshot) => set({ currentSnapshot: snapshot }),
-  
+
   setActiveRecommendations: (recommendations) => set({ activeRecommendations: recommendations }),
-  
-  dismissRecommendation: (id) => set((state) => ({
-    activeRecommendations: state.activeRecommendations.filter(r => r.id !== id)
-  }))
+
+  dismissRecommendation: (id) =>
+    set((state) => ({
+      activeRecommendations: state.activeRecommendations.filter((r) => r.id !== id),
+    })),
 }));

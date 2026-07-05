@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { DeploymentStatus, DeploymentStageType, DeploymentResult } from '@/generated/prisma';
+import { create } from "zustand";
+import { DeploymentStatus, DeploymentStageType, DeploymentResult } from "@/generated/prisma";
 
 interface DeploymentState {
   isDeploying: boolean;
@@ -8,7 +8,7 @@ interface DeploymentState {
   currentStage: DeploymentStageType | null;
   completedStages: DeploymentStageType[];
   result: DeploymentResult | null;
-  
+
   setDeploying: (isDeploying: boolean, deploymentId?: string) => void;
   updateStatus: (status: DeploymentStatus) => void;
   updateStage: (stage: DeploymentStageType, completed: boolean) => void;
@@ -24,32 +24,35 @@ export const useDeploymentStore = create<DeploymentState>((set) => ({
   completedStages: [],
   result: null,
 
-  setDeploying: (isDeploying, deploymentId) => set((state) => ({ 
-    isDeploying, 
-    deploymentId: deploymentId || state.deploymentId 
-  })),
+  setDeploying: (isDeploying, deploymentId) =>
+    set((state) => ({
+      isDeploying,
+      deploymentId: deploymentId || state.deploymentId,
+    })),
 
   updateStatus: (status) => set({ status }),
 
-  updateStage: (stage, completed) => set((state) => {
-    if (completed) {
-      return {
-        currentStage: null,
-        completedStages: [...state.completedStages, stage]
-      };
-    } else {
-      return { currentStage: stage };
-    }
-  }),
+  updateStage: (stage, completed) =>
+    set((state) => {
+      if (completed) {
+        return {
+          currentStage: null,
+          completedStages: [...state.completedStages, stage],
+        };
+      } else {
+        return { currentStage: stage };
+      }
+    }),
 
   setResult: (result) => set({ result }),
 
-  reset: () => set({
-    isDeploying: false,
-    deploymentId: null,
-    status: null,
-    currentStage: null,
-    completedStages: [],
-    result: null
-  })
+  reset: () =>
+    set({
+      isDeploying: false,
+      deploymentId: null,
+      status: null,
+      currentStage: null,
+      completedStages: [],
+      result: null,
+    }),
 }));

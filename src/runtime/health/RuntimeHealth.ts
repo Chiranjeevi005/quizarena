@@ -1,7 +1,7 @@
 export enum RuntimeHealthStatus {
-  HEALTHY = 'HEALTHY',
-  WARNING = 'WARNING',
-  CRITICAL = 'CRITICAL'
+  HEALTHY = "HEALTHY",
+  WARNING = "WARNING",
+  CRITICAL = "CRITICAL",
 }
 
 export interface RuntimeHealthReport {
@@ -17,8 +17,8 @@ export class RuntimeHealth {
   public evaluate(): RuntimeHealthReport {
     return {
       status: RuntimeHealthStatus.HEALTHY,
-      details: 'All runtime systems operational',
-      timestamp: new Date()
+      details: "All runtime systems operational",
+      timestamp: new Date(),
     };
   }
 }

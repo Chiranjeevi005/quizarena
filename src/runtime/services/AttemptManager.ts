@@ -1,4 +1,4 @@
-import { RuntimeContext } from '../context/RuntimeContext';
+import { RuntimeContext } from "../context/RuntimeContext";
 
 export class AttemptManager {
   /**
@@ -10,7 +10,7 @@ export class AttemptManager {
       attemptId: `attempt-${Date.now()}`,
       attemptNumber: 1,
       remainingAttempts: 2,
-      state: 'IN_PROGRESS'
+      state: "IN_PROGRESS",
     };
   }
 }

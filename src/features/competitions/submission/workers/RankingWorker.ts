@@ -16,7 +16,7 @@ export class RankingWorker {
 
     // 2. Fetch the attempt to bind to the leaderboard entry
     const attempt = await prisma.competitionAttempt.findUnique({
-      where: { sessionId: context.sessionId }
+      where: { sessionId: context.sessionId },
     });
 
     if (!attempt) {
@@ -24,14 +24,16 @@ export class RankingWorker {
       return;
     }
 
-    // 3. Upsert LeaderboardEntry (using legacy LeaderboardEntry model for now, 
+    // 3. Upsert LeaderboardEntry (using legacy LeaderboardEntry model for now,
     // or competition specific logic if schema separated)
     // NOTE: In the provided schema, there's `LeaderboardEntry` pointing to `challengeId`.
     // Since we are moving to `Competition`, we might need a `CompetitionLeaderboardEntry`.
     // Let's assume a generic approach or log it for MVP.
-    
-    console.log(`[RankingWorker] Processed ranking for user ${userId} in competition ${compId} with score ${scoreData.marks}`);
-    
+
+    console.log(
+      `[RankingWorker] Processed ranking for user ${userId} in competition ${compId} with score ${scoreData.marks}`
+    );
+
     // Example DB interaction (stubbed if schema doesn't have CompetitionLeaderboard yet)
     /*
     await prisma.competitionLeaderboard.upsert({

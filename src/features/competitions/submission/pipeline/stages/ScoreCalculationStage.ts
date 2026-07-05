@@ -34,7 +34,7 @@ export class ScoreCalculationStage implements IPipelineStage {
     const finalMarks = Math.max(0, marks - totalNegativeMarks); // Don't let total score go below 0 usually, but rules can dictate
     const totalAnswered = correct + incorrect;
     const accuracy = totalAnswered > 0 ? (correct / totalAnswered) * 100 : 0;
-    const maxMarks = config.maximumMarks || (evaluatedAnswers.length * 1); // fallback
+    const maxMarks = config.maximumMarks || evaluatedAnswers.length * 1; // fallback
     const percentage = maxMarks > 0 ? (finalMarks / maxMarks) * 100 : 0;
 
     // Attach to context for the Result Generation Stage
@@ -44,7 +44,7 @@ export class ScoreCalculationStage implements IPipelineStage {
       skipped,
       marks: finalMarks,
       accuracy,
-      percentage
+      percentage,
     };
   }
 

@@ -3,11 +3,15 @@
 import { CompetitionDraftService } from "../services/CompetitionDraftService";
 import { WizardDraftData } from "@/features/admin/competition/wizard/types/wizard.types";
 
-export async function saveCompetitionDraftAction(sessionId: string, userId: string, draftData: WizardDraftData) {
+export async function saveCompetitionDraftAction(
+  sessionId: string,
+  userId: string,
+  draftData: WizardDraftData
+) {
   try {
     const draftService = new CompetitionDraftService();
     const competition = await draftService.saveDraft(sessionId, userId, draftData);
-    
+
     return {
       success: true,
       competitionId: competition.id,

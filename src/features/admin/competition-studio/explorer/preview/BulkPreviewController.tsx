@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface BulkPreviewControllerProps {
   questionIds: string[];
@@ -7,21 +7,24 @@ interface BulkPreviewControllerProps {
 
 /**
  * Bulk Preview Controller
- * 
+ *
  * Allows previewing multiple selected questions.
  * Navigates using Previous/Next without closing preview.
  */
-export const BulkPreviewController: React.FC<BulkPreviewControllerProps> = ({ questionIds, onClose }) => {
+export const BulkPreviewController: React.FC<BulkPreviewControllerProps> = ({
+  questionIds,
+  onClose,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!questionIds || questionIds.length === 0) return null;
 
   const handleNext = () => {
-    if (currentIndex < questionIds.length - 1) setCurrentIndex(prev => prev + 1);
+    if (currentIndex < questionIds.length - 1) setCurrentIndex((prev) => prev + 1);
   };
 
   const handlePrev = () => {
-    if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
+    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
   };
 
   return (
@@ -31,15 +34,15 @@ export const BulkPreviewController: React.FC<BulkPreviewControllerProps> = ({ qu
           Previewing {currentIndex + 1} of {questionIds.length}
         </div>
         <div className="flex items-center space-x-2">
-          <button 
-            onClick={handlePrev} 
+          <button
+            onClick={handlePrev}
             disabled={currentIndex === 0}
             className="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
           >
             Prev
           </button>
-          <button 
-            onClick={handleNext} 
+          <button
+            onClick={handleNext}
             disabled={currentIndex === questionIds.length - 1}
             className="px-3 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
           >

@@ -1,9 +1,9 @@
-import { FileRecord, Layer, Domain } from '../config/architecture.types';
+import { FileRecord, Layer, Domain } from "../config/architecture.types";
 
 export interface SharedCandidate {
   path: string;
   suggestedLayer: string;
-  migrationPriority: 'HIGH' | 'MEDIUM' | 'LOW';
+  migrationPriority: "HIGH" | "MEDIUM" | "LOW";
   reason: string;
 }
 
@@ -18,9 +18,9 @@ export class SharedCandidateEngine {
       if (record.dependencies && record.dependencies.reverseDependencyCount > 3) {
         candidates.push({
           path: record.metadata.relativePath,
-          suggestedLayer: `Shared ${record.ownership?.layer || 'Utility'}`,
-          migrationPriority: 'HIGH',
-          reason: `Imported by ${record.dependencies.reverseDependencyCount} modules across domains`
+          suggestedLayer: `Shared ${record.ownership?.layer || "Utility"}`,
+          migrationPriority: "HIGH",
+          reason: `Imported by ${record.dependencies.reverseDependencyCount} modules across domains`,
         });
       }
     }

@@ -1,4 +1,4 @@
-import { DomainBootContract } from '../contracts/DomainBootContract';
+import { DomainBootContract } from "../contracts/DomainBootContract";
 
 export class PlatformKernel {
   private domains: Map<string, DomainBootContract> = new Map();
@@ -6,9 +6,9 @@ export class PlatformKernel {
 
   constructor(
     private capabilityRegistry: any, // PlatformCapabilityRegistry
-    private commandRegistry: any,    // PlatformCommandRegistry
-    private eventRegistry: any,      // PlatformEventRegistry
-    private configEngine: any        // PlatformConfigurationEngine
+    private commandRegistry: any, // PlatformCommandRegistry
+    private eventRegistry: any, // PlatformEventRegistry
+    private configEngine: any // PlatformConfigurationEngine
   ) {}
 
   public registerDomain(domain: DomainBootContract): void {
@@ -19,13 +19,13 @@ export class PlatformKernel {
   }
 
   public async bootstrap(): Promise<void> {
-    console.log('Bootstrapping PlatformKernel...');
-    
+    console.log("Bootstrapping PlatformKernel...");
+
     // Initialize infrastructure, registries, and domain services
     for (const [domainId, domain] of this.domains.entries()) {
       console.log(`Initializing Domain: ${domainId}`);
       await domain.initialize();
-      
+
       domain.registerCapabilities(this.capabilityRegistry);
       domain.registerCommands(this.commandRegistry);
       domain.registerEvents(this.eventRegistry);
@@ -33,7 +33,7 @@ export class PlatformKernel {
     }
 
     this.isReady = true;
-    console.log('Platform Kernel Bootstrapped and Ready.');
+    console.log("Platform Kernel Bootstrapped and Ready.");
   }
 
   public async shutdown(): Promise<void> {

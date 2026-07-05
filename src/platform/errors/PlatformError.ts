@@ -13,30 +13,30 @@ export abstract class PlatformError extends Error {
 
 export class ValidationError extends PlatformError {
   constructor(message: string, metadata?: any) {
-    super(message, 'VALIDATION_ERROR', 400, metadata);
+    super(message, "VALIDATION_ERROR", 400, metadata);
   }
 }
 
 export class WorkflowError extends PlatformError {
   constructor(message: string, metadata?: any) {
-    super(message, 'WORKFLOW_ERROR', 409, metadata);
+    super(message, "WORKFLOW_ERROR", 409, metadata);
   }
 }
 
 export class InfrastructureError extends PlatformError {
   constructor(message: string, metadata?: any) {
-    super(message, 'INFRASTRUCTURE_ERROR', 500, metadata);
+    super(message, "INFRASTRUCTURE_ERROR", 500, metadata);
   }
 }
 
 export class DomainError extends PlatformError {
   constructor(message: string, metadata?: any) {
-    super(message, 'DOMAIN_ERROR', 422, metadata);
+    super(message, "DOMAIN_ERROR", 422, metadata);
   }
 }
 
 export class IntegrationError extends PlatformError {
   constructor(message: string, metadata?: any) {
-    super(message, 'INTEGRATION_ERROR', 502, metadata);
+    super(message, "INTEGRATION_ERROR", 502, metadata);
   }
 }

@@ -1,4 +1,9 @@
-import { RankingSnapshot, PercentileSnapshot, RankTimeline, StatisticsSnapshot } from '../../models/RankingSnapshots';
+import {
+  RankingSnapshot,
+  PercentileSnapshot,
+  RankTimeline,
+  StatisticsSnapshot,
+} from "../../models/RankingSnapshots";
 
 export interface RankingSnapshotData {
   snapshots: RankingSnapshot[];
@@ -35,13 +40,13 @@ export class RankingSnapshotBuilder {
 
   public build(): RankingSnapshotData {
     if (!this.statistics) {
-      throw new Error('Statistics must be provided to build snapshots');
+      throw new Error("Statistics must be provided to build snapshots");
     }
     return {
       snapshots: this.snapshots,
       percentiles: this.percentiles,
       timelines: this.timelines,
-      statistics: this.statistics
+      statistics: this.statistics,
     };
   }
 }

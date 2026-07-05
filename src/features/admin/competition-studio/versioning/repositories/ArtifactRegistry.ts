@@ -1,4 +1,4 @@
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -10,13 +10,13 @@ export class ArtifactRegistry {
     const artifact = await prisma.competitionVersion.findFirst({
       where: {
         competitionId,
-        semanticVersion
+        semanticVersion,
       },
       include: {
         manifest: true,
         compatibilities: true,
-        buildAudits: true
-      }
+        buildAudits: true,
+      },
     });
 
     if (!artifact) {
@@ -35,20 +35,20 @@ export class ArtifactRegistry {
       where: {
         competitionId,
         isActive: true,
-        artifactStatus: 'READY',
+        artifactStatus: "READY",
         compatibilities: {
           every: {
-            status: { not: 'BLOCKED' }
-          }
-        }
+            status: { not: "BLOCKED" },
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: "desc",
       },
       include: {
         manifest: true,
-        compatibilities: true
-      }
+        compatibilities: true,
+      },
     });
 
     if (!artifact) {
@@ -64,7 +64,7 @@ export class ArtifactRegistry {
   static async getVersionHistory(competitionId: string) {
     return await prisma.competitionVersion.findMany({
       where: { competitionId },
-      orderBy: { version: 'desc' },
+      orderBy: { version: "desc" },
       select: {
         id: true,
         version: true,
@@ -78,12 +78,12 @@ export class ArtifactRegistry {
         parentVersionId: true,
         freezeDurationMs: true,
         manifest: {
-          select: { healthScore: true, entityCount: true }
+          select: { healthScore: true, entityCount: true },
         },
         publishedBy: {
-          select: { name: true, email: true }
-        }
-      }
+          select: { name: true, email: true },
+        },
+      },
     });
   }
 
@@ -93,7 +93,7 @@ export class ArtifactRegistry {
   static async getBuildAudits(artifactId: string) {
     return await prisma.versionBuildAudit.findMany({
       where: { competitionVersionId: artifactId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -102,7 +102,7 @@ export class ArtifactRegistry {
    */
   static async getManifest(artifactId: string) {
     return await prisma.versionManifest.findUnique({
-      where: { competitionVersionId: artifactId }
+      where: { competitionVersionId: artifactId },
     });
   }
 }

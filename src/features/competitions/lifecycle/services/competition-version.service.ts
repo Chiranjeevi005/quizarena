@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { VersionBuildKernel } from '../../../admin/competition-studio/versioning/kernel/VersionBuildKernel';
+import { prisma } from "@/lib/prisma";
+import { VersionBuildKernel } from "../../../admin/competition-studio/versioning/kernel/VersionBuildKernel";
 
 export class CompetitionVersionService {
   /**
@@ -11,7 +11,7 @@ export class CompetitionVersionService {
       where: { id: competitionId },
     });
 
-    if (!competition) throw new Error('Competition not found');
+    if (!competition) throw new Error("Competition not found");
 
     const nextVersionNumber = competition.lifecycleVersion + 1;
     const semanticVersion = `1.${nextVersionNumber}.0`;
@@ -19,21 +19,21 @@ export class CompetitionVersionService {
     // Use the new Phase 06 versioning pipeline
     await VersionBuildKernel.executeBuild(
       competition.id,
-      actorId || 'system',
+      actorId || "system",
       semanticVersion,
-      'Lifecycle state transition generated version'
+      "Lifecycle state transition generated version"
     );
 
     // Update the competition's current lifecycle version and deactivate old versions
     await prisma.$transaction([
       prisma.competitionVersion.updateMany({
         where: { competitionId: competition.id, version: { lt: nextVersionNumber } },
-        data: { isActive: false }
+        data: { isActive: false },
       }),
       prisma.competition.update({
         where: { id: competition.id },
-        data: { lifecycleVersion: nextVersionNumber }
-      })
+        data: { lifecycleVersion: nextVersionNumber },
+      }),
     ]);
   }
 }

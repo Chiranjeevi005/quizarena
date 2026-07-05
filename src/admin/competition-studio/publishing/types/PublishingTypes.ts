@@ -1,16 +1,16 @@
 export enum DeploymentLifecycleState {
-  PLANNED = 'PLANNED',
-  VALIDATED = 'VALIDATED',
-  READY = 'READY',
-  WAITING_APPROVAL = 'WAITING_APPROVAL',
-  APPROVED = 'APPROVED',
-  DEPLOYING = 'DEPLOYING',
-  VERIFYING = 'VERIFYING',
-  ACTIVATING = 'ACTIVATING',
-  LIVE = 'LIVE',
-  FAILED = 'FAILED',
-  ROLLED_BACK = 'ROLLED_BACK',
-  ARCHIVED = 'ARCHIVED'
+  PLANNED = "PLANNED",
+  VALIDATED = "VALIDATED",
+  READY = "READY",
+  WAITING_APPROVAL = "WAITING_APPROVAL",
+  APPROVED = "APPROVED",
+  DEPLOYING = "DEPLOYING",
+  VERIFYING = "VERIFYING",
+  ACTIVATING = "ACTIVATING",
+  LIVE = "LIVE",
+  FAILED = "FAILED",
+  ROLLED_BACK = "ROLLED_BACK",
+  ARCHIVED = "ARCHIVED",
 }
 
 export interface ExecutionStep {
@@ -20,7 +20,7 @@ export interface ExecutionStep {
   description: string;
   action: string;
   parameters: Record<string, any>;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
 }
 
 export interface RollbackBlueprint {

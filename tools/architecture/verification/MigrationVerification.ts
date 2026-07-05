@@ -1,16 +1,16 @@
-import { Logger } from '../core/Logger';
+import { Logger } from "../core/Logger";
 
 export class MigrationVerification {
   static validatePipeline(): boolean {
-    Logger.info('Running Verification Pipeline...');
-    
+    Logger.info("Running Verification Pipeline...");
+
     // Simulate TypeScript check
-    Logger.info('Validating TypeScript Compilation...');
+    Logger.info("Validating TypeScript Compilation...");
     // Simulate ESLint check
-    Logger.info('Validating ESLint rules...');
+    Logger.info("Validating ESLint rules...");
     // Import graph validation
-    Logger.info('Validating Import Graph...');
-    
+    Logger.info("Validating Import Graph...");
+
     // In a real scenario, if any of these failed, we'd return false.
     return true;
   }

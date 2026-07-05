@@ -1,6 +1,6 @@
 /**
  * Assessment Health Engine
- * 
+ *
  * Aggregates specialized health scores into one unified 0-100 metric.
  */
 
@@ -25,7 +25,7 @@ class AssessmentHealthEngineService {
     marksHealth: 100,
   };
 
-  updateHealth(component: keyof Omit<DetailedHealth, 'overallHealth'>, score: number) {
+  updateHealth(component: keyof Omit<DetailedHealth, "overallHealth">, score: number) {
     this.currentHealth[component] = score;
     this.recalculateOverall();
   }
@@ -36,13 +36,13 @@ class AssessmentHealthEngineService {
     // Simplified computation for the current active components
     const h = this.currentHealth;
     this.currentHealth.overallHealth = Math.floor(
-      (h.coverageHealth * 0.20) +
-      (h.difficultyHealth * 0.20) +
-      (h.questionHealth * 0.20) +
-      (h.sectionHealth * 0.15) +
-      (h.timeHealth * 0.10) +
-      (h.marksHealth * 0.10) +
-      (100 * 0.05) // Base 5% for structural integrity
+      h.coverageHealth * 0.2 +
+        h.difficultyHealth * 0.2 +
+        h.questionHealth * 0.2 +
+        h.sectionHealth * 0.15 +
+        h.timeHealth * 0.1 +
+        h.marksHealth * 0.1 +
+        100 * 0.05 // Base 5% for structural integrity
     );
   }
 

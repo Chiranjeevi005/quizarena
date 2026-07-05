@@ -1,11 +1,11 @@
 /**
  * Deterministic Save Pipeline
- * 
+ *
  * Pipeline steps:
  * Change Detection -> Debounce -> Validation -> Queue -> Server Action -> Optimistic Update -> Confirmation -> History -> Status Update
  */
-import { EventBus } from '../bus/EventBus';
-import { useWorkspaceStatus } from '../status/WorkspaceStatusEngine';
+import { EventBus } from "../bus/EventBus";
+import { useWorkspaceStatus } from "../status/WorkspaceStatusEngine";
 
 export interface SavePayload {
   competitionId: string;
@@ -35,14 +35,14 @@ class SavePipelineService {
 
   private async processQueue() {
     if (this.isProcessing || this.saveQueue.length === 0) return;
-    
+
     this.isProcessing = true;
     const { setStatus } = useWorkspaceStatus.getState();
-    setStatus('SAVING');
-    EventBus.publish('SaveStarted');
+    setStatus("SAVING");
+    EventBus.publish("SaveStarted");
 
     // Aggregate changes if multiple are in queue (simplified for architectural shell)
-    const payload = this.saveQueue.pop(); 
+    const payload = this.saveQueue.pop();
     this.saveQueue = []; // Clear queue
 
     if (payload) {
@@ -59,18 +59,18 @@ class SavePipelineService {
         await this.executeServerSave(payload);
 
         // Step: Confirmation & Status Update
-        setStatus('READY');
-        EventBus.publish('SaveCompleted', { version: payload.version + 1 });
+        setStatus("READY");
+        EventBus.publish("SaveCompleted", { version: payload.version + 1 });
       } catch (error) {
-        console.error('[SavePipeline] Save failed:', error);
-        setStatus('ERROR', 'Save Failed');
-        EventBus.publish('SaveFailed', { error });
+        console.error("[SavePipeline] Save failed:", error);
+        setStatus("ERROR", "Save Failed");
+        EventBus.publish("SaveFailed", { error });
         // Retry logic could go here
       }
     }
 
     this.isProcessing = false;
-    
+
     if (this.saveQueue.length > 0) {
       this.processQueue();
     }
@@ -88,7 +88,7 @@ class SavePipelineService {
 
   private async executeServerSave(payload: SavePayload): Promise<void> {
     // Call Next.js Server Action
-    return new Promise(resolve => setTimeout(resolve, 500));
+    return new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 

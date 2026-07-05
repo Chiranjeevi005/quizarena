@@ -62,8 +62,8 @@ export const ComposerBuilder: React.FC = () => {
 
   const handleUpdateSection = (sectionId: string, updates: Partial<ComposerSection>) => {
     updateComposer({
-      sections: sections.map((s) => 
-        (s.slug === sectionId || s.title === sectionId) ? { ...s, ...updates } : s
+      sections: sections.map((s) =>
+        s.slug === sectionId || s.title === sectionId ? { ...s, ...updates } : s
       ),
     });
   };
@@ -82,13 +82,17 @@ export const ComposerBuilder: React.FC = () => {
     });
   };
 
-  const handleUpdateQuestion = (sectionId: string, questionId: string, updates: Partial<ComposerQuestion>) => {
+  const handleUpdateQuestion = (
+    sectionId: string,
+    questionId: string,
+    updates: Partial<ComposerQuestion>
+  ) => {
     updateComposer({
       sections: sections.map((s) => {
         if (s.slug === sectionId || s.title === sectionId) {
           return {
             ...s,
-            questions: s.questions.map((q) => 
+            questions: s.questions.map((q) =>
               q.questionId === questionId ? { ...q, ...updates } : q
             ),
           };
@@ -119,12 +123,12 @@ export const ComposerBuilder: React.FC = () => {
       }
 
       // If we are reordering questions within a section...
-      // (Cross-section drag-and-drop requires multiple SortableContexts and a different onDragOver logic. 
+      // (Cross-section drag-and-drop requires multiple SortableContexts and a different onDragOver logic.
       // For MVP, we stick to intra-section sorting)
       sections.forEach((section) => {
         const qOldIndex = section.questions.findIndex((q) => q.questionId === active.id);
         const qNewIndex = section.questions.findIndex((q) => q.questionId === over.id);
-        
+
         if (qOldIndex !== -1 && qNewIndex !== -1) {
           handleUpdateSection(section.slug || section.title, {
             questions: arrayMove(section.questions, qOldIndex, qNewIndex),
@@ -146,7 +150,7 @@ export const ComposerBuilder: React.FC = () => {
           className="px-4 py-2 bg-blue-50 text-blue-600 font-semibold rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2 text-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
           </svg>
           Add Section
         </button>

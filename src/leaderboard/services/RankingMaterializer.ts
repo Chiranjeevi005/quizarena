@@ -1,13 +1,13 @@
-import { LeaderboardContext } from '../context/LeaderboardContext';
-import { RankingAggregate } from '../models/RankingAggregate';
-import { RankingCandidateSnapshot } from '../types/RankingCandidateSnapshot';
-import { RankingAlgorithmEngine } from './engines/RankingAlgorithmEngine';
-import { PercentileEngine } from './engines/PercentileEngine';
-import { RankTimelineEngine } from './engines/RankTimelineEngine';
-import { RankingStatisticsEngine } from './engines/RankingStatisticsEngine';
-import { RankingSnapshotBuilder } from './builders/RankingSnapshotBuilder';
-import { RankingManifestBuilder } from './builders/RankingManifestBuilder';
-import { randomUUID } from 'crypto';
+import { LeaderboardContext } from "../context/LeaderboardContext";
+import { RankingAggregate } from "../models/RankingAggregate";
+import { RankingCandidateSnapshot } from "../types/RankingCandidateSnapshot";
+import { RankingAlgorithmEngine } from "./engines/RankingAlgorithmEngine";
+import { PercentileEngine } from "./engines/PercentileEngine";
+import { RankTimelineEngine } from "./engines/RankTimelineEngine";
+import { RankingStatisticsEngine } from "./engines/RankingStatisticsEngine";
+import { RankingSnapshotBuilder } from "./builders/RankingSnapshotBuilder";
+import { RankingManifestBuilder } from "./builders/RankingManifestBuilder";
+import { randomUUID } from "crypto";
 
 export class RankingMaterializer {
   constructor(
@@ -21,19 +21,21 @@ export class RankingMaterializer {
 
   public async materialize(context: LeaderboardContext): Promise<RankingAggregate> {
     const startTime = Date.now();
-    
+
     const candidate = context.getCandidate();
     const existingAggregate = context.getExistingAggregate();
 
     // 1. Gather all candidates (merge existing with new)
     const candidatesMap = new Map<string, RankingCandidateSnapshot>();
     if (existingAggregate) {
-      existingAggregate.snapshots.forEach(s => candidatesMap.set(s.candidate.userId, s.candidate));
+      existingAggregate.snapshots.forEach((s) =>
+        candidatesMap.set(s.candidate.userId, s.candidate)
+      );
     }
-    
+
     // Override or add new candidate
     candidatesMap.set(candidate.userId, candidate);
-    
+
     const allCandidates = Array.from(candidatesMap.values());
 
     // 2. Delegate to Engines
@@ -80,13 +82,13 @@ export class RankingMaterializer {
         retryCount: 0,
         algorithmVersion: manifest.algorithmVersion,
         generatedBy: manifest.generatedBy,
-        trigger: 'Immediate'
+        trigger: "Immediate",
       },
       submissionVersion: manifest.submissionVersion,
       artifactVersion: manifest.artifactVersion,
       platformVersion: manifest.platformVersion,
       schemaVersion: manifest.schemaVersion,
-      leaderboardVersion: '1.0'
+      leaderboardVersion: "1.0",
     };
 
     return aggregate;

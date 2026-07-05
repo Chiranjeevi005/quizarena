@@ -5,10 +5,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { composerSectionSchema, composerQuestionSchema } from "../../validators/wizard.validators";
 import { z } from "zod";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { ComposerQuestionItem } from "./ComposerQuestionItem";
 import { useExplorerStore } from "../../../../competition-studio/explorer/stores/useExplorerStore";
 
@@ -20,7 +17,11 @@ interface Props {
   onRemove: (sectionId: string) => void;
   onUpdate: (sectionId: string, updates: Partial<ComposerSection>) => void;
   onRemoveQuestion: (sectionId: string, questionId: string) => void;
-  onUpdateQuestion: (sectionId: string, questionId: string, updates: Partial<ComposerQuestion>) => void;
+  onUpdateQuestion: (
+    sectionId: string,
+    questionId: string,
+    updates: Partial<ComposerQuestion>
+  ) => void;
 }
 
 export const ComposerSectionItem: React.FC<Props> = ({
@@ -31,15 +32,11 @@ export const ComposerSectionItem: React.FC<Props> = ({
   onUpdateQuestion,
 }) => {
   const sectionId = section.id || section.title; // fallback
-  
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: sectionId, data: { type: "Section", section } });
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: sectionId,
+    data: { type: "Section", section },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -64,12 +61,17 @@ export const ComposerSectionItem: React.FC<Props> = ({
             className="cursor-grab hover:bg-gray-200 p-1.5 rounded text-gray-500"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 8h16M4 16h16"
+              />
             </svg>
           </div>
-          
-          <input 
-            type="text" 
+
+          <input
+            type="text"
             className="text-lg font-bold text-navy bg-transparent border-none focus:ring-0 p-0 w-1/2 focus:outline-none placeholder-gray-400"
             placeholder="Section Title"
             value={section.title}
@@ -81,7 +83,7 @@ export const ComposerSectionItem: React.FC<Props> = ({
           <div className="text-sm font-semibold text-gray-500">
             {section.questions.length} Questions
           </div>
-          
+
           <button
             onClick={() => {
               const { selectionBasket, clearSelection } = useExplorerStore.getState();
@@ -104,7 +106,7 @@ export const ComposerSectionItem: React.FC<Props> = ({
               onUpdate(sectionId, {
                 questions: [...section.questions, ...newQuestions],
               });
-              
+
               clearSelection();
             }}
             className="px-3 py-1 bg-white border border-gray-200 text-indigo-600 text-xs font-semibold rounded hover:bg-indigo-50 transition-colors shadow-sm"
@@ -118,7 +120,12 @@ export const ComposerSectionItem: React.FC<Props> = ({
             title="Remove Section"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
             </svg>
           </button>
         </div>
@@ -128,7 +135,7 @@ export const ComposerSectionItem: React.FC<Props> = ({
       <div className="p-4 bg-gray-50/30 rounded-b-xl flex-1">
         <div className="mb-4 text-sm flex gap-4">
           <label className="flex items-center gap-2 cursor-pointer text-gray-700">
-            <input 
+            <input
               type="checkbox"
               className="rounded text-navy focus:ring-navy"
               checked={section.isMandatory}
@@ -141,16 +148,16 @@ export const ComposerSectionItem: React.FC<Props> = ({
         <div className="space-y-3 min-h-[50px]">
           <SortableContext items={questionIds} strategy={verticalListSortingStrategy}>
             {(section.questions || []).map((question: ComposerQuestion, index: number) => (
-              <ComposerQuestionItem 
-                key={question.questionId} 
-                question={question} 
+              <ComposerQuestionItem
+                key={question.questionId}
+                question={question}
                 index={index}
                 onRemove={(qId) => onRemoveQuestion(sectionId, qId)}
                 onUpdate={(qId, updates) => onUpdateQuestion(sectionId, qId, updates)}
               />
             ))}
           </SortableContext>
-          
+
           {section.questions.length === 0 && (
             <div className="p-8 text-center border-2 border-dashed border-gray-200 rounded-lg text-gray-400 text-sm bg-white">
               Drag and drop questions here from the Explorer Basket

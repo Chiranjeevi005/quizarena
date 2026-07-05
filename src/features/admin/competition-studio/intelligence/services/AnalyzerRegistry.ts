@@ -1,16 +1,16 @@
 /**
  * Analyzer Registry
- * 
+ *
  * Self-registration interface for all analyzers.
  * Ensures the Decision Pipeline doesn't hardcode dependencies.
  */
 
-import { CompositionGraph } from '../../composer/engine/CompositionEngine';
+import { CompositionGraph } from "../../composer/engine/CompositionEngine";
 
-export type AnalyzerPriority = 
-  | 'HIGH' // e.g. Coverage, Difficulty
-  | 'MEDIUM' // e.g. Section, Time
-  | 'LOW'; // e.g. Recommendations
+export type AnalyzerPriority =
+  | "HIGH" // e.g. Coverage, Difficulty
+  | "MEDIUM" // e.g. Section, Time
+  | "LOW"; // e.g. Recommendations
 
 export interface AnalyzerResult {
   analyzerId: string;
@@ -40,9 +40,9 @@ class AnalyzerRegistryService {
 
   getAnalyzers(): IAnalyzer[] {
     // Sort by priority (HIGH -> MEDIUM -> LOW)
-    const priorityWeight = { 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
-    return Array.from(this.analyzers.values()).sort((a, b) => 
-      priorityWeight[a.priority] - priorityWeight[b.priority]
+    const priorityWeight = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+    return Array.from(this.analyzers.values()).sort(
+      (a, b) => priorityWeight[a.priority] - priorityWeight[b.priority]
     );
   }
 }

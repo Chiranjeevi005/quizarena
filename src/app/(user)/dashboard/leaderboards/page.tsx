@@ -7,10 +7,14 @@ import { FiltersRegion } from "@/features/competitions/leaderboard/components/re
 import { StatisticsRegion } from "@/features/competitions/leaderboard/components/regions/statistics/StatisticsRegion";
 import { LeaderboardKeyGenerator } from "@/features/competitions/ranking/engine/LeaderboardKeyGenerator";
 
-export default async function GlobalLeaderboardPage({ searchParams }: { searchParams: { type?: string } }) {
+export default async function GlobalLeaderboardPage({
+  searchParams,
+}: {
+  searchParams: { type?: string };
+}) {
   // Default to global
   let leaderboardKey = LeaderboardKeyGenerator.global();
-  
+
   if (searchParams.type === "weekly") {
     // Current Week calculation for demo
     leaderboardKey = LeaderboardKeyGenerator.weekly(2026, 26);
@@ -35,7 +39,7 @@ export default async function GlobalLeaderboardPage({ searchParams }: { searchPa
     <div className="min-h-screen bg-slate-950 p-6 md:p-12 font-sans selection:bg-blue-500/30">
       <div className="max-w-6xl mx-auto space-y-12">
         <HeroRegion data={data} />
-        
+
         <CurrentUserRegion data={data} />
 
         <div className="grid lg:grid-cols-4 gap-8">

@@ -1,4 +1,4 @@
-import { LeaderboardSummary } from '../models/LeaderboardReadModels';
+import { LeaderboardSummary } from "../models/LeaderboardReadModels";
 
 export interface LeaderboardExportProvider {
   export(summary: LeaderboardSummary): Promise<Buffer | string>;
@@ -11,22 +11,22 @@ export class JsonLeaderboardExportProvider implements LeaderboardExportProvider 
   }
 
   public getFormat(): string {
-    return 'application/json';
+    return "application/json";
   }
 }
 
 export class CsvLeaderboardExportProvider implements LeaderboardExportProvider {
   public async export(summary: LeaderboardSummary): Promise<string> {
-    if (summary.topEntries.length === 0) return '';
-    
-    const headers = Object.keys(summary.topEntries[0]).join(',');
-    const rows = summary.topEntries.map(entry => Object.values(entry).join(','));
-    
-    return [headers, ...rows].join('\n');
+    if (summary.topEntries.length === 0) return "";
+
+    const headers = Object.keys(summary.topEntries[0]).join(",");
+    const rows = summary.topEntries.map((entry) => Object.values(entry).join(","));
+
+    return [headers, ...rows].join("\n");
   }
 
   public getFormat(): string {
-    return 'text/csv';
+    return "text/csv";
   }
 }
 
@@ -37,6 +37,6 @@ export class PdfLeaderboardExportProvider implements LeaderboardExportProvider {
   }
 
   public getFormat(): string {
-    return 'application/pdf';
+    return "application/pdf";
   }
 }

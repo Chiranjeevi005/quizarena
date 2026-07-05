@@ -7,7 +7,7 @@ export class TrueFalseEvaluator implements IQuestionEvaluator {
     }
 
     const correctOption = question.options.find((o: any) => o.isCorrect);
-    
+
     if (!correctOption) {
       return { isCorrect: false, marksAwarded: 0, negativeMarks: 0 };
     }

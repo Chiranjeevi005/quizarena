@@ -1,10 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
-import { CommandBus } from '../bus/CommandBus';
-import { EventBus } from '../bus/EventBus';
-import { useWorkspaceStatus } from '../status/WorkspaceStatusEngine';
-import { CompetitionDTO } from '@/shared/types/competition.dto';
+import React, { createContext, useContext, ReactNode, useEffect } from "react";
+import { CommandBus } from "../bus/CommandBus";
+import { EventBus } from "../bus/EventBus";
+import { useWorkspaceStatus } from "../status/WorkspaceStatusEngine";
+import { CompetitionDTO } from "@/shared/types/competition.dto";
 
 interface CompetitionStudioContextValue {
   competitionId: string;
@@ -14,7 +14,9 @@ interface CompetitionStudioContextValue {
   eventBus: typeof EventBus;
 }
 
-const CompetitionStudioContext = createContext<CompetitionStudioContextValue | undefined>(undefined);
+const CompetitionStudioContext = createContext<CompetitionStudioContextValue | undefined>(
+  undefined
+);
 
 export interface CompetitionStudioProviderProps {
   competitionId: string;
@@ -24,7 +26,7 @@ export interface CompetitionStudioProviderProps {
 
 /**
  * CompetitionStudioProvider
- * 
+ *
  * Wraps the entire Studio.
  * Provides Kernel, Command Bus, Event Bus, Workspace Status, Navigation, and Current Competition.
  * Every module consumes this Provider.
@@ -32,15 +34,15 @@ export interface CompetitionStudioProviderProps {
 export const CompetitionStudioProvider: React.FC<CompetitionStudioProviderProps> = ({
   competitionId,
   initialCompetition,
-  children
+  children,
 }) => {
   const setStatus = useWorkspaceStatus((state) => state.setStatus);
 
   useEffect(() => {
     // Initialize studio
-    setStatus('READY');
-    EventBus.publish('StudioOpened', { competitionId });
-    
+    setStatus("READY");
+    EventBus.publish("StudioOpened", { competitionId });
+
     return () => {
       // Cleanup
     };
@@ -54,16 +56,14 @@ export const CompetitionStudioProvider: React.FC<CompetitionStudioProviderProps>
   };
 
   return (
-    <CompetitionStudioContext.Provider value={value}>
-      {children}
-    </CompetitionStudioContext.Provider>
+    <CompetitionStudioContext.Provider value={value}>{children}</CompetitionStudioContext.Provider>
   );
 };
 
 export const useCompetitionStudioContext = () => {
   const context = useContext(CompetitionStudioContext);
   if (context === undefined) {
-    throw new Error('useCompetitionStudioContext must be used within a CompetitionStudioProvider');
+    throw new Error("useCompetitionStudioContext must be used within a CompetitionStudioProvider");
   }
   return context;
 };

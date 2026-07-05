@@ -1,4 +1,4 @@
-import { Layer, Domain } from '../config/architecture.types';
+import { Layer, Domain } from "../config/architecture.types";
 
 export class ResponsibilityResolver {
   static resolve(layer: Layer, feature: string, domain: Domain): string {

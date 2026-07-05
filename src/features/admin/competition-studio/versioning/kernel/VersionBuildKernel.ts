@@ -1,6 +1,6 @@
-import { PrismaClient } from '@/generated/prisma';
-import { VersionBuildPipeline, BuildContext } from '../services/VersionBuildPipeline';
-import { ArtifactStatus } from '../types/artifact.types';
+import { PrismaClient } from "@/generated/prisma";
+import { VersionBuildPipeline, BuildContext } from "../services/VersionBuildPipeline";
+import { ArtifactStatus } from "../types/artifact.types";
 
 const prisma = new PrismaClient();
 
@@ -10,10 +10,10 @@ export class VersionBuildKernel {
    * Transforms an editable Competition into an immutable Version Artifact.
    */
   static async executeBuild(
-    competitionId: string, 
-    userId: string, 
-    semanticVersion: string, 
-    reason: string = 'Standard Build'
+    competitionId: string,
+    userId: string,
+    semanticVersion: string,
+    reason: string = "Standard Build"
   ) {
     // 1. Fetch full competition data
     const competition = await prisma.competition.findUnique({
@@ -23,8 +23,8 @@ export class VersionBuildKernel {
         questions: { include: { question: true } },
         config: true,
         economics: true,
-        eligibility: true
-      }
+        eligibility: true,
+      },
     });
 
     if (!competition) {
@@ -40,7 +40,7 @@ export class VersionBuildKernel {
       eligibility: competition.eligibility,
       builderId: userId,
       version: competition.version,
-      semanticVersion
+      semanticVersion,
     };
 
     // 2. Execute Build Pipeline to create Snapshots and Hashes
@@ -54,7 +54,7 @@ export class VersionBuildKernel {
           version: competition.version,
           semanticVersion: semanticVersion,
           schemaVersion: artifact.schemaVersion,
-          
+
           competitionSnapshot: artifact.competitionSnapshot as any,
           sectionsSnapshot: artifact.sectionsSnapshot as any,
           questionsSnapshot: artifact.questionsSnapshot as any,
@@ -65,51 +65,51 @@ export class VersionBuildKernel {
           manifestHash: artifact.manifestHash,
           artifactHash: artifact.artifactHash,
           fingerprint: artifact.fingerprint,
-          
+
           freezeDurationMs: artifact.freezeDurationMs,
           reason,
           artifactStatus: ArtifactStatus.READY,
           isActive: true,
           publishedById: userId,
-          
+
           compatibilities: {
-            create: artifact.compatibilities.map(c => ({
+            create: artifact.compatibilities.map((c) => ({
               system: c.system,
               status: c.status,
-              details: c.details || {}
-            }))
+              details: c.details || {},
+            })),
           },
-          
+
           manifest: {
             create: {
               artifactId: artifact.id || crypto.randomUUID(),
               schemaVersion: artifact.manifest!.schemaVersion,
               snapshotHash: artifact.manifest!.snapshotHash,
               manifestHash: artifact.manifest!.manifestHash,
-              artifactHash: artifact.manifest!.artifactHash || '',
+              artifactHash: artifact.manifest!.artifactHash || "",
               fingerprint: artifact.manifest!.fingerprint,
               entityCount: artifact.manifest!.entityCount,
               questionCount: artifact.manifest!.questionCount,
               sectionCount: artifact.manifest!.sectionCount,
               rewardCount: artifact.manifest!.rewardCount,
               certificateCount: artifact.manifest!.certificateCount,
-              healthScore: artifact.manifest!.healthScore || 100
-            }
+              healthScore: artifact.manifest!.healthScore || 100,
+            },
           },
 
           buildAudits: {
-            create: artifact.buildAudits.map(a => ({
+            create: artifact.buildAudits.map((a) => ({
               builderId: a.builderId,
               durationMs: a.durationMs || 0,
               serializationDurationMs: a.serializationDurationMs || 0,
               validationDurationMs: a.validationDurationMs || 0,
               hashingDurationMs: a.hashingDurationMs || 0,
               registryDurationMs: a.registryDurationMs || 0,
-              buildResult: a.buildResult || 'SUCCESS',
-              executionLogs: a.executionLogs || []
-            }))
-          }
-        }
+              buildResult: a.buildResult || "SUCCESS",
+              executionLogs: a.executionLogs || [],
+            })),
+          },
+        },
       });
 
       return versionArtifact;

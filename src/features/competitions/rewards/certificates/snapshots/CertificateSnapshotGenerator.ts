@@ -23,9 +23,9 @@ export class CertificateSnapshotGenerator {
           userId_competitionId_certificateType: {
             userId,
             competitionId,
-            certificateType
-          }
-        }
+            certificateType,
+          },
+        },
       });
 
       if (existing) {
@@ -53,8 +53,8 @@ export class CertificateSnapshotGenerator {
           qrPayload,
           brandAssetsVersion: "1.0",
           userId,
-          competitionId
-        }
+          competitionId,
+        },
       });
 
       // 4. Audit
@@ -64,7 +64,7 @@ export class CertificateSnapshotGenerator {
         recipientId: userId,
         referenceId: snapshot.id,
         pipelineStage: "SNAPSHOT_GENERATION",
-        status: "SUCCESS"
+        status: "SUCCESS",
       });
 
       return snapshot;
@@ -75,7 +75,7 @@ export class CertificateSnapshotGenerator {
         recipientId: userId,
         pipelineStage: "SNAPSHOT_GENERATION",
         status: "FAILED",
-        failureReason: error.message
+        failureReason: error.message,
       });
       throw error;
     }

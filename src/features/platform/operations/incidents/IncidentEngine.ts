@@ -1,16 +1,15 @@
-import { PrismaClient, IncidentStatus, AlertSeverity } from '@/generated/prisma';
+import { PrismaClient, IncidentStatus, AlertSeverity } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
 export class IncidentEngine {
-  
   /**
    * Workers detect and report incidents but only transition them to INVESTIGATING or RECOVERED.
    * They never transition to RESOLVED or CLOSED (reserved for Admins).
    */
   public async reportIncident(
-    title: string, 
-    description: string, 
+    title: string,
+    description: string,
     severity: AlertSeverity,
     competitionId?: string
   ): Promise<string> {
@@ -21,14 +20,14 @@ export class IncidentEngine {
         severity,
         status: IncidentStatus.OPEN,
         competitionId,
-        detectedAt: new Date()
-      }
+        detectedAt: new Date(),
+      },
     });
 
     // Auto-transition to investigating
     await prisma.platformIncident.update({
       where: { id: incident.id },
-      data: { status: IncidentStatus.INVESTIGATING }
+      data: { status: IncidentStatus.INVESTIGATING },
     });
 
     return incident.id;
@@ -39,18 +38,18 @@ export class IncidentEngine {
    */
   public async markRecovered(incidentId: string, notes: string): Promise<void> {
     const incident = await prisma.platformIncident.findUnique({ where: { id: incidentId } });
-    if (!incident) throw new Error('Incident not found');
+    if (!incident) throw new Error("Incident not found");
 
     if (incident.status === IncidentStatus.RESOLVED || incident.status === IncidentStatus.CLOSED) {
-      throw new Error('Cannot recover an incident that is already resolved or closed.');
+      throw new Error("Cannot recover an incident that is already resolved or closed.");
     }
 
     await prisma.platformIncident.update({
       where: { id: incidentId },
       data: {
         status: IncidentStatus.RECOVERED,
-        resolutionNotes: notes
-      }
+        resolutionNotes: notes,
+      },
     });
   }
 
@@ -65,8 +64,8 @@ export class IncidentEngine {
         resolvedAt: new Date(),
         ownerId: userId,
         resolutionNotes: notes,
-        durationMs: Date.now() - (await this.getDetectionTime(incidentId))
-      }
+        durationMs: Date.now() - (await this.getDetectionTime(incidentId)),
+      },
     });
   }
 
@@ -79,8 +78,8 @@ export class IncidentEngine {
       data: {
         status: IncidentStatus.CLOSED,
         closedAt: new Date(),
-        ownerId: userId
-      }
+        ownerId: userId,
+      },
     });
   }
 

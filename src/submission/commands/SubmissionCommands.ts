@@ -1,4 +1,4 @@
-import { SubmissionPackage } from '../../runtime/submission/SubmissionPackage';
+import { SubmissionPackage } from "../../runtime/submission/SubmissionPackage";
 
 export interface SubmissionCommand {
   type: string;
@@ -7,6 +7,6 @@ export interface SubmissionCommand {
 }
 
 export interface ProcessSubmission extends SubmissionCommand {
-  type: 'ProcessSubmission';
+  type: "ProcessSubmission";
   payload: SubmissionPackage;
 }

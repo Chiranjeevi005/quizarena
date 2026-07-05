@@ -20,7 +20,7 @@ export async function getVersionHistory(competitionId: string): Promise<Competit
           name: v.publishedBy.name || v.publishedBy.email || "Unknown",
         }
       : null,
-    changelog: v.reason || '',
+    changelog: v.reason || "",
     isActive: v.isActive,
     createdAt: v.createdAt.toISOString(),
   }));
@@ -33,14 +33,14 @@ export async function createVersionSnapshot(
   tx?: any // Optional Prisma transaction client
 ) {
   const db = tx || prisma;
-  
+
   // Actually we should just call VersionBuildKernel.executeBuild since Phase 06 handles snapshots deterministically.
   // We'll pass the reason as changelog and calculate semanticVersion
   const lastVersion = await db.competitionVersion.findFirst({
     where: { competitionId: competition.id },
     orderBy: { version: "desc" },
   });
-  
+
   const nextVersionNumber = lastVersion ? lastVersion.version + 1 : 1;
   const semanticVersion = `1.${nextVersionNumber}.0`;
 
@@ -49,7 +49,7 @@ export async function createVersionSnapshot(
     where: { competitionId: competition.id },
     data: { isActive: false },
   });
-  
+
   // Use the Phase 06 builder
   const newVersion = await VersionBuildKernel.executeBuild(
     competition.id,
@@ -57,6 +57,6 @@ export async function createVersionSnapshot(
     semanticVersion,
     changelog
   );
-  
+
   return newVersion as any;
 }

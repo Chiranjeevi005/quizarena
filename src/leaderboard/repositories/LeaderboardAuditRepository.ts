@@ -1,4 +1,4 @@
-import { LeaderboardAudit } from '../models/RankingSnapshots';
+import { LeaderboardAudit } from "../models/RankingSnapshots";
 
 export interface LeaderboardAuditRepository {
   save(audit: LeaderboardAudit): Promise<void>;
@@ -10,13 +10,13 @@ export class InMemoryLeaderboardAuditRepository implements LeaderboardAuditRepos
 
   public async save(audit: LeaderboardAudit): Promise<void> {
     // In a real system, you'd tie it to aggregate ID, here we just store flat
-    const existing = this.audits.get('global') || [];
+    const existing = this.audits.get("global") || [];
     existing.push(audit);
-    this.audits.set('global', existing);
+    this.audits.set("global", existing);
   }
 
   public async findByAggregateId(aggregateId: string): Promise<LeaderboardAudit[]> {
     // Implementation for MVP placeholder
-    return this.audits.get('global') || [];
+    return this.audits.get("global") || [];
   }
 }

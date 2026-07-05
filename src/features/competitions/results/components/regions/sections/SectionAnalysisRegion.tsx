@@ -9,8 +9,11 @@ export function SectionAnalysisRegion({ data }: { data: CompetitionResultReadMod
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white">Section Analysis</h2>
       <div className="grid md:grid-cols-2 gap-4">
-        {data.sections.map(section => (
-          <div key={section.sectionId} className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        {data.sections.map((section) => (
+          <div
+            key={section.sectionId}
+            className="bg-slate-900 border border-slate-800 rounded-xl p-6"
+          >
             <h3 className="text-lg font-bold text-white mb-4">{section.sectionName}</h3>
             <div className="space-y-2">
               <div className="flex justify-between">

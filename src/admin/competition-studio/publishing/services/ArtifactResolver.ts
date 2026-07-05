@@ -1,4 +1,4 @@
-import { CompetitionArtifact } from '../../../../competitions/artifacts/CompetitionArtifact';
+import { CompetitionArtifact } from "../../../../competitions/artifacts/CompetitionArtifact";
 
 export class ArtifactResolver {
   /**

@@ -1,9 +1,9 @@
-import React from 'react';
-import LegacyBuilderPage from './LegacyBuilderPage';
-import { CompetitionStudioKernel } from '@/features/admin/competition-studio';
+import React from "react";
+import LegacyBuilderPage from "./LegacyBuilderPage";
+import { CompetitionStudioKernel } from "@/features/admin/competition-studio";
 
 export default async function BuilderPageWrapper({ params }: { params: Promise<{ id: string }> }) {
-  const isStudioEnabled = process.env.FEATURE_COMPETITION_STUDIO === 'true';
+  const isStudioEnabled = process.env.FEATURE_COMPETITION_STUDIO === "true";
 
   if (isStudioEnabled) {
     const { id } = await params;

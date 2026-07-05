@@ -1,5 +1,5 @@
-import { Project } from 'ts-morph';
-import { Logger } from '../core/Logger';
+import { Project } from "ts-morph";
+import { Logger } from "../core/Logger";
 
 export class ImportRewriteEngine {
   static rewrite(project: Project, oldImport: string, newImport: string) {
@@ -9,7 +9,7 @@ export class ImportRewriteEngine {
   }
 
   static verifyNoBrokenImports(project: Project): boolean {
-    Logger.info('Verifying no broken imports remain...');
+    Logger.info("Verifying no broken imports remain...");
     // Real implementation checks if TS compiler throws diagnostic errors
     return true;
   }

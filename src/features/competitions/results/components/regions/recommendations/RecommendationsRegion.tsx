@@ -9,7 +9,10 @@ export function RecommendationsRegion({ data }: { data: CompetitionResultReadMod
       <h2 className="text-2xl font-bold text-white">Recommendations</h2>
       <div className="space-y-4">
         {data.recommendations.map((rec, idx) => (
-          <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-start gap-4">
+          <div
+            key={idx}
+            className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-start gap-4"
+          >
             <div className="p-2 bg-purple-500/10 text-purple-500 rounded-lg mt-1">
               <Compass className="w-5 h-5" />
             </div>

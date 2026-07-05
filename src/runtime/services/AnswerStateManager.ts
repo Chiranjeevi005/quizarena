@@ -1,4 +1,4 @@
-import { RuntimeContext } from '../context/RuntimeContext';
+import { RuntimeContext } from "../context/RuntimeContext";
 
 export class AnswerStateManager {
   private answers: Map<string, any> = new Map();
@@ -13,7 +13,11 @@ export class AnswerStateManager {
     // Triggers AutoSavePipeline
   }
 
-  public async markForReview(context: RuntimeContext, questionId: string, isMarked: boolean): Promise<void> {
+  public async markForReview(
+    context: RuntimeContext,
+    questionId: string,
+    isMarked: boolean
+  ): Promise<void> {
     if (isMarked) {
       this.reviewMarks.add(questionId);
     } else {
@@ -24,7 +28,7 @@ export class AnswerStateManager {
   public getSnapshot(): { answers: any; reviewMarks: string[] } {
     return {
       answers: Object.fromEntries(this.answers),
-      reviewMarks: Array.from(this.reviewMarks)
+      reviewMarks: Array.from(this.reviewMarks),
     };
   }
 }

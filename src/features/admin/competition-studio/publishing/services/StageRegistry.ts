@@ -1,4 +1,4 @@
-import { DeploymentStageType } from '@/generated/prisma';
+import { DeploymentStageType } from "@/generated/prisma";
 
 export interface StageExecutionConfig {
   stage: DeploymentStageType;
@@ -44,7 +44,7 @@ export class StageRegistry {
 
   public static getSortedStages(filter?: DeploymentStageType[]): DeploymentStageType[] {
     const stagesToSort = filter ? filter : this.getAllStages();
-    
+
     return stagesToSort.sort((a, b) => {
       const configA = this.getConfig(a);
       const configB = this.getConfig(b);

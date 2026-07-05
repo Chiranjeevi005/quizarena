@@ -1,10 +1,10 @@
 /**
  * Inspector Registry
- * 
+ *
  * Supports dynamic registration of Inspector panels (Summary, Health, Readiness, etc.)
  * Avoids conditional rendering spread across UI components.
  */
-import React from 'react';
+import React from "react";
 
 export interface InspectorPanel {
   id: string;

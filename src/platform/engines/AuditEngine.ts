@@ -1,4 +1,4 @@
-import { PlatformEventBus, PlatformEvent } from '../events/PlatformEventBus';
+import { PlatformEventBus, PlatformEvent } from "../events/PlatformEventBus";
 
 export interface PlatformAudit {
   auditId: string;
@@ -13,7 +13,7 @@ export class AuditEngine {
   private auditLog: PlatformAudit[] = [];
 
   constructor(private eventBus: PlatformEventBus) {
-    this.eventBus.subscribe('DomainAuditEvent', this.handleDomainAudit.bind(this));
+    this.eventBus.subscribe("DomainAuditEvent", this.handleDomainAudit.bind(this));
   }
 
   private async handleDomainAudit(event: PlatformEvent): Promise<void> {
@@ -23,9 +23,9 @@ export class AuditEngine {
       action: event.payload.action,
       actor: event.payload.actor,
       timestamp: event.occurredAt,
-      details: event.payload.details
+      details: event.payload.details,
     };
-    
+
     this.auditLog.push(audit);
     // In production, persist to cold storage or specific audit DB
   }

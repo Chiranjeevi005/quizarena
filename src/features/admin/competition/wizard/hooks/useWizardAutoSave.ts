@@ -36,4 +36,3 @@ export function useWizardAutoSave() {
 
   return { savingState, hasUnsavedChanges: false, concurrentEditDetected: false };
 }
-

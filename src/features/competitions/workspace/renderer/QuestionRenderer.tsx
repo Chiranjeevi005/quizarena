@@ -1,6 +1,11 @@
 "use client";
 
-import { useRuntimeState, useRuntimeCommand } from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
+import React from "react";
+
+import {
+  useRuntimeState,
+  useRuntimeCommand,
+} from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
 import { rendererRegistry } from "./registry";
 
 // Ensure all renderers are registered
@@ -19,7 +24,7 @@ export function QuestionRenderer() {
 
   const isSubmitting = status === "SUBMITTING" || status === "SUBMITTED";
   const question = questions[currentIndex];
-  
+
   if (!question) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -35,7 +40,7 @@ export function QuestionRenderer() {
     dispatch("SelectAnswer", { questionId: question.questionId, optionId });
   };
 
-  const RendererComponent = rendererRegistry.get(question.type) || rendererRegistry.get("SINGLE_CHOICE");
+  const rendererComp = rendererRegistry.get(question.type) || rendererRegistry.get("SINGLE_CHOICE");
 
   return (
     <div className="flex-1 overflow-y-auto p-6 sm:p-8">
@@ -45,13 +50,13 @@ export function QuestionRenderer() {
       </h2>
 
       {/* Dynamic Answer Renderer */}
-      {RendererComponent ? (
-        <RendererComponent 
-          question={question} 
-          selectedOptionId={selectedOptionId} 
-          onSelectOption={handleSelectOption} 
-          isSubmitting={isSubmitting} 
-        />
+      {rendererComp ? (
+        React.createElement(rendererComp, {
+          question,
+          selectedOptionId,
+          onSelectOption: handleSelectOption,
+          isSubmitting,
+        })
       ) : (
         <div className="text-red-400 p-4 bg-red-400/10 rounded-lg">
           No renderer registered for question type: {question.type}

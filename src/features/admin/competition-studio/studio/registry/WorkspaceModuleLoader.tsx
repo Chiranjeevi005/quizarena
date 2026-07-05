@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { ModuleRegistry } from './ModuleRegistry';
-import { useCompetitionStudioContext } from '../context/CompetitionStudioProvider';
+import React, { useEffect, useState } from "react";
+import { ModuleRegistry } from "./ModuleRegistry";
+import { useCompetitionStudioContext } from "../context/CompetitionStudioProvider";
 
 export const WorkspaceModuleLoader: React.FC = () => {
   const { eventBus } = useCompetitionStudioContext();
@@ -10,7 +10,7 @@ export const WorkspaceModuleLoader: React.FC = () => {
 
   useEffect(() => {
     // Listen for navigation changes to load the correct module
-    const unsubscribe = eventBus.subscribe('NavigationChanged', (event) => {
+    const unsubscribe = eventBus.subscribe("NavigationChanged", (event) => {
       if (event.payload?.moduleId) {
         setActiveModuleId(event.payload.moduleId);
       }

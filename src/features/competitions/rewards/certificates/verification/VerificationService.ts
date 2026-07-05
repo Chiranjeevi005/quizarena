@@ -16,8 +16,8 @@ export class VerificationService {
         completionDate: true,
         certificateVersion: true,
         issuer: true,
-        pdfUrl: true
-      }
+        pdfUrl: true,
+      },
     });
 
     if (!snapshot) {
@@ -27,7 +27,7 @@ export class VerificationService {
     return {
       isValid: true,
       verifiedAt: new Date(),
-      certificate: snapshot
+      certificate: snapshot,
     };
   }
 }

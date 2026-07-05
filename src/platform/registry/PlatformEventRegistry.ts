@@ -24,8 +24,8 @@ export class PlatformEventRegistry {
   public validate(eventName: string, version: string, payload: any): boolean {
     const schema = this.get(eventName, version);
     if (!schema) return false;
-    
+
     // Abstract validation logic
-    return true; 
+    return true;
   }
 }

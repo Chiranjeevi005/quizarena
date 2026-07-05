@@ -1,8 +1,8 @@
-import { CompetitionVersionArtifact } from '../types/artifact.types';
+import { CompetitionVersionArtifact } from "../types/artifact.types";
 
 export class ArtifactCacheEngine {
   // In a production environment, this would interface with Redis or Memcached
-  private cache = new Map<string, { artifact: CompetitionVersionArtifact, expiresAt: number }>();
+  private cache = new Map<string, { artifact: CompetitionVersionArtifact; expiresAt: number }>();
 
   async getCachedArtifact(competitionId: string): Promise<CompetitionVersionArtifact | null> {
     const entry = this.cache.get(competitionId);
@@ -16,10 +16,14 @@ export class ArtifactCacheEngine {
     return entry.artifact;
   }
 
-  async setCachedArtifact(competitionId: string, artifact: CompetitionVersionArtifact, ttlSeconds: number = 3600): Promise<void> {
+  async setCachedArtifact(
+    competitionId: string,
+    artifact: CompetitionVersionArtifact,
+    ttlSeconds: number = 3600
+  ): Promise<void> {
     this.cache.set(competitionId, {
       artifact,
-      expiresAt: Date.now() + (ttlSeconds * 1000)
+      expiresAt: Date.now() + ttlSeconds * 1000,
     });
   }
 

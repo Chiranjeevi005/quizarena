@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { WizardDraftData } from "@/features/admin/competition/wizard/types/wizard.types";
-import { CompetitionType, ExamCategory, ChallengeDifficulty, CompetitionVisibility } from "@/generated/prisma";
+import {
+  CompetitionType,
+  ExamCategory,
+  ChallengeDifficulty,
+  CompetitionVisibility,
+} from "@/generated/prisma";
 
 export class CompetitionDraftService {
   /**
@@ -13,7 +18,7 @@ export class CompetitionDraftService {
     // We use the sessionId to track the draft if we don't have an ID yet,
     // but Prisma Competition doesn't have a 'sessionId' field.
     // Instead, we can look up by slug if basics.slug is provided, or create a temporary slug.
-    
+
     const slug = basics?.slug || `draft-${sessionId}`;
     const title = basics?.title || "Untitled Competition";
 
@@ -77,14 +82,14 @@ export class CompetitionDraftService {
 
     // Sync Composer Sections and Questions
     if (draftData.composer?.sections) {
-      // For Draft auto-saving, we will use a transaction to clear and recreate sections 
+      // For Draft auto-saving, we will use a transaction to clear and recreate sections
       // based on the client state to avoid complex diffing logic during the draft phase.
       // (In a frozen competition, this is strictly forbidden)
-      
+
       await prisma.$transaction(async (tx) => {
         // Clear existing sections (cascades to questions)
         await tx.competitionSection.deleteMany({
-          where: { competitionId: competition.id }
+          where: { competitionId: competition.id },
         });
 
         // Recreate sections and their questions
@@ -103,7 +108,7 @@ export class CompetitionDraftService {
               passingMarks: section.passingMarks,
               isMandatory: section.isMandatory ?? true,
               allowNavigation: section.allowNavigation ?? true,
-            }
+            },
           });
 
           if (section.questions && section.questions.length > 0) {
@@ -119,7 +124,7 @@ export class CompetitionDraftService {
                 isOptional: q.isOptional ?? false,
                 isBonus: q.isBonus ?? false,
                 isMandatory: q.isMandatory ?? true,
-              }))
+              })),
             });
           }
         }

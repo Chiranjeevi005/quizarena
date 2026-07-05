@@ -1,13 +1,13 @@
 "use client";
-import React, { useEffect } from 'react';
-import { ModuleRegistry } from '../../studio/registry/ModuleRegistry';
-import { useCompetitionStudioContext } from '../../studio/context/CompetitionStudioProvider';
-import { useReadinessStore } from '../stores/readiness.store';
+import React, { useEffect } from "react";
+import { ModuleRegistry } from "../../studio/registry/ModuleRegistry";
+import { useCompetitionStudioContext } from "../../studio/context/CompetitionStudioProvider";
+import { useReadinessStore } from "../stores/readiness.store";
 
 /**
  * Competition Readiness Kernel
- * 
- * Orchestrates the Readiness Engine UI, displaying the final 
+ *
+ * Orchestrates the Readiness Engine UI, displaying the final
  * Readiness Score, Blocking Tree, and the Publish Eligibility.
  */
 export const CompetitionReadinessKernel: React.FC = () => {
@@ -16,9 +16,9 @@ export const CompetitionReadinessKernel: React.FC = () => {
 
   useEffect(() => {
     // Listen to Fingerprint changes to evaluate readiness
-    const unsubscribe = eventBus.subscribe('FingerprintChanged', (payload) => {
+    const unsubscribe = eventBus.subscribe("FingerprintChanged", (payload) => {
       // Typically, this would enqueue a run to the ReadinessPipeline
-      console.log('Readiness Kernel detected Fingerprint update:', payload);
+      console.log("Readiness Kernel detected Fingerprint update:", payload);
     });
 
     return unsubscribe;
@@ -28,18 +28,20 @@ export const CompetitionReadinessKernel: React.FC = () => {
     <div className="flex flex-col h-full bg-white border-l border-gray-200 overflow-y-auto w-full">
       <header className="p-4 border-b border-gray-100 bg-gray-50 flex flex-col shrink-0 space-y-2">
         <h2 className="font-semibold text-lg text-gray-800">Publish Readiness</h2>
-        
+
         {/* Overall Readiness Score */}
         <div className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg shadow-sm">
           <div>
-            <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Overall Score</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+              Overall Score
+            </span>
             <div className="text-2xl font-bold text-gray-800">
-              {currentSnapshot ? currentSnapshot.overallScore : 'Pending'}
+              {currentSnapshot ? currentSnapshot.overallScore : "Pending"}
             </div>
           </div>
           <div className="text-right">
             <span className="text-sm font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
-              {currentSnapshot?.decision || 'EVALUATING'}
+              {currentSnapshot?.decision || "EVALUATING"}
             </span>
           </div>
         </div>
@@ -84,9 +86,9 @@ export const CompetitionReadinessKernel: React.FC = () => {
       </main>
 
       <footer className="p-4 border-t border-gray-100 shrink-0 bg-white">
-        <button 
+        <button
           className="w-full py-2 bg-black text-white rounded font-medium text-sm hover:bg-gray-800 disabled:opacity-50"
-          onClick={() => commandBus.dispatch({ type: 'EvaluateReadiness' })}
+          onClick={() => commandBus.dispatch({ type: "EvaluateReadiness" })}
         >
           Publish Version
         </button>
@@ -97,8 +99,8 @@ export const CompetitionReadinessKernel: React.FC = () => {
 
 // Register the module with the Studio Kernel
 ModuleRegistry.registerModule({
-  id: 'competition-readiness',
-  label: 'Readiness',
-  icon: 'R', // Placeholder icon
+  id: "competition-readiness",
+  label: "Readiness",
+  icon: "R", // Placeholder icon
   component: CompetitionReadinessKernel,
 });

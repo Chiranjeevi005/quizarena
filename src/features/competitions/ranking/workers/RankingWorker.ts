@@ -10,31 +10,31 @@ export class RankingWorker {
    */
   public static async executeCompetitionRanking(competitionId: string) {
     console.log(`[RankingWorker] Executing ranking for competition: ${competitionId}`);
-    
+
     // 1. Fetch all attempts for this competition that are COMPLETED/SUBMITTED
     const attempts = await prisma.competitionAttempt.findMany({
-      where: { 
+      where: {
         competitionId,
-        session: { status: "SUBMITTED" }
+        session: { status: "SUBMITTED" },
       },
       select: {
         userId: true,
         score: true,
         accuracy: true,
         timeTakenInSeconds: true,
-        submittedAt: true
-      }
+        submittedAt: true,
+      },
     });
 
     if (attempts.length === 0) return;
 
     // 2. Format for strategy
-    const participants = attempts.map(a => ({
+    const participants = attempts.map((a) => ({
       userId: a.userId,
       score: a.score,
       accuracy: a.accuracy,
       completionTime: a.timeTakenInSeconds,
-      submittedAt: a.submittedAt
+      submittedAt: a.submittedAt,
     }));
 
     // 3. Compute Rankings
@@ -48,25 +48,27 @@ export class RankingWorker {
     await prisma.$transaction(async (tx) => {
       // Clear old snapshot for this key
       await tx.rankingSnapshot.deleteMany({
-        where: { leaderboardKey }
+        where: { leaderboardKey },
       });
 
       // Insert new snapshots in batches (for massive leaderboards, we'd batch this)
       await tx.rankingSnapshot.createMany({
-        data: ranked.map(r => ({
+        data: ranked.map((r) => ({
           leaderboardKey,
           userId: r.userId,
           score: r.score,
           accuracy: r.accuracy,
           completionTime: r.completionTime,
           rank: r.rank,
-          percentile: r.percentile
-        }))
+          percentile: r.percentile,
+        })),
       });
     });
 
-    console.log(`[RankingWorker] Ranking generated for ${leaderboardKey}. Triggering Projection...`);
-    
+    console.log(
+      `[RankingWorker] Ranking generated for ${leaderboardKey}. Triggering Projection...`
+    );
+
     // In a full event-driven system, we'd emit 'RankingSnapshotGenerated' here
     // For this execution, we'll invoke the Projection Generator directly.
     await ProjectionGenerator.generate(leaderboardKey, ranked);

@@ -1,9 +1,9 @@
-import { ExportProvider } from '../ExportProvider';
-import { ResultsReadModel } from '../../models/ResultsReadModel';
+import { ExportProvider } from "../ExportProvider";
+import { ResultsReadModel } from "../../models/ResultsReadModel";
 
 export class JsonExportProvider implements ExportProvider {
   public getFormat(): string {
-    return 'JSON';
+    return "JSON";
   }
 
   public async export(data: ResultsReadModel): Promise<any> {

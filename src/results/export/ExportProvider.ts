@@ -1,4 +1,4 @@
-import { ResultsReadModel } from '../models/ResultsReadModel';
+import { ResultsReadModel } from "../models/ResultsReadModel";
 
 export interface ExportProvider {
   /**

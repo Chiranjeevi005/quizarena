@@ -1,11 +1,11 @@
-import { SubmissionContext } from '../context/SubmissionContext';
+import { SubmissionContext } from "../context/SubmissionContext";
 
 export interface FraudAssessment {
   riskScore: number;
   flags: string[];
   confidence: number;
   evidence: any;
-  decision: 'PASS' | 'FLAGGED' | 'FAIL';
+  decision: "PASS" | "FLAGGED" | "FAIL";
   version: string;
 }
 
@@ -21,8 +21,8 @@ export class FraudDetectionEngine {
       flags: [],
       confidence: 0.99,
       evidence: {},
-      decision: 'PASS',
-      version: '1.0.0'
+      decision: "PASS",
+      version: "1.0.0",
     };
   }
 }

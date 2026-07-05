@@ -1,4 +1,4 @@
-import { LeaderboardEntry } from '../models/LeaderboardReadModels';
+import { LeaderboardEntry } from "../models/LeaderboardReadModels";
 
 export interface LeaderboardSearchIndex {
   index(competitionId: string, entry: LeaderboardEntry): Promise<void>;
@@ -13,7 +13,7 @@ export class InMemoryLeaderboardSearchIndex implements LeaderboardSearchIndex {
     if (!this.indices.has(competitionId)) {
       this.indices.set(competitionId, new Map());
     }
-    
+
     const compIndex = this.indices.get(competitionId)!;
     compIndex.set(entry.userId, entry);
   }
@@ -28,7 +28,7 @@ export class InMemoryLeaderboardSearchIndex implements LeaderboardSearchIndex {
     for (const entry of compIndex.values()) {
       // Basic search on username or exact match on userId/rank
       if (
-        entry.username.toLowerCase().includes(lowerQuery) || 
+        entry.username.toLowerCase().includes(lowerQuery) ||
         entry.userId.toLowerCase() === lowerQuery ||
         entry.rank.toString() === query
       ) {

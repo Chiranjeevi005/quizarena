@@ -1,6 +1,9 @@
 "use client";
 
-import { CompetitionRuntimeProvider, useRuntimeState } from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
+import {
+  CompetitionRuntimeProvider,
+  useRuntimeState,
+} from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
 import { WorkspaceLayout } from "./layout/WorkspaceLayout";
 import { WorkspaceConfiguration } from "./types/workspace.types";
 import { Loader2 } from "lucide-react";
@@ -25,6 +28,7 @@ const DEFAULT_CONFIG: WorkspaceConfiguration = {
 function WorkspaceLoader() {
   const status = useRuntimeState((s: any) => s.status);
   const questions = useRuntimeState((s: any) => s.questions);
+  const runtimeConfig = useRuntimeState((s: any) => s.workspaceConfig);
 
   if (
     status === "BOOTING" ||
@@ -41,7 +45,6 @@ function WorkspaceLoader() {
   }
 
   // Assuming Runtime supplies configuration, but for MVP we merge with DEFAULTS
-  const runtimeConfig = useRuntimeState((s: any) => s.workspaceConfig);
   const config = { ...DEFAULT_CONFIG, ...runtimeConfig };
 
   return <WorkspaceLayout config={config} />;

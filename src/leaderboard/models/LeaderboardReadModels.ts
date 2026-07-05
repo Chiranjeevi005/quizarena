@@ -1,4 +1,4 @@
-import { StatisticsSnapshot } from './RankingSnapshots';
+import { StatisticsSnapshot } from "./RankingSnapshots";
 
 export interface LeaderboardEntry {
   rank: number;
@@ -8,11 +8,11 @@ export interface LeaderboardEntry {
   accuracy: number;
   completionTimeMs: number;
   submittedAt: Date;
-  
+
   // Timeline info
-  movement: 'UP' | 'DOWN' | 'SAME' | 'NEW';
+  movement: "UP" | "DOWN" | "SAME" | "NEW";
   previousRank: number | null;
-  
+
   // Percentile info
   percentile: number;
   topPercentage: number;

@@ -1,6 +1,6 @@
 /**
  * Explorer Cache
- * 
+ *
  * In-memory cache for Recent Searches, Search Results, Previews, Recommendations, and Filter Metadata.
  * Includes intelligent invalidation strategies.
  */
@@ -30,7 +30,7 @@ class ExplorerCacheService {
   }
 
   invalidate(keyPattern: RegExp | string) {
-    if (typeof keyPattern === 'string') {
+    if (typeof keyPattern === "string") {
       this.cache.delete(keyPattern);
     } else {
       for (const key of this.cache.keys()) {

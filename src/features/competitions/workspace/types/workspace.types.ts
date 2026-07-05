@@ -11,7 +11,7 @@ export interface WorkspaceConfiguration {
   allowPreviousNavigation: boolean;
   requireFullscreen: boolean;
   timerThresholds: TimerThresholds;
-  
+
   // Future capabilities
   enableCalculator?: boolean;
   enableNotes?: boolean;

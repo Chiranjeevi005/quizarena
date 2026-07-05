@@ -1,10 +1,10 @@
 /**
  * Integrity Validator
- * 
+ *
  * Ensures the structure of the data inside the snapshot has not been corrupted.
  */
 
-import { CompetitionVersionArtifact } from '../types/artifact.types';
+import { CompetitionVersionArtifact } from "../types/artifact.types";
 
 export class IntegrityValidatorService {
   /**
@@ -14,15 +14,15 @@ export class IntegrityValidatorService {
     const errors: string[] = [];
 
     if (!artifact.competitionSnapshot) {
-      errors.push('Competition Snapshot is missing.');
+      errors.push("Competition Snapshot is missing.");
     }
 
     if (!artifact.sectionsSnapshot || !Array.isArray(artifact.sectionsSnapshot)) {
-      errors.push('Sections Snapshot is missing or corrupted.');
+      errors.push("Sections Snapshot is missing or corrupted.");
     }
 
     if (!artifact.questionsSnapshot || !Array.isArray(artifact.questionsSnapshot)) {
-      errors.push('Questions Snapshot is missing or corrupted.');
+      errors.push("Questions Snapshot is missing or corrupted.");
     }
 
     return errors;

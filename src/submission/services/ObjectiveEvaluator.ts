@@ -1,4 +1,4 @@
-import { SubmissionContext } from '../context/SubmissionContext';
+import { SubmissionContext } from "../context/SubmissionContext";
 
 export class ObjectiveEvaluator {
   /**
@@ -9,7 +9,7 @@ export class ObjectiveEvaluator {
     return {
       correct: 0,
       incorrect: 0,
-      skipped: Object.keys(context.package.answers).length
+      skipped: Object.keys(context.package.answers).length,
     };
   }
 }

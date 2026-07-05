@@ -1,11 +1,11 @@
 /**
  * Domain Score Engine
- * 
+ *
  * Aggregates rule results into domain-specific readiness scores (0-100).
  */
 
-import { RuleResultObject } from './RuleResultObject';
-import { RuleDomain } from './RuleGraph';
+import { RuleResultObject } from "./RuleResultObject";
+import { RuleDomain } from "./RuleGraph";
 
 class DomainScoreEngineService {
   calculateScores(ruleResults: RuleResultObject[]): Record<string, number> {
@@ -14,18 +14,20 @@ class DomainScoreEngineService {
       configuration: 100,
       composition: 100,
       coverage: 100,
-      publishing: 100
+      publishing: 100,
     };
 
     // Deduct points based on severity of failures per domain
-    const penaltyMap = { 'CRITICAL': 100, 'HIGH': 30, 'MEDIUM': 15, 'LOW': 5, 'INFO': 0 };
+    const penaltyMap = { CRITICAL: 100, HIGH: 30, MEDIUM: 15, LOW: 5, INFO: 0 };
 
-    ruleResults.filter(r => r.status === 'FAIL').forEach(failure => {
-      const penalty = penaltyMap[failure.severity];
-      // In production we would map rule.id back to its domain to subtract from the proper bucket
-      // Example deduction from composition:
-      scores.composition = Math.max(0, scores.composition - penalty);
-    });
+    ruleResults
+      .filter((r) => r.status === "FAIL")
+      .forEach((failure) => {
+        const penalty = penaltyMap[failure.severity];
+        // In production we would map rule.id back to its domain to subtract from the proper bucket
+        // Example deduction from composition:
+        scores.composition = Math.max(0, scores.composition - penalty);
+      });
 
     return scores;
   }

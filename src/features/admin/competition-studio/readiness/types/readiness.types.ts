@@ -1,4 +1,4 @@
-export type ReadinessDecision = 'READY' | 'READY_WITH_WARNINGS' | 'BLOCKED';
+export type ReadinessDecision = "READY" | "READY_WITH_WARNINGS" | "BLOCKED";
 
 export interface ReadinessSnapshot {
   fingerprint: string;

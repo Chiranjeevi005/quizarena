@@ -6,19 +6,30 @@ export class CertificateRenderer {
    * Generates the raw HTML view for a certificate based on its immutable snapshot.
    */
   public static renderHtml(snapshot: CertificateSnapshot): string {
-    const template = CertificateTemplateRegistry.getTemplate(snapshot.certificateType, snapshot.brandAssetsVersion);
-    
+    const template = CertificateTemplateRegistry.getTemplate(
+      snapshot.certificateType,
+      snapshot.brandAssetsVersion
+    );
+
     const formatType = (type: string) => {
       switch (type) {
-        case "WINNER": return "Winner";
-        case "EXCELLENCE": return "Excellence";
-        case "TOP_PERFORMER": return "Top Performer";
-        default: return "Participation";
+        case "WINNER":
+          return "Winner";
+        case "EXCELLENCE":
+          return "Excellence";
+        case "TOP_PERFORMER":
+          return "Top Performer";
+        default:
+          return "Participation";
       }
     };
 
     const typeLabel = formatType(snapshot.certificateType);
-    const dateFormatted = snapshot.completionDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateFormatted = snapshot.completionDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
     return `
       <!DOCTYPE html>
@@ -141,15 +152,15 @@ export class CertificateRenderer {
             <div class="statement-small">This certifies that</div>
             <div class="name">${snapshot.participantName}</div>
             
-            ${snapshot.certificateType === "WINNER" ? `<div class="badge-container mb-4"><span class="achievement-badge">🥇 Rank #${snapshot.rank || 1}</span></div>` : ''}
+            ${snapshot.certificateType === "WINNER" ? `<div class="badge-container mb-4"><span class="achievement-badge">🥇 Rank #${snapshot.rank || 1}</span></div>` : ""}
             
             <div class="statement">has successfully completed</div>
             <div class="competition">${snapshot.competitionName}</div>
             <div class="performance">with outstanding performance.</div>
             
             <div class="metrics">
-              ${snapshot.score !== null ? `<div class="metric"><div class="metric-label">Score</div><div class="metric-value">${snapshot.score}</div></div>` : ''}
-              ${snapshot.rank !== null ? `<div class="metric"><div class="metric-label">Rank</div><div class="metric-value">#${snapshot.rank}</div></div>` : ''}
+              ${snapshot.score !== null ? `<div class="metric"><div class="metric-label">Score</div><div class="metric-value">${snapshot.score}</div></div>` : ""}
+              ${snapshot.rank !== null ? `<div class="metric"><div class="metric-label">Rank</div><div class="metric-value">#${snapshot.rank}</div></div>` : ""}
               <div class="metric"><div class="metric-label">Completion</div><div class="metric-value">${dateFormatted}</div></div>
             </div>
             
@@ -186,12 +197,16 @@ export class CertificateRenderer {
             </div>
           </div>
           
-          ${template.hasSeal ? `
+          ${
+            template.hasSeal
+              ? `
           <div class="official-seal">
             <div class="seal-text">VERIFIED</div>
             <div style="font-size: 8px; font-weight: 600; color: #FFF; margin-top: 2px;">OFFICIAL</div>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </body>
       </html>

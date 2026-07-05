@@ -12,21 +12,27 @@ interface LandingHeroProps {
   sessionState: SessionState | null;
 }
 
-export function LandingHero({ competition, isEligible, eligibilityDetails, sessionState }: LandingHeroProps) {
+export function LandingHero({
+  competition,
+  isEligible,
+  eligibilityDetails,
+  sessionState,
+}: LandingHeroProps) {
   return (
     <section className="bg-slate-900 border border-slate-800 p-6 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
       {/* Decorative background element */}
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      
+
       <div className="relative z-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
-        
         {/* Left Content */}
         <div className="flex-1 space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold uppercase tracking-widest rounded-full">
               {competition.competitionType.replace("_", " ")}
             </span>
-            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full ${competition.status === 'LIVE' ? 'bg-green-500/10 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
+            <span
+              className={`px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full ${competition.status === "LIVE" ? "bg-green-500/10 text-green-400" : "bg-slate-800 text-slate-400"}`}
+            >
               {competition.status}
             </span>
             <span className="px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-widest rounded-full">
@@ -62,7 +68,7 @@ export function LandingHero({ competition, isEligible, eligibilityDetails, sessi
 
         {/* Right CTA Panel */}
         <div className="w-full md:w-auto flex flex-col items-stretch gap-4 p-6 bg-slate-950/50 rounded-2xl border border-slate-800/50 backdrop-blur-sm">
-          <DynamicCTA 
+          <DynamicCTA
             competition={competition}
             isEligible={isEligible}
             eligibilityDetails={eligibilityDetails}
@@ -72,7 +78,6 @@ export function LandingHero({ competition, isEligible, eligibilityDetails, sessi
             {isEligible ? "Ready to begin!" : "Check eligibility requirements below."}
           </p>
         </div>
-
       </div>
     </section>
   );

@@ -26,7 +26,11 @@ export function BuilderClientInitializer({ hydrationData }: Props) {
   }, [hydrate, hydrationData]);
 
   if (!isHydrated) {
-    return <div className="flex-1 flex items-center justify-center p-8 text-gray-500">Initializing builder...</div>;
+    return (
+      <div className="flex-1 flex items-center justify-center p-8 text-gray-500">
+        Initializing builder...
+      </div>
+    );
   }
 
   return (

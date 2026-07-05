@@ -1,4 +1,4 @@
-import { CompetitionLifecycle } from '@/generated/prisma';
+import { CompetitionLifecycle } from "@/generated/prisma";
 
 export interface DependencyValidationResult {
   valid: boolean;
@@ -6,7 +6,10 @@ export interface DependencyValidationResult {
 }
 
 export class CompetitionDependencyService {
-  async validateTransition(competitionId: string, newState: CompetitionLifecycle): Promise<DependencyValidationResult> {
+  async validateTransition(
+    competitionId: string,
+    newState: CompetitionLifecycle
+  ): Promise<DependencyValidationResult> {
     const errors: string[] = [];
 
     // Simulate cross-module dependency checks
@@ -14,19 +17,19 @@ export class CompetitionDependencyService {
       // 1. Check if certificates are still generating
       const certificatesPending = await this.checkCertificatesPending(competitionId);
       if (certificatesPending) {
-        errors.push('Cannot archive: Certificates are still being generated.');
+        errors.push("Cannot archive: Certificates are still being generated.");
       }
 
       // 2. Check if rewards are still processing
       const rewardsPending = await this.checkRewardsPending(competitionId);
       if (rewardsPending) {
-        errors.push('Cannot archive: Rewards are still processing.');
+        errors.push("Cannot archive: Rewards are still processing.");
       }
 
       // 3. Check if analytics or leaderboards are processing
       const leaderboardProcessing = await this.checkLeaderboardProcessing(competitionId);
       if (leaderboardProcessing) {
-        errors.push('Cannot archive: Leaderboard is currently rebuilding.');
+        errors.push("Cannot archive: Leaderboard is currently rebuilding.");
       }
     }
 
@@ -36,7 +39,7 @@ export class CompetitionDependencyService {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 

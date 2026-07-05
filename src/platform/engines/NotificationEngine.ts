@@ -1,6 +1,6 @@
-import { PlatformEventBus, PlatformEvent } from '../events/PlatformEventBus';
+import { PlatformEventBus, PlatformEvent } from "../events/PlatformEventBus";
 
-export type NotificationChannel = 'EMAIL' | 'PUSH' | 'TOAST' | 'WEBHOOK';
+export type NotificationChannel = "EMAIL" | "PUSH" | "TOAST" | "WEBHOOK";
 
 export interface NotificationPayload {
   userId: string;
@@ -11,14 +11,16 @@ export interface NotificationPayload {
 
 export class NotificationEngine {
   constructor(private eventBus: PlatformEventBus) {
-    this.eventBus.subscribe('SendNotificationCommand', this.handleSendNotification.bind(this));
+    this.eventBus.subscribe("SendNotificationCommand", this.handleSendNotification.bind(this));
   }
 
   private async handleSendNotification(event: PlatformEvent): Promise<void> {
     const payload = event.payload as NotificationPayload;
-    
+
     // Switch on channel and dispatch to appropriate provider (e.g., SendGrid, Firebase, WebSocket)
-    console.log(`Dispatching ${payload.channel} to user ${payload.userId} using template ${payload.template}`);
+    console.log(
+      `Dispatching ${payload.channel} to user ${payload.userId} using template ${payload.template}`
+    );
   }
 
   public async notify(payload: NotificationPayload): Promise<void> {

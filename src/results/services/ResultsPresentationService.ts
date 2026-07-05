@@ -1,9 +1,12 @@
-import { ResultsRepository } from '../repositories/ResultsRepository';
-import { ResultsCache } from '../cache/ResultsCache';
-import { ResultsReadModel } from '../models/ResultsReadModel';
+import { ResultsRepository } from "../repositories/ResultsRepository";
+import { ResultsCache } from "../cache/ResultsCache";
+import { ResultsReadModel } from "../models/ResultsReadModel";
 
 export class ResultsPresentationService {
-  constructor(private repo: ResultsRepository, private cache: ResultsCache) {}
+  constructor(
+    private repo: ResultsRepository,
+    private cache: ResultsCache
+  ) {}
 
   /**
    * Transforms the canonical ResultAggregate into the Frontend ResultsReadModel.
@@ -34,6 +37,6 @@ export class ResultsPresentationService {
   }
 
   public async getExportsReadModel(resultId: string): Promise<any> {
-    return { availableFormats: ['PDF', 'JSON', 'PRINT'] };
+    return { availableFormats: ["PDF", "JSON", "PRINT"] };
   }
 }

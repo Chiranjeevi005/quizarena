@@ -11,7 +11,7 @@ export function CompetitionPublishStep() {
         <h2 className="text-2xl font-bold text-navy">Publish Competition</h2>
         <p className="text-gray-500 mt-2">Deploy your competition to the runtime environment.</p>
       </div>
-      
+
       <div className="flex gap-4">
         <p className="text-gray-500 italic">Publish Pipeline integration coming soon...</p>
       </div>

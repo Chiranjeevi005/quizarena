@@ -7,7 +7,7 @@ export class SingleChoiceEvaluator implements IQuestionEvaluator {
     }
 
     const correctOption = question.options.find((o: any) => o.isCorrect);
-    
+
     if (!correctOption) {
       // Malformed question, assume incorrect or skip
       return { isCorrect: false, marksAwarded: 0, negativeMarks: 0 };

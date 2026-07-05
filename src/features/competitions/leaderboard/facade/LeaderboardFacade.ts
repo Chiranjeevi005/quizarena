@@ -14,7 +14,7 @@ export class LeaderboardFacade {
   ): Promise<LeaderboardReadModel> {
     // 1. Fetch O(1) Precomputed Projection
     const projection = await prisma.leaderboardProjection.findUnique({
-      where: { leaderboardKey }
+      where: { leaderboardKey },
     });
 
     if (!projection) {
@@ -26,7 +26,7 @@ export class LeaderboardFacade {
     if (currentUserId) {
       const userSnapshot = await prisma.rankingSnapshot.findUnique({
         where: { leaderboardKey_userId: { leaderboardKey, userId: currentUserId } },
-        include: { user: { select: { name: true, image: true } } }
+        include: { user: { select: { name: true, image: true } } },
       });
 
       if (userSnapshot) {
@@ -39,7 +39,7 @@ export class LeaderboardFacade {
           accuracy: userSnapshot.accuracy,
           completionTime: userSnapshot.completionTime,
           percentile: userSnapshot.percentile,
-          rankChange: "SAME" as const // Trend engine would calculate this historically
+          rankChange: "SAME" as const, // Trend engine would calculate this historically
         };
       }
     }
@@ -51,14 +51,14 @@ export class LeaderboardFacade {
       skip: cursor ? 1 : 0,
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { rank: "asc" },
-      include: { user: { select: { name: true, image: true } } }
+      include: { user: { select: { name: true, image: true } } },
     });
 
     const hasNextPage = snapshotQuery.length > limit;
     const paginatedRecords = hasNextPage ? snapshotQuery.slice(0, -1) : snapshotQuery;
     const nextCursor = hasNextPage ? paginatedRecords[paginatedRecords.length - 1].id : null;
 
-    const paginatedRankings: UserRankPosition[] = paginatedRecords.map(s => ({
+    const paginatedRankings: UserRankPosition[] = paginatedRecords.map((s) => ({
       userId: s.userId,
       name: s.user.name || "Unknown",
       image: s.user.image,
@@ -67,21 +67,22 @@ export class LeaderboardFacade {
       accuracy: s.accuracy,
       completionTime: s.completionTime,
       percentile: s.percentile,
-      rankChange: "SAME" as const
+      rankChange: "SAME" as const,
     }));
 
     // Top Rankings from Projection (Guaranteed fastest read)
-    const topRankings = (projection.top3Snapshot as any[])?.map(t => ({
-      userId: t.user.id,
-      name: t.user.name,
-      image: t.user.image,
-      rank: t.rank,
-      score: t.score,
-      accuracy: t.accuracy,
-      completionTime: t.completionTime,
-      percentile: 99.9, // Approximation for UI
-      rankChange: "SAME" as const
-    })) || [];
+    const topRankings =
+      (projection.top3Snapshot as any[])?.map((t) => ({
+        userId: t.user.id,
+        name: t.user.name,
+        image: t.user.image,
+        rank: t.rank,
+        score: t.score,
+        accuracy: t.accuracy,
+        completionTime: t.completionTime,
+        percentile: 99.9, // Approximation for UI
+        rankChange: "SAME" as const,
+      })) || [];
 
     const meta = LeaderboardKeyGenerator.parse(leaderboardKey);
 
@@ -90,19 +91,19 @@ export class LeaderboardFacade {
         key: leaderboardKey,
         type: meta.type,
         title: `${meta.type} Leaderboard ${meta.id ? `- ${meta.id}` : ""}`,
-        lastUpdated: projection.lastUpdated.toISOString()
+        lastUpdated: projection.lastUpdated.toISOString(),
       },
       statistics: {
         participantCount: projection.participantCount,
         highestScore: projection.highestScore,
         averageScore: projection.averageScore,
-        averageAccuracy: projection.averageAccuracy
+        averageAccuracy: projection.averageAccuracy,
       },
       topRankings,
       currentUserPosition,
       paginatedRankings,
       hasNextPage,
-      nextCursor
+      nextCursor,
     };
   }
 }

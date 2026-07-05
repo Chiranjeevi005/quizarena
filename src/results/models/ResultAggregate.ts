@@ -1,9 +1,9 @@
-import { 
-  RecommendationSnapshot, 
-  PerformanceInsightSnapshot, 
-  SectionPerformanceSnapshot, 
-  ExplanationSnapshot 
-} from '../../submission/models/PresentationSnapshots';
+import {
+  RecommendationSnapshot,
+  PerformanceInsightSnapshot,
+  SectionPerformanceSnapshot,
+  ExplanationSnapshot,
+} from "../../submission/models/PresentationSnapshots";
 
 export interface ResultAggregate {
   resultId: string;

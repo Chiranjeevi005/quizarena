@@ -1,4 +1,4 @@
-import { SubmissionPackage } from '../../runtime/submission/SubmissionPackage';
+import { SubmissionPackage } from "../../runtime/submission/SubmissionPackage";
 
 export interface SubmissionContext {
   package: SubmissionPackage;

@@ -1,6 +1,6 @@
 /**
  * Studio Layout Manager
- * 
+ *
  * Centralized service to manage and persist layout configuration.
  * Avoids scattering layout logic across hooks.
  */
@@ -24,7 +24,7 @@ const DEFAULT_LAYOUT: StudioLayoutConfig = {
   zoomLevel: 100,
 };
 
-const STORAGE_KEY = 'competition_studio_layout';
+const STORAGE_KEY = "competition_studio_layout";
 
 class LayoutManagerService {
   private config: StudioLayoutConfig;
@@ -34,25 +34,25 @@ class LayoutManagerService {
   }
 
   private loadConfig(): StudioLayoutConfig {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           return { ...DEFAULT_LAYOUT, ...JSON.parse(stored) };
         }
       } catch (e) {
-        console.error('Failed to load studio layout config', e);
+        console.error("Failed to load studio layout config", e);
       }
     }
     return { ...DEFAULT_LAYOUT };
   }
 
   private saveConfig() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.config));
       } catch (e) {
-        console.error('Failed to save studio layout config', e);
+        console.error("Failed to save studio layout config", e);
       }
     }
   }

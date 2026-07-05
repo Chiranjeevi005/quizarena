@@ -10,9 +10,9 @@ export class ValidationStage implements IPipelineStage {
   }
 
   async execute(context: PipelineContext, tx: any): Promise<void> {
-    // 1. Fetch Session with lock (SELECT FOR UPDATE equivalent in Prisma is slightly tricky, 
+    // 1. Fetch Session with lock (SELECT FOR UPDATE equivalent in Prisma is slightly tricky,
     // but Prisma executes $transaction sequentially, and we can check status)
-    
+
     const session = await tx.competitionSession.findUnique({
       where: { id: context.sessionId },
       include: {
@@ -22,14 +22,14 @@ export class ValidationStage implements IPipelineStage {
             questions: {
               include: {
                 question: {
-                  include: { options: true }
-                }
-              }
-            }
-          }
+                  include: { options: true },
+                },
+              },
+            },
+          },
         },
         answers: true,
-      }
+      },
     });
 
     if (!session) {
@@ -52,7 +52,7 @@ export class ValidationStage implements IPipelineStage {
     // Lock session status to SUBMITTING to prevent duplicates
     await tx.competitionSession.update({
       where: { id: session.id },
-      data: { status: "SUBMITTING" }
+      data: { status: "SUBMITTING" },
     });
 
     // Populate context with fetched full models to prevent re-querying

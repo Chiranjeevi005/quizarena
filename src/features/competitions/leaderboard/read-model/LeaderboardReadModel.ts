@@ -29,7 +29,7 @@ export interface LeaderboardReadModel {
   statistics: LeaderboardStatistics;
   topRankings: UserRankPosition[];
   currentUserPosition: UserRankPosition | null;
-  
+
   // Pagination
   paginatedRankings: UserRankPosition[];
   hasNextPage: boolean;

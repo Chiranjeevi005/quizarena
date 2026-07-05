@@ -1,4 +1,4 @@
-import { RuntimeContext } from '../context/RuntimeContext';
+import { RuntimeContext } from "../context/RuntimeContext";
 
 export class WorkspaceManager {
   /**
@@ -9,8 +9,8 @@ export class WorkspaceManager {
     console.log(`[WorkspaceManager] Initializing workspace for artifact ${context.artifactId}`);
     return {
       layout: context.artifact.manifest,
-      theme: context.workspaceConfig?.theme || 'default',
-      panels: []
+      theme: context.workspaceConfig?.theme || "default",
+      panels: [],
     };
   }
 }

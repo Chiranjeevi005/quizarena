@@ -1,4 +1,4 @@
-import { SubmissionResult } from '../../submission/models/SubmissionResult';
+import { SubmissionResult } from "../../submission/models/SubmissionResult";
 
 export interface PlatformEvent {
   type: string;
@@ -13,9 +13,11 @@ export class ResultsEventHandler {
    * Listens to the platform event bus for SubmissionCompleted.
    */
   public async handleEvent(event: PlatformEvent): Promise<void> {
-    if (event.type === 'SubmissionCompleted') {
+    if (event.type === "SubmissionCompleted") {
       const result: SubmissionResult = event.payload;
-      console.log(`[ResultsEventHandler] Received SubmissionCompleted for attempt ${result.attempt.attemptId}`);
+      console.log(
+        `[ResultsEventHandler] Received SubmissionCompleted for attempt ${result.attempt.attemptId}`
+      );
       await this.gateway.ingestResult(result);
     }
   }

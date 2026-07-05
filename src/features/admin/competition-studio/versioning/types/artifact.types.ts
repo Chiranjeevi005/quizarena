@@ -1,22 +1,22 @@
 export enum ArtifactStatus {
-  BUILDING = 'BUILDING',
-  VERIFIED = 'VERIFIED',
-  READY = 'READY',
-  FAILED = 'FAILED',
-  SUPERSEDED = 'SUPERSEDED'
+  BUILDING = "BUILDING",
+  VERIFIED = "VERIFIED",
+  READY = "READY",
+  FAILED = "FAILED",
+  SUPERSEDED = "SUPERSEDED",
 }
 
-export type SubsystemType = 
-  | 'RUNTIME' 
-  | 'SUBMISSION' 
-  | 'RESULTS' 
-  | 'LEADERBOARD' 
-  | 'REWARDS' 
-  | 'CERTIFICATES' 
-  | 'ANALYTICS' 
-  | 'LIFECYCLE';
+export type SubsystemType =
+  | "RUNTIME"
+  | "SUBMISSION"
+  | "RESULTS"
+  | "LEADERBOARD"
+  | "REWARDS"
+  | "CERTIFICATES"
+  | "ANALYTICS"
+  | "LIFECYCLE";
 
-export type CompatibilityStatus = 'COMPATIBLE' | 'PARTIALLY_COMPATIBLE' | 'BLOCKED';
+export type CompatibilityStatus = "COMPATIBLE" | "PARTIALLY_COMPATIBLE" | "BLOCKED";
 
 export interface VersionCompatibilityDTO {
   system: SubsystemType;
@@ -34,13 +34,13 @@ export interface VersionManifestDTO {
   builderVersion?: string;
   studioVersion?: string;
   healthScore?: number;
-  
+
   entityCount: number;
   questionCount: number;
   sectionCount: number;
   rewardCount: number;
   certificateCount: number;
-  
+
   runtimeVersion?: string;
   submissionVersion?: string;
   leaderboardVersion?: string;
@@ -56,7 +56,7 @@ export interface VersionBuildAuditDTO {
 
   builderId?: string;
   executionLogs?: string[];
-  buildResult: 'SUCCESS' | 'FAILURE';
+  buildResult: "SUCCESS" | "FAILURE";
   warnings?: string[];
   reason?: string;
 }
@@ -64,7 +64,7 @@ export interface VersionBuildAuditDTO {
 export interface CompetitionVersionArtifact {
   id: string;
   competitionId: string;
-  
+
   version: number;
   semanticVersion: string;
   schemaVersion: number;
@@ -92,7 +92,7 @@ export interface CompetitionVersionArtifact {
   configSnapshot: any;
 
   artifactStatus: ArtifactStatus;
-  
+
   manifest?: VersionManifestDTO;
   compatibilities: VersionCompatibilityDTO[];
   buildAudits: VersionBuildAuditDTO[];

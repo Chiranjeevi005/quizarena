@@ -13,7 +13,7 @@ export class MetricsEngine {
       name,
       value,
       tags,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
     // In production, this flushes to Prometheus, Datadog, etc.
   }

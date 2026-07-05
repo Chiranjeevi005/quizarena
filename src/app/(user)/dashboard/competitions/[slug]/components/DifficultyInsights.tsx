@@ -18,23 +18,39 @@ export async function DifficultyInsights({ slug }: DifficultyInsightsProps) {
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50">
-          <div className="text-slate-500 mb-2"><Clock className="w-5 h-5" /></div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Est. Completion</p>
+          <div className="text-slate-500 mb-2">
+            <Clock className="w-5 h-5" />
+          </div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Est. Completion
+          </p>
           <p className="font-bold text-slate-200">{insights.estimatedTime}</p>
         </div>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50">
-          <div className="text-slate-500 mb-2"><Target className="w-5 h-5" /></div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Recommended Level</p>
+          <div className="text-slate-500 mb-2">
+            <Target className="w-5 h-5" />
+          </div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Recommended Level
+          </p>
           <p className="font-bold text-slate-200">{insights.recommendedSkillLevel}</p>
         </div>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50">
-          <div className="text-slate-500 mb-2"><BarChart className="w-5 h-5" /></div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Difficulty Mix</p>
+          <div className="text-slate-500 mb-2">
+            <BarChart className="w-5 h-5" />
+          </div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Difficulty Mix
+          </p>
           <p className="font-bold text-slate-200">{insights.difficultyDistribution}</p>
         </div>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50">
-          <div className="text-slate-500 mb-2"><Percent className="w-5 h-5" /></div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Avg Success Rate</p>
+          <div className="text-slate-500 mb-2">
+            <Percent className="w-5 h-5" />
+          </div>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Avg Success Rate
+          </p>
           <p className="font-bold text-slate-200">{insights.successRate}</p>
         </div>
       </div>

@@ -1,10 +1,10 @@
 /**
  * Readiness Cache
- * 
+ *
  * Caches Rule Results and Domain Scores based on Fingerprint deltas.
  */
 
-import { RuleResultObject } from '../services/RuleResultObject';
+import { RuleResultObject } from "../services/RuleResultObject";
 
 class ReadinessCacheService {
   private cache: Map<string, RuleResultObject> = new Map();

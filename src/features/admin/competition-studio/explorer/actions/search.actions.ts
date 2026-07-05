@@ -1,6 +1,9 @@
 "use server";
 
-import { QuestionSearchRepository, QuestionSearchFilters } from "../repositories/QuestionSearchRepository";
+import {
+  QuestionSearchRepository,
+  QuestionSearchFilters,
+} from "../repositories/QuestionSearchRepository";
 
 /**
  * Server Action for searching questions from the Question Explorer.

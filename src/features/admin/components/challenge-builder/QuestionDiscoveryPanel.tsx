@@ -7,9 +7,9 @@ import {
   addQuestionToChallenge,
   removeQuestionFromChallenge,
 } from "@/features/admin/services/challenge-builder";
-import { notify } from '@/shared/feedback/notify';
-import { Button } from '@/shared/ui/button';
-import { Input } from '@/shared/ui/input';
+import { notify } from "@/shared/feedback/notify";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 
 export default function QuestionDiscoveryPanel({ challenge }: { challenge: any }) {
   const [search, setSearch] = useState("");

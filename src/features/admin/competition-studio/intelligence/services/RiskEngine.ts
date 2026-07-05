@@ -1,12 +1,12 @@
 /**
  * Risk Engine
- * 
+ *
  * Separates operational risks from actionable recommendations.
  */
 
-import { DecisionExplanation } from './ExplainabilityEngine';
+import { DecisionExplanation } from "./ExplainabilityEngine";
 
-export type RiskSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type RiskSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
 export interface AssessmentRisk {
   id: string;

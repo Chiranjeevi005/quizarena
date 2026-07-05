@@ -1,29 +1,28 @@
 /**
  * Composition Repository
- * 
+ *
  * Direct production Prisma integration.
  * Handles batched flushes from the CompositionBatchEngine.
  * Generates lightweight snapshots for history/recovery.
  */
 
-import { prisma } from '@/lib/prisma';
-import { CompositionGraph } from '../engine/CompositionEngine';
+import { prisma } from "@/lib/prisma";
+import { CompositionGraph } from "../engine/CompositionEngine";
 
 class CompositionRepositoryService {
-  
   async getCompositionGraph(competitionId: string): Promise<CompositionGraph | null> {
     const comp = await prisma.competition.findUnique({
       where: { id: competitionId },
       include: {
         sections: {
-          orderBy: { displayOrder: 'asc' },
+          orderBy: { displayOrder: "asc" },
           include: {
             questions: {
-              orderBy: { displayOrder: 'asc' }
-            }
-          }
-        }
-      }
+              orderBy: { displayOrder: "asc" },
+            },
+          },
+        },
+      },
     });
 
     if (!comp) return null;
@@ -40,9 +39,9 @@ class CompositionRepositoryService {
           questionId: q.questionId,
           order: q.displayOrder,
           marks: q.marks,
-          negativeMarks: q.negativeMarks
-        }))
-      }))
+          negativeMarks: q.negativeMarks,
+        })),
+      })),
     };
   }
 

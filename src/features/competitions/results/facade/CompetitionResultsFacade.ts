@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { 
-  CompetitionResultReadModel, 
+import {
+  CompetitionResultReadModel,
   QuestionReviewItem,
-  SectionMetric
+  SectionMetric,
 } from "../types/results.types";
 import { RecommendationService } from "../services/recommendations/RecommendationService";
 import { PerformanceInsightGenerator } from "../services/insights/PerformanceInsightGenerator";
@@ -25,14 +25,14 @@ export class CompetitionResultsFacade {
             questions: {
               include: {
                 question: {
-                  include: { options: true }
-                }
-              }
-            }
-          }
+                  include: { options: true },
+                },
+              },
+            },
+          },
         },
-        session: true
-      }
+        session: true,
+      },
     });
 
     if (!attempt) {
@@ -54,14 +54,17 @@ export class CompetitionResultsFacade {
 
     // Assemble Review Items
     const questionReviews: QuestionReviewItem[] = evalAnswers.map((ea: any) => {
-      const compQ = attempt.competition.questions.find((cq: any) => cq.questionId === ea.questionId);
+      const compQ = attempt.competition.questions.find(
+        (cq: any) => cq.questionId === ea.questionId
+      );
       const qData = compQ?.question;
-      
-      const options = qData?.options?.map((o: any) => ({
-        id: o.id,
-        text: o.optionText,
-        isCorrect: o.isCorrect
-      })) || [];
+
+      const options =
+        qData?.options?.map((o: any) => ({
+          id: o.id,
+          text: o.optionText,
+          isCorrect: o.isCorrect,
+        })) || [];
 
       const correctOption = options.find((o: any) => o.isCorrect);
 
@@ -74,7 +77,7 @@ export class CompetitionResultsFacade {
         explanation: qData?.explanation || null,
         marksAwarded: ea.marksAwarded,
         isCorrect: ea.isCorrect,
-        isSkipped: ea.isSkipped
+        isSkipped: ea.isSkipped,
       };
     });
 
@@ -83,8 +86,8 @@ export class CompetitionResultsFacade {
 
     // Generators
     const insights = PerformanceInsightGenerator.generate(
-      questionReviews, 
-      attempt.accuracy, 
+      questionReviews,
+      attempt.accuracy,
       attempt.timeTakenInSeconds,
       attempt.competition.questions.length
     );
@@ -105,7 +108,10 @@ export class CompetitionResultsFacade {
       attemptId: attempt.sessionId,
       competitionTitle: attempt.competition.title,
       competitionSlug: attempt.competition.slug,
-      status: attempt.percentage >= (attempt.competition.config as any)?.passPercentage ? "PASSED" : "FAILED",
+      status:
+        attempt.percentage >= (attempt.competition.config as any)?.passPercentage
+          ? "PASSED"
+          : "FAILED",
       score: attempt.score,
       maxScore: attempt.competition.questions.length, // Rough estimation for MVP, ideally stored in snapshot
       accuracy: attempt.accuracy,
@@ -116,7 +122,7 @@ export class CompetitionResultsFacade {
         questionVersion: "1",
         scoringVersion: "1",
         evaluationVersion: "1",
-        generatedAt: attempt.submittedAt.toISOString()
+        generatedAt: attempt.submittedAt.toISOString(),
       },
       correctAnswers: attempt.correctAnswers,
       incorrectAnswers: attempt.wrongAnswers,
@@ -124,13 +130,15 @@ export class CompetitionResultsFacade {
       marksAwarded: attempt.score,
       negativeMarks: 0, // Fallback if not tracked perfectly in snapshot
       percentage: attempt.percentage,
-      completionRate: ((attempt.correctAnswers + attempt.wrongAnswers) / attempt.competition.questions.length) * 100,
+      completionRate:
+        ((attempt.correctAnswers + attempt.wrongAnswers) / attempt.competition.questions.length) *
+        100,
       averageTimePerQuestion: attempt.timeTakenInSeconds / attempt.competition.questions.length,
       questionReviews,
       sections,
       insights,
       recommendations,
-      nextActions
+      nextActions,
     };
   }
 }

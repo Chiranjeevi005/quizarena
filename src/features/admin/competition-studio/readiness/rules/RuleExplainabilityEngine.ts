@@ -1,6 +1,6 @@
 /**
  * Rule Explainability Engine
- * 
+ *
  * Ensures that every rule failure exposes structured 'Why', 'Evidence',
  * 'Impact', and 'Resolution' data, preventing generic failures.
  */
@@ -32,7 +32,7 @@ class RuleExplainabilityEngineService {
       businessRisk,
       impact,
       resolution,
-      estimatedImprovement
+      estimatedImprovement,
     };
   }
 }

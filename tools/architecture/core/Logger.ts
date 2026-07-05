@@ -6,6 +6,6 @@ export class Logger {
     console.warn(`[WARN] ${message}`);
   }
   static error(message: string, error?: any) {
-    console.error(`[ERROR] ${message}`, error || '');
+    console.error(`[ERROR] ${message}`, error || "");
   }
 }

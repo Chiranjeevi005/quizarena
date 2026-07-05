@@ -13,7 +13,7 @@ export function TopRegion({ config }: TopRegionProps) {
   const remainingSeconds = useRuntimeState((s: any) => s.remainingSeconds);
   const connectionStatus = useRuntimeState((s: any) => s.connectionStatus);
   const mutationQueueSize = useRuntimeState((s: any) => s.mutationQueueSize);
-  
+
   // Progress computation strictly from state
   const questions = useRuntimeState((s: any) => s.questions);
   const answers = useRuntimeState((s: any) => s.answers);
@@ -32,8 +32,11 @@ export function TopRegion({ config }: TopRegionProps) {
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const isWarning = remainingSeconds <= config.timerThresholds.warningSeconds && remainingSeconds > config.timerThresholds.criticalSeconds;
-  const isCritical = remainingSeconds <= config.timerThresholds.criticalSeconds && remainingSeconds > 0;
+  const isWarning =
+    remainingSeconds <= config.timerThresholds.warningSeconds &&
+    remainingSeconds > config.timerThresholds.criticalSeconds;
+  const isCritical =
+    remainingSeconds <= config.timerThresholds.criticalSeconds && remainingSeconds > 0;
 
   return (
     <header className="flex flex-col bg-slate-900 border-b border-slate-800 z-40 sticky top-0">
@@ -71,7 +74,11 @@ export function TopRegion({ config }: TopRegionProps) {
           {config.showTimer && (
             <div
               className={`font-mono text-xl font-bold tracking-wider ${
-                isCritical ? "text-red-500 animate-pulse" : isWarning ? "text-amber-500" : "text-white"
+                isCritical
+                  ? "text-red-500 animate-pulse"
+                  : isWarning
+                    ? "text-amber-500"
+                    : "text-white"
               }`}
             >
               {formatTime(remainingSeconds)}
@@ -79,13 +86,13 @@ export function TopRegion({ config }: TopRegionProps) {
           )}
         </div>
       </div>
-      
+
       {/* Progress Bar (If configured) */}
       {config.showProgress && (
         <div className="h-1 bg-slate-800 w-full">
-          <div 
-            className="h-full bg-blue-500 transition-all duration-300" 
-            style={{ width: `${progressPercent}%` }} 
+          <div
+            className="h-full bg-blue-500 transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
       )}

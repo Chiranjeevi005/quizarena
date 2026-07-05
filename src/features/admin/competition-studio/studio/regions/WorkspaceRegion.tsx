@@ -1,5 +1,5 @@
-import React from 'react';
-import { WorkspaceModuleLoader } from '../registry/WorkspaceModuleLoader';
+import React from "react";
+import { WorkspaceModuleLoader } from "../registry/WorkspaceModuleLoader";
 
 export const WorkspaceRegion: React.FC = () => {
   return (

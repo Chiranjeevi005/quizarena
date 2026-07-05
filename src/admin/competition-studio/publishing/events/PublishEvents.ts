@@ -6,34 +6,34 @@ export interface PublishEvent {
 }
 
 export interface DeploymentPlanned extends PublishEvent {
-  type: 'DeploymentPlanned';
+  type: "DeploymentPlanned";
   blueprint: any;
 }
 
 export interface DeploymentValidated extends PublishEvent {
-  type: 'DeploymentValidated';
+  type: "DeploymentValidated";
   validationResults: any;
 }
 
 export interface DeploymentStarted extends PublishEvent {
-  type: 'DeploymentStarted';
+  type: "DeploymentStarted";
 }
 
 export interface DeploymentActivated extends PublishEvent {
-  type: 'DeploymentActivated';
+  type: "DeploymentActivated";
 }
 
 export interface DeploymentVerified extends PublishEvent {
-  type: 'DeploymentVerified';
+  type: "DeploymentVerified";
   verificationResults: any;
 }
 
 export interface DeploymentHealthy extends PublishEvent {
-  type: 'DeploymentHealthy';
+  type: "DeploymentHealthy";
   healthReport: any;
 }
 
 export interface CompetitionPublished extends PublishEvent {
-  type: 'CompetitionPublished';
+  type: "CompetitionPublished";
   publishReport: any;
 }

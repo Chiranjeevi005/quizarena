@@ -1,13 +1,13 @@
 /**
  * Decision Pipeline
- * 
+ *
  * Orchestrates the analyzers based on defined dependencies.
  * Executes incrementally, producing the final Intelligence Snapshot.
  */
 
-import { CompositionGraph } from '../../composer/engine/CompositionEngine';
-import { AnalyzerRegistry } from './AnalyzerRegistry';
-import { EventBus } from '../../studio/bus/EventBus';
+import { CompositionGraph } from "../../composer/engine/CompositionEngine";
+import { AnalyzerRegistry } from "./AnalyzerRegistry";
+import { EventBus } from "../../studio/bus/EventBus";
 
 export interface IntelligenceSnapshot {
   fingerprint: string;
@@ -23,7 +23,7 @@ class DecisionPipelineService {
 
   async execute(graph: CompositionGraph, fingerprint: string) {
     console.log(`[Intelligence] Starting Decision Pipeline for ${fingerprint}`);
-    EventBus.publish('AnalysisStarted', { fingerprint });
+    EventBus.publish("AnalysisStarted", { fingerprint });
 
     const analyzers = AnalyzerRegistry.getAnalyzers();
     const metrics: Record<string, any> = {};
@@ -37,7 +37,7 @@ class DecisionPipelineService {
     for (const analyzer of analyzers) {
       try {
         const result = await analyzer.analyze(graph, this.lastSnapshot?.metrics[analyzer.id]);
-        
+
         metrics[analyzer.id] = result.data;
         if (result.recommendations) recommendations.push(...result.recommendations);
         if (result.risks) risks.push(...result.risks);
@@ -56,15 +56,15 @@ class DecisionPipelineService {
       healthScore: overallHealthScore,
       recommendations,
       risks,
-      metrics
+      metrics,
     };
 
     this.lastSnapshot = snapshot;
     console.log(`[Intelligence] Decision Pipeline completed. Health: ${snapshot.healthScore}`);
-    
-    EventBus.publish('AnalysisCompleted', snapshot);
-    EventBus.publish('SnapshotCreated', snapshot);
-    EventBus.publish('HealthChanged', { score: snapshot.healthScore });
+
+    EventBus.publish("AnalysisCompleted", snapshot);
+    EventBus.publish("SnapshotCreated", snapshot);
+    EventBus.publish("HealthChanged", { score: snapshot.healthScore });
   }
 
   getLastSnapshot(): IntelligenceSnapshot | null {

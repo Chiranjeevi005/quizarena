@@ -16,8 +16,10 @@ export class EvaluationStage implements IPipelineStage {
 
     for (const answer of answers!) {
       // Find the corresponding question in the competition
-      const compQuestion = competition.questions.find((cq: any) => cq.questionId === answer.questionId);
-      
+      const compQuestion = competition.questions.find(
+        (cq: any) => cq.questionId === answer.questionId
+      );
+
       if (!compQuestion || !compQuestion.question) {
         // Orphaned answer or question removed
         continue;
@@ -54,7 +56,7 @@ export class EvaluationStage implements IPipelineStage {
 
     context.evaluationSnapshot = {
       evaluatedAnswers,
-      competitionVersionId: competition.versionId || "LATEST"
+      competitionVersionId: competition.versionId || "LATEST",
     };
   }
 

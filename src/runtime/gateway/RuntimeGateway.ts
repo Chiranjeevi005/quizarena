@@ -1,5 +1,5 @@
-import { RuntimeKernel } from '../kernel/RuntimeKernel';
-import { RuntimeContext } from '../context/RuntimeContext';
+import { RuntimeKernel } from "../kernel/RuntimeKernel";
+import { RuntimeContext } from "../context/RuntimeContext";
 
 export class RuntimeGateway {
   constructor(private kernel: RuntimeKernel) {}
@@ -23,11 +23,11 @@ export class RuntimeGateway {
       session: { id: `sess-${Date.now()}` },
       workspaceConfig: {},
       eligibility: {},
-      featureFlags: {}
+      featureFlags: {},
     };
 
     // 3. Boot Runtime
     await this.kernel.boot(context);
-    console.log('[RuntimeGateway] Runtime booted successfully');
+    console.log("[RuntimeGateway] Runtime booted successfully");
   }
 }

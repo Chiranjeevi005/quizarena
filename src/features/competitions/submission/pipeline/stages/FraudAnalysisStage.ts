@@ -25,13 +25,15 @@ export class FraudAnalysisStage implements IPipelineStage {
     // 2. Duration analysis
     const timeTakenMs = Date.now() - new Date(session.startedAt).getTime();
     const timeTakenSeconds = timeTakenMs / 1000;
-    
+
     // Impossible completion time (e.g. 10 seconds for 50 questions)
     const questionCount = session.competition?.questions?.length || 0;
     const minPlausibleTime = questionCount * 2; // Assume at least 2 seconds per question reading
-    
+
     if (timeTakenSeconds > 0 && timeTakenSeconds < minPlausibleTime) {
-      flags.push(`Impossible completion time: ${Math.floor(timeTakenSeconds)}s for ${questionCount} questions`);
+      flags.push(
+        `Impossible completion time: ${Math.floor(timeTakenSeconds)}s for ${questionCount} questions`
+      );
       fraudScore += 60;
     }
 
@@ -44,7 +46,7 @@ export class FraudAnalysisStage implements IPipelineStage {
     context.fraudAssessment = {
       risk,
       flags,
-      score: Math.min(fraudScore, 100)
+      score: Math.min(fraudScore, 100),
     };
   }
 

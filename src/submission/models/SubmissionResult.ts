@@ -1,4 +1,4 @@
-import { EvaluationSnapshot } from './EvaluationSnapshot';
+import { EvaluationSnapshot } from "./EvaluationSnapshot";
 
 export interface SubmissionResult {
   resultId: string;

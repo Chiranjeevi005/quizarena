@@ -1,6 +1,6 @@
 /**
  * Explainability Engine
- * 
+ *
  * Attaches structured reasoning, evidence, and resolution guidance to every decision.
  * Prevents opaque "AI-style" generic warnings.
  */
@@ -32,7 +32,7 @@ class ExplainabilityEngineService {
       affectedSections,
       affectedQuestions,
       impact,
-      expectedImprovement
+      expectedImprovement,
     };
   }
 }

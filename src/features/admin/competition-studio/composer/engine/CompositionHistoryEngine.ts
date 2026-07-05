@@ -1,11 +1,11 @@
 /**
  * Composition History Engine
- * 
+ *
  * Tracks structural modifications as reversible transactions.
  * Enables robust Undo/Redo across the entire Composer workspace.
  */
 
-import { EventBus } from '../../studio/bus/EventBus';
+import { EventBus } from "../../studio/bus/EventBus";
 
 export interface HistoryTransaction {
   id: string;
@@ -21,7 +21,7 @@ class CompositionHistoryEngineService {
   private pointer: number = -1;
   private readonly MAX_HISTORY = 50;
 
-  push(transaction: Omit<HistoryTransaction, 'id' | 'timestamp'>) {
+  push(transaction: Omit<HistoryTransaction, "id" | "timestamp">) {
     // If we're not at the end of the history stack, truncate the future
     if (this.pointer < this.history.length - 1) {
       this.history = this.history.slice(0, this.pointer + 1);
@@ -45,7 +45,7 @@ class CompositionHistoryEngineService {
       const txn = this.history[this.pointer];
       txn.undo();
       this.pointer--;
-      EventBus.publish('CompositionUpdated', { source: 'undo', transactionId: txn.id });
+      EventBus.publish("CompositionUpdated", { source: "undo", transactionId: txn.id });
     }
   }
 
@@ -54,7 +54,7 @@ class CompositionHistoryEngineService {
       this.pointer++;
       const txn = this.history[this.pointer];
       txn.redo();
-      EventBus.publish('CompositionUpdated', { source: 'redo', transactionId: txn.id });
+      EventBus.publish("CompositionUpdated", { source: "redo", transactionId: txn.id });
     }
   }
 

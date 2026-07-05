@@ -1,10 +1,10 @@
 /**
  * Module Registry
- * 
+ *
  * Supports feature registration for the Workspace Module Loader.
  * Future modules (Overview, Composition, Validation, etc.) register themselves here.
  */
-import React from 'react';
+import React from "react";
 
 export interface StudioModule {
   id: string;

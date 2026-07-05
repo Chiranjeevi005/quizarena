@@ -1,8 +1,11 @@
 "use client";
 
-import { useRuntimeState, useRuntimeCommand } from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
+import {
+  useRuntimeState,
+  useRuntimeCommand,
+} from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function OverlayRegion() {
   const status = useRuntimeState((s: any) => s.status);
@@ -10,16 +13,18 @@ export function OverlayRegion() {
 
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
-  // We can listen to a custom event or state for showing the modal, 
+  // We can listen to a custom event or state for showing the modal,
   // but usually a global state manager or context handles overlay toggles.
-  // For MVP, we expose a global window method to trigger it from TopRegion,
-  // or we can just move the submit button logic here. Let's provide a global trigger.
-
-  // Actually, a better React way is to use an event emitter or zustand store. 
-  // Since we want to keep it simple, we'll expose a window event.
-  if (typeof window !== "undefined") {
-    (window as any).triggerSubmitModal = () => setShowSubmitConfirm(true);
-  }
+  // For MVP, we expose a global window method to trigger it from TopRegion.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      Object.defineProperty(window, "triggerSubmitModal", {
+        value: () => setShowSubmitConfirm(true),
+        writable: true,
+        configurable: true,
+      });
+    }
+  }, []);
 
   const isSubmitting = status === "SUBMITTING";
 
@@ -32,7 +37,9 @@ export function OverlayRegion() {
           <div className="flex flex-col items-center justify-center py-6">
             <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">Submitting...</h3>
-            <p className="text-slate-400 text-sm text-center">Please wait while we secure your answers.</p>
+            <p className="text-slate-400 text-sm text-center">
+              Please wait while we secure your answers.
+            </p>
           </div>
         ) : (
           <>

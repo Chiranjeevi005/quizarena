@@ -1,9 +1,8 @@
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
 export class ArtifactDeploymentResolver {
-  
   /**
    * Resolves a verified Competition Version Artifact.
    * Throws an error if the artifact is not found, not verified, or not active.
@@ -13,16 +12,18 @@ export class ArtifactDeploymentResolver {
     const version = await prisma.competitionVersion.findUnique({
       where: { id: versionId },
       include: {
-        manifest: true
-      }
+        manifest: true,
+      },
     });
 
     if (!version) {
       throw new Error(`CompetitionVersion ${versionId} not found.`);
     }
 
-    if (version.artifactStatus !== 'VERIFIED' && version.artifactStatus !== 'READY') {
-      throw new Error(`CompetitionVersion ${versionId} is not a verified artifact. Current status: ${version.artifactStatus}`);
+    if (version.artifactStatus !== "VERIFIED" && version.artifactStatus !== "READY") {
+      throw new Error(
+        `CompetitionVersion ${versionId} is not a verified artifact. Current status: ${version.artifactStatus}`
+      );
     }
 
     if (!version.manifest) {
@@ -40,8 +41,8 @@ export class ArtifactDeploymentResolver {
         sections: version.sectionsSnapshot,
         questions: version.questionsSnapshot,
         rules: version.rulesSnapshot,
-        config: version.configSnapshot
-      }
+        config: version.configSnapshot,
+      },
     };
   }
 }

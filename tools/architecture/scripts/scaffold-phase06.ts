@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-const SRC_DIR = path.join(process.cwd(), 'src');
+const SRC_DIR = path.join(process.cwd(), "src");
 
 function write(p: string, content: string) {
   const fullPath = path.join(SRC_DIR, p);
@@ -243,14 +243,14 @@ export class FreezePipeline {
 }
 `;
 
-write('platform/container/Container.ts', CONTAINER_TS);
-write('platform/registry/CapabilityRegistry.ts', CAPABILITY_REG_TS);
-write('platform/feature-flags/FeatureFlagManager.ts', FEATURE_FLAGS_TS);
-write('platform/health/PlatformHealthMonitor.ts', HEALTH_TS);
+write("platform/container/Container.ts", CONTAINER_TS);
+write("platform/registry/CapabilityRegistry.ts", CAPABILITY_REG_TS);
+write("platform/feature-flags/FeatureFlagManager.ts", FEATURE_FLAGS_TS);
+write("platform/health/PlatformHealthMonitor.ts", HEALTH_TS);
 
-write('admin/competition-studio/models/CompetitionVersion.ts', COMPETITION_VERSION);
-write('admin/competition-studio/models/CompetitionArtifact.ts', COMPETITION_ARTIFACT);
-write('admin/competition-studio/pipeline/FreezePipeline.ts', FREEZE_PIPELINE);
-write('competitions/registry/ArtifactRegistry.ts', ARTIFACT_REGISTRY);
+write("admin/competition-studio/models/CompetitionVersion.ts", COMPETITION_VERSION);
+write("admin/competition-studio/models/CompetitionArtifact.ts", COMPETITION_ARTIFACT);
+write("admin/competition-studio/pipeline/FreezePipeline.ts", FREEZE_PIPELINE);
+write("competitions/registry/ArtifactRegistry.ts", ARTIFACT_REGISTRY);
 
-console.log('Phase 06 scaffolding complete.');
+console.log("Phase 06 scaffolding complete.");

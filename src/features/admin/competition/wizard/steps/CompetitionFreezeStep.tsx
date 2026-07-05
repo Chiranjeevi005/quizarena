@@ -9,9 +9,11 @@ export function CompetitionFreezeStep() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="border-b border-gray-200 pb-5">
         <h2 className="text-2xl font-bold text-navy">Freeze Version</h2>
-        <p className="text-gray-500 mt-2">Freeze this competition version to create an immutable snapshot before publishing.</p>
+        <p className="text-gray-500 mt-2">
+          Freeze this competition version to create an immutable snapshot before publishing.
+        </p>
       </div>
-      
+
       <div className="flex gap-4">
         <p className="text-gray-500 italic">Freeze Engine integration coming soon...</p>
       </div>

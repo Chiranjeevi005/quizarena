@@ -1,6 +1,6 @@
 /**
  * Composition Cache
- * 
+ *
  * In-memory cache for Section Metadata, Question Blocks, Selection State, Analytics, and Snapshots.
  */
 
@@ -16,7 +16,7 @@ class CompositionCacheService {
   }
 
   invalidate(keyPattern: RegExp | string) {
-    if (typeof keyPattern === 'string') {
+    if (typeof keyPattern === "string") {
       this.cache.delete(keyPattern);
     } else {
       for (const key of this.cache.keys()) {

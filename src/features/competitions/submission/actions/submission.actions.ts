@@ -22,7 +22,7 @@ export async function submitCompetitionSession(sessionId: string, competitionId:
     userId: user.id,
     competitionId,
     sessionId,
-    metrics: {}
+    metrics: {},
   };
 
   // 2. Build Pipeline
@@ -38,23 +38,23 @@ export async function submitCompetitionSession(sessionId: string, competitionId:
   // 3. Execute Pipeline
   try {
     const resultContext = await orchestrator.execute(initialContext);
-    
-    // Client only needs to know it was successfully evaluated. 
+
+    // Client only needs to know it was successfully evaluated.
     // Further results can be fetched from a specific results endpoint.
-    return { 
-      success: true, 
+    return {
+      success: true,
       result: {
         score: resultContext.resultSnapshot?.marks,
         percentage: resultContext.resultSnapshot?.percentage,
         accuracy: resultContext.resultSnapshot?.accuracy,
-        timeTakenInSeconds: resultContext.resultSnapshot?.timeTakenInSeconds
-      }
+        timeTakenInSeconds: resultContext.resultSnapshot?.timeTakenInSeconds,
+      },
     };
   } catch (error: any) {
     console.error("[SubmissionAction] Pipeline failed:", error);
-    return { 
-      success: false, 
-      error: error.message || "Failed to process submission. Please try again." 
+    return {
+      success: false,
+      error: error.message || "Failed to process submission. Please try again.",
     };
   }
 }

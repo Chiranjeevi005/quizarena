@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { FullPageLoading } from '@/shared/loading/LoadingStates';
+import { FullPageLoading } from "@/shared/loading/LoadingStates";
 
 export default function SubscriptionLoading() {
   return (

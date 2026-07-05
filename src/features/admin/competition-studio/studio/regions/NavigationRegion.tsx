@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { ModuleRegistry } from '../registry/ModuleRegistry';
-import { useCompetitionStudioContext } from '../context/CompetitionStudioProvider';
+import React, { useEffect, useState } from "react";
+import { ModuleRegistry } from "../registry/ModuleRegistry";
+import { useCompetitionStudioContext } from "../context/CompetitionStudioProvider";
 
 export const NavigationRegion: React.FC = () => {
   const { commandBus, eventBus } = useCompetitionStudioContext();
@@ -10,7 +10,7 @@ export const NavigationRegion: React.FC = () => {
   const modules = ModuleRegistry.getAllModules();
 
   useEffect(() => {
-    const unsubscribe = eventBus.subscribe('NavigationChanged', (event) => {
+    const unsubscribe = eventBus.subscribe("NavigationChanged", (event) => {
       if (event.payload?.moduleId) {
         setActiveId(event.payload.moduleId);
       }
@@ -24,11 +24,13 @@ export const NavigationRegion: React.FC = () => {
         {modules.map((mod) => (
           <button
             key={mod.id}
-            onClick={() => commandBus.dispatch({ type: 'NavigateStudio', payload: { moduleId: mod.id } })}
+            onClick={() =>
+              commandBus.dispatch({ type: "NavigateStudio", payload: { moduleId: mod.id } })
+            }
             className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
               activeId === mod.id
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+                ? "bg-blue-100 text-blue-700"
+                : "text-gray-700 hover:bg-gray-200 hover:text-gray-900"
             }`}
           >
             {/* Placeholder for actual icon rendering */}

@@ -21,6 +21,6 @@ export class PlatformCapabilityRegistry {
   }
 
   public listByDomain(domain: string): CapabilityDefinition[] {
-    return Array.from(this.capabilities.values()).filter(c => c.providerDomain === domain);
+    return Array.from(this.capabilities.values()).filter((c) => c.providerDomain === domain);
   }
 }

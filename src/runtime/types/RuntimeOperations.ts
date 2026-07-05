@@ -10,7 +10,14 @@ export interface RuntimeMetrics {
 
 export interface RuntimeAudit {
   eventId: string;
-  eventType: 'Started' | 'Recovered' | 'Paused' | 'Resumed' | 'Submitted' | 'Expired' | 'Disconnected';
+  eventType:
+    | "Started"
+    | "Recovered"
+    | "Paused"
+    | "Resumed"
+    | "Submitted"
+    | "Expired"
+    | "Disconnected";
   timestamp: Date;
   details: any;
 }

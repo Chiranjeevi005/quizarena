@@ -5,19 +5,15 @@ export class BadgeSnapshotGenerator {
   /**
    * Idempotently issues a badge snapshot.
    */
-  public static async issueBadge(
-    userId: string,
-    badgeType: string,
-    competitionId?: string
-  ) {
+  public static async issueBadge(userId: string, badgeType: string, competitionId?: string) {
     try {
       // 1. Idempotency Check
       const existing = await prisma.badgeSnapshot.findFirst({
         where: {
           userId,
           badgeType,
-          competitionId: competitionId || null
-        }
+          competitionId: competitionId || null,
+        },
       });
 
       if (existing) {
@@ -29,8 +25,8 @@ export class BadgeSnapshotGenerator {
         data: {
           userId,
           badgeType,
-          competitionId
-        }
+          competitionId,
+        },
       });
 
       // 3. Audit
@@ -40,18 +36,18 @@ export class BadgeSnapshotGenerator {
         recipientId: userId,
         referenceId: badge.id,
         pipelineStage: "BADGE_GENERATION",
-        status: "SUCCESS"
+        status: "SUCCESS",
       });
 
       return badge;
     } catch (error: any) {
-       await RewardLedgerService.recordEvent({
+      await RewardLedgerService.recordEvent({
         rewardEvent: "BADGE_ISSUED",
         rewardType: "BADGE",
         recipientId: userId,
         pipelineStage: "BADGE_GENERATION",
         status: "FAILED",
-        failureReason: error.message
+        failureReason: error.message,
       });
       throw error;
     }

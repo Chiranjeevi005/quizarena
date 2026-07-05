@@ -1,13 +1,13 @@
 /**
  * Multi Selection Engine
- * 
+ *
  * Selections become first-class state separated from the UI.
  * Supports Single, Range, Section, and Entire Competition selections.
  */
 
-import { EventBus } from '../../studio/bus/EventBus';
+import { EventBus } from "../../studio/bus/EventBus";
 
-export type SelectionType = 'QUESTION' | 'SECTION' | 'COMPETITION';
+export type SelectionType = "QUESTION" | "SECTION" | "COMPETITION";
 
 class MultiSelectionEngineService {
   private selectedIds: Set<string> = new Set();
@@ -35,7 +35,7 @@ class MultiSelectionEngineService {
 
   selectAllQuestions(questionIds: string[]) {
     this.selectedIds = new Set(questionIds);
-    this.selectionType = 'QUESTION';
+    this.selectionType = "QUESTION";
     this.publish();
   }
 
@@ -54,7 +54,7 @@ class MultiSelectionEngineService {
   }
 
   private publish() {
-    EventBus.publish('SelectionChanged', this.getSelection());
+    EventBus.publish("SelectionChanged", this.getSelection());
   }
 }
 

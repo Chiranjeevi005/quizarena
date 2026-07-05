@@ -16,7 +16,10 @@ export async function LeaderboardPreview({ slug }: LeaderboardPreviewProps) {
           <Medal className="w-5 h-5 text-yellow-500" />
           Leaderboard Preview
         </h2>
-        <Link href={`/dashboard/competitions/${slug}/leaderboard`} className="text-sm text-blue-400 hover:text-blue-300 font-medium">
+        <Link
+          href={`/dashboard/competitions/${slug}/leaderboard`}
+          className="text-sm text-blue-400 hover:text-blue-300 font-medium"
+        >
           View Full
         </Link>
       </div>
@@ -43,7 +46,10 @@ export async function LeaderboardPreview({ slug }: LeaderboardPreviewProps) {
       ) : (
         <div className="space-y-2">
           {topEntries.map((entry: any, i: number) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800/50">
+            <div
+              key={i}
+              className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800/50"
+            >
               <div className="flex items-center gap-3">
                 <span className="text-slate-400 font-bold w-4 text-center">{entry.rank}</span>
                 <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center overflow-hidden">

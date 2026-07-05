@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { CompetitionVersionArtifact } from '../types/artifact.types';
+import { prisma } from "@/lib/prisma";
+import { CompetitionVersionArtifact } from "../types/artifact.types";
 
 export class VersionResolverEngine {
   /**
@@ -10,8 +10,8 @@ export class VersionResolverEngine {
       where: { competitionId, isActive: true },
       include: {
         compatibilities: true,
-        manifest: true
-      }
+        manifest: true,
+      },
     });
 
     if (!version) return null;
@@ -22,13 +22,16 @@ export class VersionResolverEngine {
   /**
    * Resolves a specific version by its semantic string.
    */
-  async resolveBySemanticVersion(competitionId: string, semanticVersion: string): Promise<CompetitionVersionArtifact | null> {
+  async resolveBySemanticVersion(
+    competitionId: string,
+    semanticVersion: string
+  ): Promise<CompetitionVersionArtifact | null> {
     const version = await prisma.competitionVersion.findFirst({
       where: { competitionId, semanticVersion },
       include: {
         compatibilities: true,
-        manifest: true
-      }
+        manifest: true,
+      },
     });
 
     if (!version) return null;

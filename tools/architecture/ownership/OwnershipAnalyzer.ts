@@ -1,9 +1,9 @@
-import { DomainResolver } from './DomainResolver';
-import { LayerResolver } from './LayerResolver';
-import { FeatureResolver } from './FeatureResolver';
-import { ResponsibilityResolver } from './ResponsibilityResolver';
-import { FileRecord, OwnershipMetadata, Domain, Layer } from '../config/architecture.types';
-import * as path from 'path';
+import { DomainResolver } from "./DomainResolver";
+import { LayerResolver } from "./LayerResolver";
+import { FeatureResolver } from "./FeatureResolver";
+import { ResponsibilityResolver } from "./ResponsibilityResolver";
+import { FileRecord, OwnershipMetadata, Domain, Layer } from "../config/architecture.types";
+import * as path from "path";
 
 export class OwnershipAnalyzer {
   static analyze(record: FileRecord): OwnershipMetadata {
@@ -19,7 +19,7 @@ export class OwnershipAnalyzer {
 
     if (domain === Domain.Unknown) confidenceScore -= 0.3;
     if (layer === Layer.Unknown) confidenceScore -= 0.3;
-    if (feature === 'Core' && !relativePath.includes('core')) confidenceScore -= 0.1;
+    if (feature === "Core" && !relativePath.includes("core")) confidenceScore -= 0.1;
 
     // Ensure score is between 0.0 and 1.0
     confidenceScore = Math.max(0, Math.min(1.0, confidenceScore));
@@ -29,7 +29,7 @@ export class OwnershipAnalyzer {
       feature,
       layer,
       responsibility,
-      confidenceScore
+      confidenceScore,
     };
   }
 }

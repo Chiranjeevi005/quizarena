@@ -1,12 +1,12 @@
-import React from 'react';
-import { InspectorRegistry } from '../registry/InspectorRegistry';
+import React from "react";
+import { InspectorRegistry } from "../registry/InspectorRegistry";
 
 export const InspectorRegion: React.FC = () => {
   const panels = InspectorRegistry.getPanels();
 
   return (
     <aside className="w-80 border-l border-gray-200 bg-gray-50 flex flex-col shrink-0 overflow-y-auto">
-      {panels.map(panel => {
+      {panels.map((panel) => {
         const PanelComponent = panel.component;
         return (
           <div key={panel.id} className="border-b border-gray-200">
@@ -20,9 +20,7 @@ export const InspectorRegion: React.FC = () => {
         );
       })}
       {panels.length === 0 && (
-        <div className="p-8 text-center text-sm text-gray-500">
-          No inspector panels registered.
-        </div>
+        <div className="p-8 text-center text-sm text-gray-500">No inspector panels registered.</div>
       )}
     </aside>
   );

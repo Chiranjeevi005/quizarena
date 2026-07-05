@@ -1,11 +1,11 @@
 export enum LeaderboardState {
-  INITIALIZING = 'INITIALIZING',
-  LOADING = 'LOADING',
-  MATERIALIZING = 'MATERIALIZING',
-  PERSISTING = 'PERSISTING',
-  READY = 'READY',
-  ARCHIVED = 'ARCHIVED',
-  FAILED = 'FAILED'
+  INITIALIZING = "INITIALIZING",
+  LOADING = "LOADING",
+  MATERIALIZING = "MATERIALIZING",
+  PERSISTING = "PERSISTING",
+  READY = "READY",
+  ARCHIVED = "ARCHIVED",
+  FAILED = "FAILED",
 }
 
 export class LeaderboardStateMachine {
@@ -29,9 +29,13 @@ export class LeaderboardStateMachine {
       [LeaderboardState.LOADING]: [LeaderboardState.MATERIALIZING, LeaderboardState.FAILED],
       [LeaderboardState.MATERIALIZING]: [LeaderboardState.PERSISTING, LeaderboardState.FAILED],
       [LeaderboardState.PERSISTING]: [LeaderboardState.READY, LeaderboardState.FAILED],
-      [LeaderboardState.READY]: [LeaderboardState.ARCHIVED, LeaderboardState.FAILED, LeaderboardState.LOADING], // Support re-loading for next candidate
+      [LeaderboardState.READY]: [
+        LeaderboardState.ARCHIVED,
+        LeaderboardState.FAILED,
+        LeaderboardState.LOADING,
+      ], // Support re-loading for next candidate
       [LeaderboardState.ARCHIVED]: [],
-      [LeaderboardState.FAILED]: [LeaderboardState.INITIALIZING] // Support retry
+      [LeaderboardState.FAILED]: [LeaderboardState.INITIALIZING], // Support retry
     };
 
     return transitions[from].includes(to);

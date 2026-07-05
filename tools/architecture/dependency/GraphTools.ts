@@ -59,6 +59,6 @@ export class CircularDependencyDetector {
 
 export class OrphanFileDetector {
   static detect(files: string[], reverseDependencyCounts: Record<string, number>): string[] {
-    return files.filter(f => !reverseDependencyCounts[f] || reverseDependencyCounts[f] === 0);
+    return files.filter((f) => !reverseDependencyCounts[f] || reverseDependencyCounts[f] === 0);
   }
 }

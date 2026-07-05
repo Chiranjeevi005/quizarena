@@ -1,15 +1,15 @@
-import React from 'react';
-import { ModuleRegistry } from '../../studio/registry/ModuleRegistry';
-import { useCompetitionStudioContext } from '../../studio/context/CompetitionStudioProvider';
+import React from "react";
+import { ModuleRegistry } from "../../studio/registry/ModuleRegistry";
+import { useCompetitionStudioContext } from "../../studio/context/CompetitionStudioProvider";
 
-import { QuestionFiltersSidebar } from '../filters/QuestionFiltersSidebar';
-import { QuestionGrid } from '../selection/QuestionGrid';
-import { QuestionPreviewSidebar } from '../preview/QuestionPreviewSidebar';
-import { useExplorerStore } from '../stores/useExplorerStore';
+import { QuestionFiltersSidebar } from "../filters/QuestionFiltersSidebar";
+import { QuestionGrid } from "../selection/QuestionGrid";
+import { QuestionPreviewSidebar } from "../preview/QuestionPreviewSidebar";
+import { useExplorerStore } from "../stores/useExplorerStore";
 
 /**
  * Question Explorer Kernel
- * 
+ *
  * The main module for the Question Explorer Engine.
  * Supports multiple operating modes (Browse, Selection, Replace, etc.)
  */
@@ -18,7 +18,7 @@ export const QuestionExplorerKernel: React.FC = () => {
   const { selectionBasket } = useExplorerStore();
 
   React.useEffect(() => {
-    eventBus.publish('ExplorerOpened');
+    eventBus.publish("ExplorerOpened");
   }, [eventBus]);
 
   return (
@@ -44,10 +44,11 @@ export const QuestionExplorerKernel: React.FC = () => {
         <footer className="border-t border-gray-200 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] shrink-0 flex items-center justify-between z-20">
           <div className="flex items-center gap-4">
             <div className="text-sm font-medium text-gray-700">
-              Selection Basket: <span className="text-blue-600 font-bold">{selectionBasket.size}</span> Items
+              Selection Basket:{" "}
+              <span className="text-blue-600 font-bold">{selectionBasket.size}</span> Items
             </div>
             {selectionBasket.size > 0 && (
-              <button 
+              <button
                 onClick={() => useExplorerStore.getState().clearSelection()}
                 className="text-xs text-red-600 hover:text-red-800 font-medium"
               >
@@ -55,8 +56,8 @@ export const QuestionExplorerKernel: React.FC = () => {
               </button>
             )}
           </div>
-          <button 
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm" 
+          <button
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             disabled={selectionBasket.size === 0}
           >
             Review Selection
@@ -72,8 +73,8 @@ export const QuestionExplorerKernel: React.FC = () => {
 
 // Register the module with the Studio Kernel
 ModuleRegistry.registerModule({
-  id: 'question-explorer',
-  label: 'Explorer',
-  icon: 'Q', // Placeholder icon character
+  id: "question-explorer",
+  label: "Explorer",
+  icon: "Q", // Placeholder icon character
   component: QuestionExplorerKernel,
 });

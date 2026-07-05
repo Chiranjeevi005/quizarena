@@ -20,20 +20,20 @@ export default async function RewardsDashboardPage() {
   return (
     <div className="min-h-screen bg-slate-950 p-6 md:p-12 font-sans selection:bg-blue-500/30">
       <div className="max-w-6xl mx-auto space-y-12">
-        
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Rewards & Recognition</h1>
-          <p className="text-slate-400 text-sm">Your digital assets, certificates, and achievements.</p>
+          <p className="text-slate-400 text-sm">
+            Your digital assets, certificates, and achievements.
+          </p>
         </div>
 
         <OverviewRegion data={data} />
-        
-        <CertificatesRegion data={data} />
-        
-        <BadgesRegion data={data} />
-        
-        <RewardHistoryRegion data={data} />
 
+        <CertificatesRegion data={data} />
+
+        <BadgesRegion data={data} />
+
+        <RewardHistoryRegion data={data} />
       </div>
     </div>
   );

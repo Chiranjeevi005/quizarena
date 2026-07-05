@@ -1,4 +1,4 @@
-import { SubmissionResult } from '../../submission/models/SubmissionResult';
+import { SubmissionResult } from "../../submission/models/SubmissionResult";
 
 export interface ResultsContext {
   result: SubmissionResult;

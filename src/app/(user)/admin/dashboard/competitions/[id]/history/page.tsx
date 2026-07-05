@@ -5,7 +5,11 @@ import { CompetitionService } from "@/features/admin/competition/services/compet
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
-export default async function CompetitionHistoryPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CompetitionHistoryPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const user = await requireAdmin();
   if (!user || !user.id) return null;

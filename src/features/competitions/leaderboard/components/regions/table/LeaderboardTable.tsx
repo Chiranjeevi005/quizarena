@@ -25,8 +25,8 @@ export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
           </thead>
           <tbody className="divide-y divide-slate-800/50">
             {data.paginatedRankings.map((user) => (
-              <tr 
-                key={user.userId} 
+              <tr
+                key={user.userId}
                 className={`
                   hover:bg-slate-800/30 transition-colors
                   ${data.currentUserPosition?.userId === user.userId ? "bg-blue-900/20" : ""}
@@ -36,7 +36,9 @@ export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-white text-lg">#{user.rank}</span>
                     {user.rankChange === "UP" && <TrendingUp className="w-4 h-4 text-green-500" />}
-                    {user.rankChange === "DOWN" && <TrendingDown className="w-4 h-4 text-red-500" />}
+                    {user.rankChange === "DOWN" && (
+                      <TrendingDown className="w-4 h-4 text-red-500" />
+                    )}
                     {user.rankChange === "SAME" && <Minus className="w-4 h-4 text-slate-500" />}
                   </div>
                 </td>
@@ -46,7 +48,9 @@ export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
                       <img src={user.image} alt="Avatar" className="w-8 h-8 rounded-full" />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
-                        <span className="text-xs font-bold text-slate-400">{user.name.charAt(0)}</span>
+                        <span className="text-xs font-bold text-slate-400">
+                          {user.name.charAt(0)}
+                        </span>
                       </div>
                     )}
                     <span className="font-medium text-white">{user.name}</span>
@@ -54,16 +58,20 @@ export function LeaderboardTable({ data }: { data: LeaderboardReadModel }) {
                 </td>
                 <td className="p-4 font-bold text-blue-400">{user.score}</td>
                 <td className="p-4 text-slate-300">{user.accuracy.toFixed(1)}%</td>
-                <td className="p-4 text-slate-400">{Math.floor(user.completionTime / 60)}m {user.completionTime % 60}s</td>
+                <td className="p-4 text-slate-400">
+                  {Math.floor(user.completionTime / 60)}m {user.completionTime % 60}s
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      
+
       {/* Basic Cursor Pagination Footer */}
       <div className="p-4 border-t border-slate-800 flex items-center justify-between text-sm">
-        <span className="text-slate-400">Showing top {data.paginatedRankings.length} of {data.statistics.participantCount}</span>
+        <span className="text-slate-400">
+          Showing top {data.paginatedRankings.length} of {data.statistics.participantCount}
+        </span>
         {data.hasNextPage && (
           <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
             Load More

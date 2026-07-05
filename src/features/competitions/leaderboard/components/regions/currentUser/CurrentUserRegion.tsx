@@ -5,12 +5,16 @@ export function CurrentUserRegion({ data }: { data: LeaderboardReadModel }) {
   if (!data.currentUserPosition) return null;
 
   const pos = data.currentUserPosition;
-  
+
   return (
     <div className="bg-linear-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-4">
         {pos.image ? (
-          <img src={pos.image} alt="Avatar" className="w-16 h-16 rounded-full border-2 border-blue-500" />
+          <img
+            src={pos.image}
+            alt="Avatar"
+            className="w-16 h-16 rounded-full border-2 border-blue-500"
+          />
         ) : (
           <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center border-2 border-blue-500">
             <span className="text-xl font-bold text-slate-400">{pos.name.charAt(0)}</span>
@@ -42,7 +46,9 @@ export function CurrentUserRegion({ data }: { data: LeaderboardReadModel }) {
         </div>
         <div>
           <p className="text-sm text-slate-400">Time</p>
-          <p className="text-2xl font-bold text-white">{Math.floor(pos.completionTime / 60)}m {pos.completionTime % 60}s</p>
+          <p className="text-2xl font-bold text-white">
+            {Math.floor(pos.completionTime / 60)}m {pos.completionTime % 60}s
+          </p>
         </div>
       </div>
     </div>

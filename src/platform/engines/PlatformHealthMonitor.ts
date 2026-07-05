@@ -1,7 +1,7 @@
-import { DomainBootContract, DomainHealthReport } from '../contracts/DomainBootContract';
+import { DomainBootContract, DomainHealthReport } from "../contracts/DomainBootContract";
 
 export interface PlatformHealthReport {
-  overallStatus: 'HEALTHY' | 'DEGRADED' | 'FAILED';
+  overallStatus: "HEALTHY" | "DEGRADED" | "FAILED";
   domains: Record<string, DomainHealthReport>;
   generatedAt: Date;
 }
@@ -15,9 +15,9 @@ export class PlatformHealthMonitor {
 
   public async generateReport(): Promise<PlatformHealthReport> {
     const report: PlatformHealthReport = {
-      overallStatus: 'HEALTHY',
+      overallStatus: "HEALTHY",
       domains: {},
-      generatedAt: new Date()
+      generatedAt: new Date(),
     };
 
     let hasDegraded = false;
@@ -27,27 +27,27 @@ export class PlatformHealthMonitor {
       try {
         const health = await domain.healthCheck();
         report.domains[id] = health;
-        if (health.status === 'DEGRADED') hasDegraded = true;
-        if (health.status === 'FAILED') hasFailed = true;
+        if (health.status === "DEGRADED") hasDegraded = true;
+        if (health.status === "FAILED") hasFailed = true;
       } catch (err) {
         hasFailed = true;
         report.domains[id] = {
-          status: 'FAILED',
-          version: 'unknown',
+          status: "FAILED",
+          version: "unknown",
           uptimeSeconds: 0,
           lastEventAt: null,
           pendingJobs: 0,
           activeWorkflows: 0,
           failureCount: 1,
-          averageLatencyMs: 0
+          averageLatencyMs: 0,
         };
       }
     }
 
     if (hasFailed) {
-      report.overallStatus = 'FAILED';
+      report.overallStatus = "FAILED";
     } else if (hasDegraded) {
-      report.overallStatus = 'DEGRADED';
+      report.overallStatus = "DEGRADED";
     }
 
     return report;

@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { VersionBuildAudit } from '@/generated/prisma';
+import { prisma } from "@/lib/prisma";
+import { VersionBuildAudit } from "@/generated/prisma";
 
 export class VersionAuditEngine {
   /**
@@ -8,7 +8,7 @@ export class VersionAuditEngine {
   async getAuditsForVersion(versionId: string): Promise<VersionBuildAudit[]> {
     return prisma.versionBuildAudit.findMany({
       where: { competitionVersionId: versionId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -20,7 +20,7 @@ export class VersionAuditEngine {
       timestamp: new Date().toISOString(),
       stage,
       message,
-      durationMs
+      durationMs,
     };
   }
 }

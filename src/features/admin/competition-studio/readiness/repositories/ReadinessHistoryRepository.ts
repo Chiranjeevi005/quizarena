@@ -1,11 +1,11 @@
 /**
  * Readiness History Repository
- * 
+ *
  * Persists the immutable Readiness Snapshots over time.
  * Purely projection queries.
  */
 
-import { ReadinessSnapshot } from '../types/readiness.types';
+import { ReadinessSnapshot } from "../types/readiness.types";
 
 class ReadinessHistoryRepositoryService {
   private history: ReadinessSnapshot[] = [];

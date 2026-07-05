@@ -1,10 +1,11 @@
-import { CompetitionArtifact } from '../artifacts/CompetitionArtifact';
+import { CompetitionArtifact } from "../artifacts/CompetitionArtifact";
 
 export class ArtifactRepository {
   private artifacts: Map<string, CompetitionArtifact> = new Map();
 
   public save(artifact: CompetitionArtifact): void {
-    if (this.artifacts.has(artifact.artifactId)) throw new Error('Artifacts are immutable and cannot be overwritten.');
+    if (this.artifacts.has(artifact.artifactId))
+      throw new Error("Artifacts are immutable and cannot be overwritten.");
     this.artifacts.set(artifact.artifactId, artifact);
   }
 
@@ -25,9 +26,9 @@ export class ArtifactResolver {
 export class ArtifactRegistry {
   private static instance: ArtifactRegistry;
   private resolver!: ArtifactResolver;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): ArtifactRegistry {
     if (!ArtifactRegistry.instance) {
       ArtifactRegistry.instance = new ArtifactRegistry();
@@ -41,7 +42,7 @@ export class ArtifactRegistry {
 
   public fetch(versionId: string): CompetitionArtifact {
     const artifact = this.resolver.resolveCompatible(versionId);
-    if (!artifact) throw new Error('No compatible artifact found.');
+    if (!artifact) throw new Error("No compatible artifact found.");
     return artifact;
   }
 }

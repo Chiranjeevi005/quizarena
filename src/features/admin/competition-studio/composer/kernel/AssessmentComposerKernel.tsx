@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect } from 'react';
-import { ModuleRegistry } from '../../studio/registry/ModuleRegistry';
-import { useCompetitionStudioContext } from '../../studio/context/CompetitionStudioProvider';
+import React, { useEffect } from "react";
+import { ModuleRegistry } from "../../studio/registry/ModuleRegistry";
+import { useCompetitionStudioContext } from "../../studio/context/CompetitionStudioProvider";
 
 /**
  * Assessment Composer Kernel
- * 
+ *
  * The main module for the Assessment Composer Engine.
  * Provides the visual workspace for organizing questions and sections.
  */
@@ -73,8 +73,8 @@ export const AssessmentComposerKernel: React.FC = () => {
 
 // Register the module with the Studio Kernel
 ModuleRegistry.registerModule({
-  id: 'assessment-composer',
-  label: 'Composer',
-  icon: 'C', // Placeholder icon character
+  id: "assessment-composer",
+  label: "Composer",
+  icon: "C", // Placeholder icon character
   component: AssessmentComposerKernel,
 });

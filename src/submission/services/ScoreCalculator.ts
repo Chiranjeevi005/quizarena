@@ -1,4 +1,4 @@
-import { SubmissionContext } from '../context/SubmissionContext';
+import { SubmissionContext } from "../context/SubmissionContext";
 
 export class ScoreCalculator {
   /**
@@ -8,7 +8,7 @@ export class ScoreCalculator {
     console.log(`[ScoreCalculator] Calculating score for attempt ${context.package.attemptId}`);
     return {
       marks: 0,
-      negativeMarks: 0
+      negativeMarks: 0,
     };
   }
 }

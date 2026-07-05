@@ -1,4 +1,4 @@
-import { ResultAggregate } from '../models/ResultAggregate';
+import { ResultAggregate } from "../models/ResultAggregate";
 
 export interface ResultsRepository {
   /**

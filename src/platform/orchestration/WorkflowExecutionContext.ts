@@ -1,4 +1,4 @@
-import { PlatformManifest } from '../models/PlatformManifest';
+import { PlatformManifest } from "../models/PlatformManifest";
 
 export interface WorkflowExecutionContext {
   readonly workflowId: string;

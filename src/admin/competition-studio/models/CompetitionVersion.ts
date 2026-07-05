@@ -6,5 +6,5 @@ export interface CompetitionVersion {
   versionNumber: number;
   createdAt: string;
   parentVersionId?: string; // Lineage
-  status: 'DRAFT' | 'FROZEN' | 'SUPERSEDED';
+  status: "DRAFT" | "FROZEN" | "SUPERSEDED";
 }

@@ -1,5 +1,5 @@
-import { VersionManifestDTO } from '../types/artifact.types';
-import { HashEngine } from './HashEngine';
+import { VersionManifestDTO } from "../types/artifact.types";
+import { HashEngine } from "./HashEngine";
 
 export class ManifestBuilder {
   static build(
@@ -36,7 +36,7 @@ export class ManifestBuilder {
       analyticsVersion,
       builderVersion,
       studioVersion,
-      healthScore
+      healthScore,
     };
 
     const manifestHash = HashEngine.generateManifestHash(baseManifest);
@@ -44,7 +44,7 @@ export class ManifestBuilder {
     return {
       ...baseManifest,
       manifestHash,
-      artifactHash: '' // This will be set later by ArtifactBuilder when the artifact hash is finalized
+      artifactHash: "", // This will be set later by ArtifactBuilder when the artifact hash is finalized
     } as VersionManifestDTO;
   }
 }

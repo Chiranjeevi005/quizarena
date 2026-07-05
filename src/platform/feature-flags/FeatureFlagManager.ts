@@ -1,4 +1,4 @@
-export type FlagLevel = 'Platform' | 'Domain' | 'Feature' | 'Capability';
+export type FlagLevel = "Platform" | "Domain" | "Feature" | "Capability";
 
 export interface FeatureFlag {
   id: string;
@@ -27,10 +27,10 @@ export class FeatureFlagManager {
   public isEnabled(id: string): boolean {
     const flag = this.flags.get(id);
     if (!flag) return false;
-    
+
     if (flag.parent) {
-       const parentEnabled = this.isEnabled(flag.parent);
-       if (!parentEnabled) return false;
+      const parentEnabled = this.isEnabled(flag.parent);
+      if (!parentEnabled) return false;
     }
     return flag.enabled;
   }

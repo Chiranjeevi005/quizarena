@@ -1,4 +1,4 @@
-import { FileRecord } from '../config/architecture.types';
+import { FileRecord } from "../config/architecture.types";
 
 export class RepositoryContext {
   private files: Map<string, FileRecord> = new Map();
@@ -16,6 +16,6 @@ export class RepositoryContext {
   }
 
   getFilesByDomain(domain: string): FileRecord[] {
-    return this.getAllFiles().filter(f => f.ownership?.domain === domain);
+    return this.getAllFiles().filter((f) => f.ownership?.domain === domain);
   }
 }

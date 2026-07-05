@@ -1,16 +1,15 @@
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
 export class DeploymentQueueService {
-  
   /**
    * Enqueues a deployment if another deployment is currently running for the same competition.
    * Otherwise, returns 0 for immediate execution.
    */
   public async enqueue(competitionVersionId: string): Promise<number> {
     const version = await prisma.competitionVersion.findUnique({
-      where: { id: competitionVersionId }
+      where: { id: competitionVersionId },
     });
 
     if (!version) {
@@ -20,12 +19,12 @@ export class DeploymentQueueService {
     const activeDeployments = await prisma.publishDeployment.count({
       where: {
         version: {
-          competitionId: version.competitionId
+          competitionId: version.competitionId,
         },
         status: {
-          in: ['PLANNED', 'VALIDATING', 'EXECUTING', 'VERIFYING', 'ACTIVATING']
-        }
-      }
+          in: ["PLANNED", "VALIDATING", "EXECUTING", "VERIFYING", "ACTIVATING"],
+        },
+      },
     });
 
     return activeDeployments > 0 ? activeDeployments + 1 : 0;
@@ -38,21 +37,21 @@ export class DeploymentQueueService {
     const nextDeployment = await prisma.publishDeployment.findFirst({
       where: {
         version: {
-          competitionId
+          competitionId,
         },
-        status: 'PLANNED',
-        queuePosition: { gt: 0 }
+        status: "PLANNED",
+        queuePosition: { gt: 0 },
       },
       orderBy: {
-        queuedAt: 'asc'
-      }
+        queuedAt: "asc",
+      },
     });
 
     if (!nextDeployment) return null;
 
     await prisma.publishDeployment.update({
       where: { id: nextDeployment.id },
-      data: { queuePosition: 0 }
+      data: { queuePosition: 0 },
     });
 
     return nextDeployment.id;

@@ -47,14 +47,14 @@ export class AttemptFinalizationStage implements IPipelineStage {
         resultSnapshot: result as any,
         fraudAssessment: fraud as any,
         pipelineMetrics: context.metrics as any,
-      }
+      },
     });
 
     // Mark the session as SUBMITTED
     // The previous state was SUBMITTING (set in ValidationStage)
     await tx.competitionSession.update({
       where: { id: context.sessionId },
-      data: { status: "SUBMITTED" }
+      data: { status: "SUBMITTED" },
     });
   }
 

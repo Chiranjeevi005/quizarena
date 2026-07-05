@@ -1,4 +1,4 @@
-import { RankingCandidateSnapshot } from '../types/RankingCandidateSnapshot';
+import { RankingCandidateSnapshot } from "../types/RankingCandidateSnapshot";
 
 export interface RankingSnapshot {
   rank: number;
@@ -8,7 +8,7 @@ export interface RankingSnapshot {
 export interface RankTimeline {
   previousRank: number | null;
   currentRank: number;
-  movement: 'UP' | 'DOWN' | 'SAME' | 'NEW';
+  movement: "UP" | "DOWN" | "SAME" | "NEW";
   highestRank: number;
   lowestRank: number;
 }
@@ -53,5 +53,5 @@ export interface LeaderboardAudit {
   retryCount: number;
   algorithmVersion: string;
   generatedBy: string;
-  trigger: 'Immediate' | 'Interval' | 'CompetitionCompleted' | 'Manual';
+  trigger: "Immediate" | "Interval" | "CompetitionCompleted" | "Manual";
 }

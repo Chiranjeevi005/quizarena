@@ -111,45 +111,45 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex-1 space-y-4">
             <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                  <CircleDot className="w-3.5 h-3.5 text-white/40" />
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">
-                    Practice Arena Open
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <CircleDot className="w-3.5 h-3.5 text-white/40" />
+                <span className="text-xs font-bold text-white/50 uppercase tracking-widest">
+                  Practice Arena Open
+                </span>
+              </div>
             </div>
-              <>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white/80 leading-tight">
-                  No Scheduled Challenge
-                </h1>
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
-                    <Swords className="w-3.5 h-3.5 text-blue-400" />
-                    20 Questions
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
-                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
-                    20 Minutes
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-300">
-                    <Trophy className="w-3.5 h-3.5" />
-                    Instant Ranking
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
-                    <Users className="w-3.5 h-3.5 text-pink-400" />
-                    1,248 Participants
-                  </span>
-                </div>
-              </>
+            <>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white/80 leading-tight">
+                No Scheduled Challenge
+              </h1>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                  <Swords className="w-3.5 h-3.5 text-blue-400" />
+                  20 Questions
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                  <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                  20 Minutes
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-300">
+                  <Trophy className="w-3.5 h-3.5" />
+                  Instant Ranking
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-white/70">
+                  <Users className="w-3.5 h-3.5 text-pink-400" />
+                  1,248 Participants
+                </span>
+              </div>
+            </>
           </div>
           <div className="shrink-0 mt-4 lg:mt-0">
-              <Link
-                href="/arena"
-                className="w-full lg:w-auto flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/15 text-white/80 px-8 py-3.5 rounded-xl font-bold text-base border border-white/10 transition-all hover:scale-105 active:scale-95"
-              >
-                <Target className="w-5 h-5" />
-                Practice Arena
-              </Link>
+            <Link
+              href="/arena"
+              className="w-full lg:w-auto flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/15 text-white/80 px-8 py-3.5 rounded-xl font-bold text-base border border-white/10 transition-all hover:scale-105 active:scale-95"
+            >
+              <Target className="w-5 h-5" />
+              Practice Arena
+            </Link>
           </div>
         </div>
       </section>

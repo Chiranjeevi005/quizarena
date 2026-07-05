@@ -4,7 +4,7 @@ export class AutoSavePipeline {
    */
   public async queueSync(questionId: string, payload: any): Promise<void> {
     console.log(`[AutoSavePipeline] Queueing sync for question ${questionId}`);
-    
+
     // 1. Validation
     // 2. Queueing
     // 3. Compression (if necessary)

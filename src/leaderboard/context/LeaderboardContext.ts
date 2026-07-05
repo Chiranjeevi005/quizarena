@@ -1,5 +1,5 @@
-import { RankingCandidateSnapshot } from '../types/RankingCandidateSnapshot';
-import { RankingAggregate } from '../models/RankingAggregate';
+import { RankingCandidateSnapshot } from "../types/RankingCandidateSnapshot";
+import { RankingAggregate } from "../models/RankingAggregate";
 
 export interface LeaderboardContextConfig {
   competitionId: string;
@@ -23,7 +23,7 @@ export class LeaderboardContext {
 
   public getCandidate(): RankingCandidateSnapshot {
     if (!this.candidate) {
-      throw new Error('Candidate not set in context');
+      throw new Error("Candidate not set in context");
     }
     return this.candidate;
   }

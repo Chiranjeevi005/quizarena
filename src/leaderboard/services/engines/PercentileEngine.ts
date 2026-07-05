@@ -1,4 +1,4 @@
-import { PercentileSnapshot, RankingSnapshot } from '../../models/RankingSnapshots';
+import { PercentileSnapshot, RankingSnapshot } from "../../models/RankingSnapshots";
 
 export class PercentileEngine {
   public calculate(snapshots: RankingSnapshot[]): Map<string, PercentileSnapshot> {
@@ -9,11 +9,11 @@ export class PercentileEngine {
 
     snapshots.forEach((snapshot) => {
       const { rank, candidate } = snapshot;
-      
+
       // Calculate percentile: how many people are below this rank
       const belowCount = total - rank;
       const percentile = (belowCount / total) * 100;
-      
+
       // Calculate top percentage: which top % bucket they fall into
       const topPercentage = (rank / total) * 100;
 

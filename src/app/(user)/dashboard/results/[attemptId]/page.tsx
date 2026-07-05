@@ -10,7 +10,11 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
-export default async function CompetitionResultsPage({ params }: { params: { attemptId: string } }) {
+export default async function CompetitionResultsPage({
+  params,
+}: {
+  params: { attemptId: string };
+}) {
   const result = await getResultReadModel(params.attemptId);
 
   if (!result.success || !result.data) {
@@ -34,7 +38,7 @@ export default async function CompetitionResultsPage({ params }: { params: { att
           {/* Main Content (Review & Sections) */}
           <div className="lg:col-span-2 space-y-12">
             <SectionAnalysisRegion data={data} />
-            
+
             <Suspense fallback={<div className="animate-pulse h-64 bg-slate-900 rounded-xl" />}>
               <QuestionReviewRegion data={data} />
             </Suspense>
@@ -45,7 +49,7 @@ export default async function CompetitionResultsPage({ params }: { params: { att
             <Suspense fallback={<div className="animate-pulse h-64 bg-slate-900 rounded-xl" />}>
               <InsightsRegion data={data} />
             </Suspense>
-            
+
             <Suspense fallback={<div className="animate-pulse h-64 bg-slate-900 rounded-xl" />}>
               <RecommendationsRegion data={data} />
             </Suspense>

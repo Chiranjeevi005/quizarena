@@ -1,9 +1,8 @@
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
 export class RecoveryCenter {
-  
   /**
    * Simulates retrying a failed deployment stage.
    */
@@ -11,10 +10,10 @@ export class RecoveryCenter {
     // In a real implementation, this would queue a job for the Deployment Worker
     await prisma.platformMonitoringAudit.create({
       data: {
-        action: 'RETRY_DEPLOYMENT_STAGE',
+        action: "RETRY_DEPLOYMENT_STAGE",
         targetId: deploymentId,
-        metadata: { stageId }
-      }
+        metadata: { stageId },
+      },
     });
     return true;
   }
@@ -26,9 +25,9 @@ export class RecoveryCenter {
     // Queues job for Certificate Worker
     await prisma.platformMonitoringAudit.create({
       data: {
-        action: 'RETRY_CERTIFICATES',
-        targetId: competitionId
-      }
+        action: "RETRY_CERTIFICATES",
+        targetId: competitionId,
+      },
     });
     return true;
   }
@@ -40,9 +39,9 @@ export class RecoveryCenter {
     // Queues job for Rewards Worker
     await prisma.platformMonitoringAudit.create({
       data: {
-        action: 'RETRY_REWARDS',
-        targetId: competitionId
-      }
+        action: "RETRY_REWARDS",
+        targetId: competitionId,
+      },
     });
     return true;
   }
@@ -54,9 +53,9 @@ export class RecoveryCenter {
     // Queues job for Leaderboard Worker
     await prisma.platformMonitoringAudit.create({
       data: {
-        action: 'REBUILD_LEADERBOARD',
-        targetId: competitionId
-      }
+        action: "REBUILD_LEADERBOARD",
+        targetId: competitionId,
+      },
     });
     return true;
   }
@@ -67,9 +66,9 @@ export class RecoveryCenter {
   public async forceSnapshotRefresh(competitionVersionId: string): Promise<boolean> {
     await prisma.platformMonitoringAudit.create({
       data: {
-        action: 'FORCE_SNAPSHOT_REFRESH',
-        targetId: competitionVersionId
-      }
+        action: "FORCE_SNAPSHOT_REFRESH",
+        targetId: competitionVersionId,
+      },
     });
     return true;
   }

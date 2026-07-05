@@ -1,4 +1,4 @@
-import { logger } from './logger';
+import { logger } from "./logger";
 
 export class CompositionRoot {
   private static instance: CompositionRoot;
@@ -13,8 +13,8 @@ export class CompositionRoot {
   }
 
   public initialize() {
-    logger.info('Initializing Platform Kernel and Composition Root...');
+    logger.info("Initializing Platform Kernel and Composition Root...");
     // Register global event/command handlers here
-    logger.info('Platform Kernel initialized successfully.');
+    logger.info("Platform Kernel initialized successfully.");
   }
 }

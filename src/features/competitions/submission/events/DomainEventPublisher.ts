@@ -9,8 +9,10 @@ export class DomainEventPublisher {
     // Fire-and-forget: we don't await the workers to block the user request.
     // In production, this would publish to a message queue (e.g., Redis, Kafka).
     // For now, we simulate an async job queue.
-    
-    console.log(`[DomainEventPublisher] CompetitionSubmitted emitted for session ${context.sessionId}`);
+
+    console.log(
+      `[DomainEventPublisher] CompetitionSubmitted emitted for session ${context.sessionId}`
+    );
     console.log(`[DomainEventPublisher] AttemptFinalized emitted for session ${context.sessionId}`);
 
     // Queue ranking update asynchronously

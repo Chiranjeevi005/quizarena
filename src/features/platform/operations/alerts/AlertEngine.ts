@@ -1,21 +1,19 @@
-import { PrismaClient, AlertSeverity } from '@/generated/prisma';
+import { PrismaClient, AlertSeverity } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
 export class AlertEngine {
-  
   /**
    * Raises an alert with a 60-second deduplication window.
    * Increments occurrence count if already exists and unacknowledged.
    * Implements exponential back-off conceptually by suppressing spam.
    */
   public async raiseAlert(
-    type: string, 
-    message: string, 
-    severity: AlertSeverity, 
+    type: string,
+    message: string,
+    severity: AlertSeverity,
     competitionId?: string
   ): Promise<void> {
-    
     // Config: 60s deduplication window
     const deduplicationWindow = new Date();
     deduplicationWindow.setSeconds(deduplicationWindow.getSeconds() - 60);
@@ -25,8 +23,8 @@ export class AlertEngine {
         type,
         competitionId,
         isResolved: false,
-        lastSeenAt: { gt: deduplicationWindow }
-      }
+        lastSeenAt: { gt: deduplicationWindow },
+      },
     });
 
     if (existingAlert) {
@@ -37,8 +35,8 @@ export class AlertEngine {
         data: {
           occurrenceCount: { increment: 1 },
           lastSeenAt: new Date(),
-          message // Update with latest message string if needed
-        }
+          message, // Update with latest message string if needed
+        },
       });
       return;
     }
@@ -53,7 +51,7 @@ export class AlertEngine {
         occurrenceCount: 1,
         firstSeenAt: new Date(),
         lastSeenAt: new Date(),
-      }
+      },
     });
   }
 
@@ -66,8 +64,8 @@ export class AlertEngine {
       data: {
         isAcknowledged: true,
         acknowledgedById: userId,
-        isSuppressed: true // Stop firing
-      }
+        isSuppressed: true, // Stop firing
+      },
     });
   }
 
@@ -78,8 +76,8 @@ export class AlertEngine {
     await prisma.platformAlert.update({
       where: { id: alertId },
       data: {
-        isResolved: true
-      }
+        isResolved: true,
+      },
     });
   }
 }

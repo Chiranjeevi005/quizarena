@@ -1,10 +1,10 @@
 /**
  * Selection Pipeline
- * 
+ *
  * Pipeline: Select -> Selection Basket -> Validation -> Duplicate Detection -> Conflict Detection -> Preview Changes -> Commit Selection
  */
 
-import { EventBus } from '../../studio/bus/EventBus';
+import { EventBus } from "../../studio/bus/EventBus";
 
 export interface SelectionState {
   basket: string[];
@@ -15,12 +15,12 @@ class SelectionPipelineService {
 
   select(questionId: string) {
     this.basket.add(questionId);
-    EventBus.publish('QuestionSelected', { questionId, total: this.basket.size });
+    EventBus.publish("QuestionSelected", { questionId, total: this.basket.size });
   }
 
   deselect(questionId: string) {
     this.basket.delete(questionId);
-    EventBus.publish('QuestionDeselected', { questionId, total: this.basket.size });
+    EventBus.publish("QuestionDeselected", { questionId, total: this.basket.size });
   }
 
   getBasket(): string[] {
@@ -43,12 +43,12 @@ class SelectionPipelineService {
 
     const conflicts = await this.detectConflicts();
     if (conflicts.hasConflict) {
-      EventBus.publish('DuplicateDetected', conflicts.warnings);
+      EventBus.publish("DuplicateDetected", conflicts.warnings);
       throw new Error("Conflicts detected");
     }
 
     // Commit
-    EventBus.publish('BasketCommitted', { questions: this.getBasket() });
+    EventBus.publish("BasketCommitted", { questions: this.getBasket() });
     this.basket.clear();
   }
 }

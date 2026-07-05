@@ -11,13 +11,17 @@ export function TopRankingsRegion({ data }: { data: LeaderboardReadModel }) {
       </h2>
       <div className="grid md:grid-cols-3 gap-6">
         {data.topRankings.map((user) => (
-          <div 
-            key={user.userId} 
+          <div
+            key={user.userId}
             className={`
               bg-slate-900 border rounded-xl p-6 flex flex-col items-center text-center relative overflow-hidden
-              ${user.rank === 1 ? "border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]" : 
-                user.rank === 2 ? "border-slate-300/50" : 
-                "border-amber-700/50"}
+              ${
+                user.rank === 1
+                  ? "border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                  : user.rank === 2
+                    ? "border-slate-300/50"
+                    : "border-amber-700/50"
+              }
             `}
           >
             {user.rank === 1 && <div className="absolute top-0 left-0 w-full h-1 bg-yellow-500" />}
@@ -37,10 +41,17 @@ export function TopRankingsRegion({ data }: { data: LeaderboardReadModel }) {
             )}
             <h3 className="text-lg font-bold text-white mb-1">{user.name}</h3>
             <p className="text-sm font-semibold text-blue-400 mb-4">{user.score} pts</p>
-            
+
             <div className="flex justify-between w-full text-sm">
-              <div className="text-slate-400">Acc: <span className="text-white font-medium">{user.accuracy.toFixed(1)}%</span></div>
-              <div className="text-slate-400">Time: <span className="text-white font-medium">{Math.floor(user.completionTime / 60)}m</span></div>
+              <div className="text-slate-400">
+                Acc: <span className="text-white font-medium">{user.accuracy.toFixed(1)}%</span>
+              </div>
+              <div className="text-slate-400">
+                Time:{" "}
+                <span className="text-white font-medium">
+                  {Math.floor(user.completionTime / 60)}m
+                </span>
+              </div>
             </div>
           </div>
         ))}

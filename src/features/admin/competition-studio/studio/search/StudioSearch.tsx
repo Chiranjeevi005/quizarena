@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Studio Search
- * 
+ *
  * Future global search infrastructure (Questions, Sections, Settings).
  * Currently a placeholder UI.
  */

@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect } from 'react';
-import { ModuleRegistry } from '../../studio/registry/ModuleRegistry';
-import { useCompetitionStudioContext } from '../../studio/context/CompetitionStudioProvider';
+import React, { useEffect } from "react";
+import { ModuleRegistry } from "../../studio/registry/ModuleRegistry";
+import { useCompetitionStudioContext } from "../../studio/context/CompetitionStudioProvider";
 
 /**
  * Assessment Intelligence Kernel
- * 
+ *
  * Orchestrates the Intelligence Pipeline when compositions update.
  * Renders the Intelligence Inspector Dashboards (Health, Coverage, Risk).
  */
@@ -14,9 +14,9 @@ export const AssessmentIntelligenceKernel: React.FC = () => {
 
   useEffect(() => {
     // Listen to Composition updates and feed them to the Intelligence Queue
-    const unsubscribe = eventBus.subscribe('CompositionUpdated', (payload) => {
+    const unsubscribe = eventBus.subscribe("CompositionUpdated", (payload) => {
       // In full implementation, this forwards to IntelligencePipelineQueue
-      console.log('Intelligence Kernel detected composition update:', payload);
+      console.log("Intelligence Kernel detected composition update:", payload);
     });
 
     return unsubscribe;
@@ -67,8 +67,8 @@ export const AssessmentIntelligenceKernel: React.FC = () => {
 
 // Register the module with the Studio Kernel
 ModuleRegistry.registerModule({
-  id: 'assessment-intelligence',
-  label: 'Intelligence',
-  icon: 'I', // Placeholder icon character
+  id: "assessment-intelligence",
+  label: "Intelligence",
+  icon: "I", // Placeholder icon character
   component: AssessmentIntelligenceKernel,
 });

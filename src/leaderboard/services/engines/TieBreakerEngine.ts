@@ -1,4 +1,4 @@
-import { RankingCandidateSnapshot } from '../../types/RankingCandidateSnapshot';
+import { RankingCandidateSnapshot } from "../../types/RankingCandidateSnapshot";
 
 export class TieBreakerEngine {
   /**

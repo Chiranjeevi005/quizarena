@@ -1,6 +1,6 @@
 /**
  * Shared Data Transfer Objects (DTOs)
- * 
+ *
  * Used across the Studio and Runtime domains to ensure consistency
  * without tight coupling between features.
  */

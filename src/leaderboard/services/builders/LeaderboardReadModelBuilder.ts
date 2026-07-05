@@ -1,44 +1,49 @@
-import { RankingAggregate } from '../../models/RankingAggregate';
-import { LeaderboardSummary, LeaderboardEntry, LeaderboardStatistics, LeaderboardCurrentUser } from '../../models/LeaderboardReadModels';
-import { RankingSnapshot } from '../../models/RankingSnapshots';
+import { RankingAggregate } from "../../models/RankingAggregate";
+import {
+  LeaderboardSummary,
+  LeaderboardEntry,
+  LeaderboardStatistics,
+  LeaderboardCurrentUser,
+} from "../../models/LeaderboardReadModels";
+import { RankingSnapshot } from "../../models/RankingSnapshots";
 
 export class LeaderboardReadModelBuilder {
   public buildSummary(aggregate: RankingAggregate, limit: number = 10): LeaderboardSummary {
     const topSnapshots = aggregate.snapshots.slice(0, limit);
-    const topEntries = topSnapshots.map(s => this.buildEntry(aggregate, s));
+    const topEntries = topSnapshots.map((s) => this.buildEntry(aggregate, s));
 
     return {
       competitionId: aggregate.competitionId,
       scope: aggregate.leaderboardScope,
       totalParticipants: aggregate.manifest.rankingCount,
       lastUpdatedAt: aggregate.manifest.generatedAt,
-      topEntries
+      topEntries,
     };
   }
 
   public buildStatistics(aggregate: RankingAggregate): LeaderboardStatistics {
     return {
       competitionId: aggregate.competitionId,
-      statistics: aggregate.statistics
+      statistics: aggregate.statistics,
     };
   }
 
   public buildCurrentUser(aggregate: RankingAggregate, userId: string): LeaderboardCurrentUser {
-    const snapshot = aggregate.snapshots.find(s => s.candidate.userId === userId);
+    const snapshot = aggregate.snapshots.find((s) => s.candidate.userId === userId);
     const timeline = aggregate.timelines.get(userId);
 
     if (!snapshot) {
       return {
         entry: null,
         highestRank: null,
-        lowestRank: null
+        lowestRank: null,
       };
     }
 
     return {
       entry: this.buildEntry(aggregate, snapshot),
       highestRank: timeline ? timeline.highestRank : snapshot.rank,
-      lowestRank: timeline ? timeline.lowestRank : snapshot.rank
+      lowestRank: timeline ? timeline.lowestRank : snapshot.rank,
     };
   }
 
@@ -55,10 +60,10 @@ export class LeaderboardReadModelBuilder {
       accuracy: candidate.accuracy,
       completionTimeMs: candidate.completionTime,
       submittedAt: candidate.submittedAt,
-      movement: timeline ? timeline.movement : 'NEW',
+      movement: timeline ? timeline.movement : "NEW",
       previousRank: timeline ? timeline.previousRank : null,
       percentile: percentile ? percentile.percentile : 0,
-      topPercentage: percentile ? percentile.topPercentage : 100
+      topPercentage: percentile ? percentile.topPercentage : 100,
     };
   }
 }

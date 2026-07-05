@@ -56,8 +56,16 @@ export const competitionConfigSchema = z
 export const competitionParticipationSchema = z
   .object({
     visibility: z.nativeEnum(CompetitionVisibility, { error: "Visibility is required" }),
-    startsAt: z.string().refine((val) => val === "" || !isNaN(Date.parse(val)), { message: "Invalid Start Date" }).optional().nullable(),
-    endsAt: z.string().refine((val) => val === "" || !isNaN(Date.parse(val)), { message: "Invalid End Date" }).optional().nullable(),
+    startsAt: z
+      .string()
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), { message: "Invalid Start Date" })
+      .optional()
+      .nullable(),
+    endsAt: z
+      .string()
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), { message: "Invalid End Date" })
+      .optional()
+      .nullable(),
 
     maxParticipants: z.number().min(1, "Max participants must be at least 1").optional().nullable(),
     allowRetake: z.boolean(),

@@ -2,7 +2,7 @@ export interface ResultsCapability {
   id: string;
   name: string;
   version: string;
-  type: 'AI_ANALYSIS' | 'COACH' | 'MENTOR' | 'ACCESSIBILITY' | 'TRANSLATION';
+  type: "AI_ANALYSIS" | "COACH" | "MENTOR" | "ACCESSIBILITY" | "TRANSLATION";
   initialize(context: any): Promise<void>;
 }
 

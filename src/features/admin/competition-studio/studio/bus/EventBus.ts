@@ -1,91 +1,91 @@
 /**
  * Event Bus
- * 
+ *
  * Central event publisher for the Competition Studio.
  * Future phases will subscribe to these events for reactive updates.
  */
 
-export type StudioEventType = 
-  | 'StudioOpened'
-  | 'CompetitionLoaded'
-  | 'NavigationChanged'
-  | 'LayoutChanged'
-  | 'InspectorOpened'
-  | 'InspectorClosed'
-  | 'LockAcquired'
-  | 'SaveStarted'
-  | 'SaveCompleted'
-  | 'SaveFailed'
-  | 'LockReleased'
-  | 'ExplorerOpened'
-  | 'SearchExecuted'
-  | 'QuestionSelected'
-  | 'QuestionDeselected'
-  | 'QuestionPreviewOpened'
-  | 'BasketCommitted'
-  | 'RecommendationAccepted'
-  | 'DuplicateDetected'
-  | 'SectionCreated'
-  | 'SectionUpdated'
-  | 'SectionDeleted'
-  | 'QuestionAdded'
-  | 'QuestionMoved'
-  | 'QuestionRemoved'
-  | 'QuestionReplaced'
-  | 'QuestionDuplicated'
-  | 'CompositionUpdated'
-  | 'CompositionSaved'
-  | 'CompositionSnapshotCreated'
-  | 'CompositionHealthUpdated'
-  | 'SelectionChanged'
-  | 'AnalysisStarted'
-  | 'AnalysisCompleted'
-  | 'RecommendationCreated'
-  | 'RecommendationResolved'
-  | 'HealthChanged'
-  | 'CoverageChanged'
-  | 'RiskChanged'
-  | 'FingerprintChanged'
-  | 'SnapshotCreated'
-  | 'ReadinessEvaluationStarted'
-  | 'ReadinessEvaluationCompleted'
-  | 'PublishGatePassed'
-  | 'PublishGateBlocked'
-  | 'IssueResolved'
-  | 'IssueCreated'
-  | 'ReadinessImproved'
-  | 'ReadinessRegressed'
-  | 'VersionBuildStarted'
-  | 'SnapshotBuilt'
-  | 'ManifestBuilt'
-  | 'CompatibilityVerified'
-  | 'IntegrityVerified'
-  | 'ArtifactBuilt'
-  | 'ArtifactStored'
-  | 'ArtifactVerified'
-  | 'VersionBuildCompleted'
-  | 'VersionBuildFailed'
-  | 'DeploymentPlanned'
-  | 'DeploymentStarted'
-  | 'DeploymentStageStarted'
-  | 'DeploymentStageCompleted'
-  | 'DeploymentStageFailed'
-  | 'DeploymentVerified'
-  | 'CompetitionActivated'
-  | 'DeploymentCompleted'
-  | 'DeploymentFailed'
-  | 'DeploymentRolledBack'
-  | 'CompetitionHealthUpdated'
-  | 'IncidentDetected'
-  | 'IncidentResolved'
-  | 'AlertCreated'
-  | 'AlertResolved'
-  | 'RuntimeRecovered'
-  | 'DeploymentVerified'
-  | 'LeaderboardSynced'
-  | 'RewardsCompleted'
-  | 'CertificatesGenerated'
-  | 'MonitoringSnapshotGenerated';
+export type StudioEventType =
+  | "StudioOpened"
+  | "CompetitionLoaded"
+  | "NavigationChanged"
+  | "LayoutChanged"
+  | "InspectorOpened"
+  | "InspectorClosed"
+  | "LockAcquired"
+  | "SaveStarted"
+  | "SaveCompleted"
+  | "SaveFailed"
+  | "LockReleased"
+  | "ExplorerOpened"
+  | "SearchExecuted"
+  | "QuestionSelected"
+  | "QuestionDeselected"
+  | "QuestionPreviewOpened"
+  | "BasketCommitted"
+  | "RecommendationAccepted"
+  | "DuplicateDetected"
+  | "SectionCreated"
+  | "SectionUpdated"
+  | "SectionDeleted"
+  | "QuestionAdded"
+  | "QuestionMoved"
+  | "QuestionRemoved"
+  | "QuestionReplaced"
+  | "QuestionDuplicated"
+  | "CompositionUpdated"
+  | "CompositionSaved"
+  | "CompositionSnapshotCreated"
+  | "CompositionHealthUpdated"
+  | "SelectionChanged"
+  | "AnalysisStarted"
+  | "AnalysisCompleted"
+  | "RecommendationCreated"
+  | "RecommendationResolved"
+  | "HealthChanged"
+  | "CoverageChanged"
+  | "RiskChanged"
+  | "FingerprintChanged"
+  | "SnapshotCreated"
+  | "ReadinessEvaluationStarted"
+  | "ReadinessEvaluationCompleted"
+  | "PublishGatePassed"
+  | "PublishGateBlocked"
+  | "IssueResolved"
+  | "IssueCreated"
+  | "ReadinessImproved"
+  | "ReadinessRegressed"
+  | "VersionBuildStarted"
+  | "SnapshotBuilt"
+  | "ManifestBuilt"
+  | "CompatibilityVerified"
+  | "IntegrityVerified"
+  | "ArtifactBuilt"
+  | "ArtifactStored"
+  | "ArtifactVerified"
+  | "VersionBuildCompleted"
+  | "VersionBuildFailed"
+  | "DeploymentPlanned"
+  | "DeploymentStarted"
+  | "DeploymentStageStarted"
+  | "DeploymentStageCompleted"
+  | "DeploymentStageFailed"
+  | "DeploymentVerified"
+  | "CompetitionActivated"
+  | "DeploymentCompleted"
+  | "DeploymentFailed"
+  | "DeploymentRolledBack"
+  | "CompetitionHealthUpdated"
+  | "IncidentDetected"
+  | "IncidentResolved"
+  | "AlertCreated"
+  | "AlertResolved"
+  | "RuntimeRecovered"
+  | "DeploymentVerified"
+  | "LeaderboardSynced"
+  | "RewardsCompleted"
+  | "CertificatesGenerated"
+  | "MonitoringSnapshotGenerated";
 
 export interface StudioEvent<T = any> {
   type: StudioEventType;
@@ -101,11 +101,14 @@ class EventBusService {
   subscribe(type: StudioEventType, handler: EventHandler) {
     const currentListeners = this.listeners.get(type) || [];
     this.listeners.set(type, [...currentListeners, handler]);
-    
+
     // Return unsubscribe function
     return () => {
       const listeners = this.listeners.get(type) || [];
-      this.listeners.set(type, listeners.filter(h => h !== handler));
+      this.listeners.set(
+        type,
+        listeners.filter((h) => h !== handler)
+      );
     };
   }
 
@@ -113,13 +116,13 @@ class EventBusService {
     const event: StudioEvent = {
       type,
       payload,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     console.debug(`[EventBus] Published: ${event.type}`, event.payload);
     const listeners = this.listeners.get(type) || [];
-    
-    listeners.forEach(handler => {
+
+    listeners.forEach((handler) => {
       try {
         handler(event);
       } catch (error) {

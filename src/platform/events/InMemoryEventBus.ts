@@ -1,5 +1,5 @@
-import { PlatformEvent, PlatformEventBus, EventHandler } from './PlatformEventBus';
-import { EventEmitter } from 'events';
+import { PlatformEvent, PlatformEventBus, EventHandler } from "./PlatformEventBus";
+import { EventEmitter } from "events";
 
 export class InMemoryEventBus implements PlatformEventBus {
   private emitter: EventEmitter;

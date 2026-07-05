@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { IGNORED_DIRECTORIES } from './Constants';
-import { Logger } from './Logger';
+import * as fs from "fs";
+import * as path from "path";
+import { IGNORED_DIRECTORIES } from "./Constants";
+import { Logger } from "./Logger";
 
 export class FileWalker {
   static walk(dir: string, callback: (filePath: string) => void) {

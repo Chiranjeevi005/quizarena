@@ -7,7 +7,10 @@ export function QuestionReviewRegion({ data }: { data: CompetitionResultReadMode
       <h2 className="text-2xl font-bold text-white">Question Review</h2>
       <div className="space-y-4">
         {data.questionReviews.map((review, idx) => (
-          <div key={review.questionId} className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <div
+            key={review.questionId}
+            className="bg-slate-900 border border-slate-800 rounded-xl p-6"
+          >
             <div className="flex items-start gap-4 mb-4">
               <div className="mt-1">
                 {review.isSkipped ? (
@@ -20,19 +23,19 @@ export function QuestionReviewRegion({ data }: { data: CompetitionResultReadMode
               </div>
               <div className="flex-1">
                 <p className="text-sm text-slate-400 mb-1">Question {idx + 1}</p>
-                <div 
-                  className="text-white text-lg mb-4" 
-                  dangerouslySetInnerHTML={{ __html: review.questionText }} 
+                <div
+                  className="text-white text-lg mb-4"
+                  dangerouslySetInnerHTML={{ __html: review.questionText }}
                 />
-                
+
                 <div className="space-y-2">
-                  {review.options.map(opt => {
+                  {review.options.map((opt) => {
                     const isSelected = opt.id === review.userAnswerId;
                     const isCorrect = opt.id === review.correctAnswerId;
-                    
+
                     let bg = "bg-slate-800 border-slate-700";
                     let text = "text-slate-300";
-                    
+
                     if (isCorrect) {
                       bg = "bg-green-500/10 border-green-500/50";
                       text = "text-green-400";

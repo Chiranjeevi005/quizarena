@@ -16,12 +16,12 @@ export class CertificateTemplateRegistry {
       id: "PARTICIPATION",
       version: "1.0",
       orientation: "LANDSCAPE",
-      primaryColor: "#0F172A", 
-      secondaryColor: "#475569", 
+      primaryColor: "#0F172A",
+      secondaryColor: "#475569",
       accentColor: "#3B82F6", // Blue accent
       borderColor: "#E5E7EB",
       hasSeal: false,
-      signatureAsset: "/images/signatures/admin_default.png"
+      signatureAsset: "/images/signatures/admin_default.png",
     },
     "EXCELLENCE_1.0": {
       id: "EXCELLENCE",
@@ -32,7 +32,7 @@ export class CertificateTemplateRegistry {
       accentColor: "#C98A00", // Gold accent
       borderColor: "#E5E7EB",
       hasSeal: false,
-      signatureAsset: "/images/signatures/admin_default.png"
+      signatureAsset: "/images/signatures/admin_default.png",
     },
     "WINNER_1.0": {
       id: "WINNER",
@@ -43,7 +43,7 @@ export class CertificateTemplateRegistry {
       accentColor: "#C98A00", // Gold accent
       borderColor: "#E5E7EB",
       hasSeal: true,
-      signatureAsset: "/images/signatures/admin_default.png"
+      signatureAsset: "/images/signatures/admin_default.png",
     },
     "TOP_PERFORMER_1.0": {
       id: "TOP_PERFORMER",
@@ -54,8 +54,8 @@ export class CertificateTemplateRegistry {
       accentColor: "#0F172A", // Dark Navy
       borderColor: "#C98A00", // Gold Border
       hasSeal: true,
-      signatureAsset: "/images/signatures/admin_default.png"
-    }
+      signatureAsset: "/images/signatures/admin_default.png",
+    },
   };
 
   public static getTemplate(type: string, version: string): CertificateTemplate {

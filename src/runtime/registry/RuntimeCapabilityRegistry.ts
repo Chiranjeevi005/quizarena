@@ -2,7 +2,7 @@ export interface RuntimeCapability {
   id: string;
   name: string;
   version: string;
-  type: 'AI' | 'ACCESSIBILITY' | 'VOICE' | 'MOBILE_BRIDGE';
+  type: "AI" | "ACCESSIBILITY" | "VOICE" | "MOBILE_BRIDGE";
   initialize(context: any): Promise<void>;
 }
 

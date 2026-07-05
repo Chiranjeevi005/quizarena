@@ -5,26 +5,26 @@ export interface ResultsCommand {
 }
 
 export interface ViewResult extends ResultsCommand {
-  type: 'ViewResult';
+  type: "ViewResult";
   payload: { resultId: string; userId: string };
 }
 
 export interface ExportResult extends ResultsCommand {
-  type: 'ExportResult';
+  type: "ExportResult";
   payload: { resultId: string; format: string };
 }
 
 export interface ShareResult extends ResultsCommand {
-  type: 'ShareResult';
+  type: "ShareResult";
   payload: { resultId: string; target: string };
 }
 
 export interface DownloadResult extends ResultsCommand {
-  type: 'DownloadResult';
+  type: "DownloadResult";
   payload: { resultId: string; format: string };
 }
 
 export interface ArchiveResult extends ResultsCommand {
-  type: 'ArchiveResult';
+  type: "ArchiveResult";
   payload: { resultId: string };
 }

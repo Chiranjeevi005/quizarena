@@ -1,6 +1,11 @@
 import { QuestionRendererProps, rendererRegistry } from "../registry";
 
-export function SingleChoiceRenderer({ question, selectedOptionId, onSelectOption, isSubmitting }: QuestionRendererProps) {
+export function SingleChoiceRenderer({
+  question,
+  selectedOptionId,
+  onSelectOption,
+  isSubmitting,
+}: QuestionRendererProps) {
   return (
     <div className="space-y-3 max-w-3xl">
       {question.options.map((option: any) => {

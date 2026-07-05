@@ -1,14 +1,14 @@
-import { 
-  DeploymentStatus, 
-  DeploymentStrategy, 
-  DeploymentEnvironment, 
-  DeploymentStageType, 
-  StageStatus, 
-  DeploymentAuditAction, 
+import {
+  DeploymentStatus,
+  DeploymentStrategy,
+  DeploymentEnvironment,
+  DeploymentStageType,
+  StageStatus,
+  DeploymentAuditAction,
   DeploymentHealthStatus,
   DeploymentReason,
-  DeploymentResult 
-} from '@/generated/prisma';
+  DeploymentResult,
+} from "@/generated/prisma";
 
 export interface PublishDeploymentOptions {
   competitionId: string;

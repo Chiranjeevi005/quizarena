@@ -9,9 +9,11 @@ export function CompetitionTemplateStep() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="border-b border-gray-200 pb-5">
         <h2 className="text-2xl font-bold text-navy">Choose a Template</h2>
-        <p className="text-gray-500 mt-2">Start from a template to pre-fill common configurations.</p>
+        <p className="text-gray-500 mt-2">
+          Start from a template to pre-fill common configurations.
+        </p>
       </div>
-      
+
       <div className="flex gap-4">
         {/* We will implement template cards here */}
         <p className="text-gray-500 italic">Template selection coming soon...</p>

@@ -17,7 +17,9 @@ export async function RewardsPreview({ slug }: RewardsPreviewProps) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">Skill Practice</h2>
-            <p className="text-slate-400 text-sm mt-1">This competition is designed for practice and does not offer monetary rewards.</p>
+            <p className="text-slate-400 text-sm mt-1">
+              This competition is designed for practice and does not offer monetary rewards.
+            </p>
           </div>
         </div>
       </section>
@@ -33,17 +35,25 @@ export async function RewardsPreview({ slug }: RewardsPreviewProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50 flex flex-col items-center justify-center text-center">
           <Coins className="w-8 h-8 text-amber-500 mb-2" />
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Pool</p>
-          <p className="text-2xl font-bold text-white">{rewards.rewardPool} {rewards.currency}</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Total Pool
+          </p>
+          <p className="text-2xl font-bold text-white">
+            {rewards.rewardPool} {rewards.currency}
+          </p>
         </div>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50 flex flex-col items-center justify-center text-center">
           <Trophy className="w-8 h-8 text-blue-400 mb-2" />
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Winner Reward</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Winner Reward
+          </p>
           <p className="font-bold text-slate-300 text-sm">Leaderboard Recognition</p>
         </div>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/50 flex flex-col items-center justify-center text-center">
           <Award className="w-8 h-8 text-purple-400 mb-2" />
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Badges</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            Badges
+          </p>
           <p className="font-bold text-slate-300 text-sm">Profile Badges (Top 10)</p>
         </div>
       </div>

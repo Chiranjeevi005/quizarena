@@ -1,4 +1,4 @@
-import { ResultsPresentationService } from '../services/ResultsPresentationService';
+import { ResultsPresentationService } from "../services/ResultsPresentationService";
 
 export class ResultsFacade {
   constructor(private presentationService: ResultsPresentationService) {}

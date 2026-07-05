@@ -44,7 +44,7 @@ export class DefaultRankingStrategy implements RankingStrategy {
 
 export class RankingStrategyRegistry {
   private static strategies: Record<string, RankingStrategy> = {
-    "DEFAULT": new DefaultRankingStrategy(),
+    DEFAULT: new DefaultRankingStrategy(),
   };
 
   public static getStrategy(strategyKey: string = "DEFAULT"): RankingStrategy {

@@ -1,4 +1,4 @@
-export type Lifecycle = 'Singleton' | 'Scoped' | 'Transient';
+export type Lifecycle = "Singleton" | "Scoped" | "Transient";
 
 interface Registration {
   token: string;
@@ -20,7 +20,7 @@ export class Container {
     return Container.instance;
   }
 
-  public register<T>(token: string, factory: () => T, lifecycle: Lifecycle = 'Singleton'): void {
+  public register<T>(token: string, factory: () => T, lifecycle: Lifecycle = "Singleton"): void {
     this.registrations.set(token, { token, factory, lifecycle });
   }
 
@@ -28,12 +28,12 @@ export class Container {
     const reg = this.registrations.get(token);
     if (!reg) throw new Error(`Token ${token} not registered in container.`);
 
-    if (reg.lifecycle === 'Singleton') {
+    if (reg.lifecycle === "Singleton") {
       if (!reg.instance) reg.instance = reg.factory();
       return reg.instance;
     }
-    
-    if (reg.lifecycle === 'Scoped') {
+
+    if (reg.lifecycle === "Scoped") {
       // Scoped would typically tie to a request/context. For simplicity, we treat it similarly to transient or placeholder here.
       return reg.factory();
     }

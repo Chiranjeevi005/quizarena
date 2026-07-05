@@ -7,28 +7,28 @@ export class ProjectionGenerator {
    */
   public static async generate(leaderboardKey: string, ranked: RankedParticipant[]) {
     console.log(`[ProjectionGenerator] Building projection for: ${leaderboardKey}`);
-    
+
     if (ranked.length === 0) return;
 
     const participantCount = ranked.length;
-    const highestScore = Math.max(...ranked.map(r => r.score));
-    
+    const highestScore = Math.max(...ranked.map((r) => r.score));
+
     const sumScore = ranked.reduce((acc, r) => acc + r.score, 0);
     const averageScore = sumScore / participantCount;
-    
+
     const sumAccuracy = ranked.reduce((acc, r) => acc + r.accuracy, 0);
     const averageAccuracy = sumAccuracy / participantCount;
 
     // Get Top 3 with User details
-    const top3 = ranked.filter(r => r.rank <= 3).sort((a, b) => a.rank - b.rank);
-    
+    const top3 = ranked.filter((r) => r.rank <= 3).sort((a, b) => a.rank - b.rank);
+
     const users = await prisma.user.findMany({
-      where: { id: { in: top3.map(t => t.userId) } },
-      select: { id: true, name: true, image: true }
+      where: { id: { in: top3.map((t) => t.userId) } },
+      select: { id: true, name: true, image: true },
     });
 
-    const top3Snapshot = top3.map(t => {
-      const user = users.find(u => u.id === t.userId);
+    const top3Snapshot = top3.map((t) => {
+      const user = users.find((u) => u.id === t.userId);
       return {
         rank: t.rank,
         score: t.score,
@@ -37,8 +37,8 @@ export class ProjectionGenerator {
         user: {
           id: user?.id,
           name: user?.name || "Unknown",
-          image: user?.image
-        }
+          image: user?.image,
+        },
       };
     });
 
@@ -50,7 +50,7 @@ export class ProjectionGenerator {
         highestScore,
         averageScore,
         averageAccuracy,
-        top3Snapshot: top3Snapshot as any
+        top3Snapshot: top3Snapshot as any,
       },
       create: {
         leaderboardKey,
@@ -58,8 +58,8 @@ export class ProjectionGenerator {
         highestScore,
         averageScore,
         averageAccuracy,
-        top3Snapshot: top3Snapshot as any
-      }
+        top3Snapshot: top3Snapshot as any,
+      },
     });
 
     console.log(`[ProjectionGenerator] Projection complete for ${leaderboardKey}.`);

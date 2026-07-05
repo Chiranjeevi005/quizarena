@@ -7,13 +7,13 @@ export class DeploymentHealthEngine {
 
     // Mock health check across domains
     const healthReport = {
-      runtime: 'HEALTHY',
-      submission: 'HEALTHY',
-      leaderboard: 'HEALTHY',
-      results: 'HEALTHY',
-      rewards: 'HEALTHY',
-      certificates: 'HEALTHY',
-      operations: 'HEALTHY'
+      runtime: "HEALTHY",
+      submission: "HEALTHY",
+      leaderboard: "HEALTHY",
+      results: "HEALTHY",
+      rewards: "HEALTHY",
+      certificates: "HEALTHY",
+      operations: "HEALTHY",
     };
 
     return { healthy: true, report: healthReport };

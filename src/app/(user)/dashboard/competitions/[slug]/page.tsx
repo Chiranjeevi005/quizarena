@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getCompetitionLanding, getEligibilityStatus, getUserSessionState } from "@/features/competitions/experience/actions/landing.actions";
+import {
+  getCompetitionLanding,
+  getEligibilityStatus,
+  getUserSessionState,
+} from "@/features/competitions/experience/actions/landing.actions";
 import { LandingHero } from "./components/LandingHero";
 import { EligibilityPanel } from "./components/EligibilityPanel";
 import { CompetitionSnapshot } from "./components/CompetitionSnapshot";
@@ -39,9 +43,8 @@ export default async function CompetitionEntryPage({ params }: CompetitionEntryP
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
-        
         {/* 1. Hero as Decision Panel */}
-        <LandingHero 
+        <LandingHero
           competition={competition}
           isEligible={isEligible}
           eligibilityDetails={details}
@@ -52,10 +55,10 @@ export default async function CompetitionEntryPage({ params }: CompetitionEntryP
           <div className="lg:col-span-2 space-y-8">
             {/* 2. Eligibility Requirements */}
             <EligibilityPanel details={details} />
-            
+
             {/* 3. Competition Snapshot */}
             <CompetitionSnapshot competition={competition} />
-            
+
             {/* 4. Rewards (Streamed) */}
             <Suspense fallback={<SectionSkeleton />}>
               <RewardsPreview slug={slug} />
@@ -84,10 +87,7 @@ export default async function CompetitionEntryPage({ params }: CompetitionEntryP
             </Suspense>
 
             {/* 9. Instructions */}
-            <MandatoryInstructions 
-              competitionId={competition.id} 
-              version={competition.version} 
-            />
+            <MandatoryInstructions competitionId={competition.id} version={competition.version} />
           </div>
         </div>
       </div>

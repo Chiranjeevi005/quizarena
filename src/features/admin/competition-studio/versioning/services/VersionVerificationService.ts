@@ -1,5 +1,5 @@
-import { CompetitionVersionArtifact } from '../types/artifact.types';
-import { HashEngine } from './HashEngine';
+import { CompetitionVersionArtifact } from "../types/artifact.types";
+import { HashEngine } from "./HashEngine";
 
 export class VersionVerificationService {
   /**

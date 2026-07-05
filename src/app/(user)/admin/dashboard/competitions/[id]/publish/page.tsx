@@ -5,7 +5,11 @@ import { notFound } from "next/navigation";
 import { PublishingWorkspace } from "@/features/admin/competition/publishing/components/PublishingWorkspace";
 import { getPublishingWorkspaceData } from "@/features/admin/competition/publishing/publishing/actions/publishing.actions";
 
-export default async function CompetitionPublishPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CompetitionPublishPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const user = await requireAdmin();
   if (!user || !user.id) return null;

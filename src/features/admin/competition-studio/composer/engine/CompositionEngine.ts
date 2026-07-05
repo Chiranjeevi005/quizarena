@@ -1,13 +1,13 @@
 /**
  * Composition Engine
- * 
+ *
  * The absolute source of truth for the Assessment Composer.
  * Maintains the Composition Graph and routes operations through Transactions.
  */
 
-import { CompositionHistoryEngine } from './CompositionHistoryEngine';
-import { CompositionBatchEngine } from './CompositionBatchEngine';
-import { EventBus } from '../../studio/bus/EventBus';
+import { CompositionHistoryEngine } from "./CompositionHistoryEngine";
+import { CompositionBatchEngine } from "./CompositionBatchEngine";
+import { EventBus } from "../../studio/bus/EventBus";
 
 export interface QuestionNode {
   id: string;
@@ -35,7 +35,7 @@ class CompositionEngineService {
   initialize(competitionId: string, initialSections: SectionNode[]) {
     this.graph = {
       competitionId,
-      sections: initialSections
+      sections: initialSections,
     };
   }
 
@@ -46,33 +46,34 @@ class CompositionEngineService {
   // TRANSACTION: Add Section
   addSection(title: string) {
     if (!this.graph) return;
-    
+
     const newSection: SectionNode = {
       id: `sec_${Date.now()}`,
       title,
       order: this.graph.sections.length,
-      questions: []
+      questions: [],
     };
 
     // Apply
     this.graph.sections.push(newSection);
 
     // Queue for persistence
-    CompositionBatchEngine.queueOperation('AddSection', newSection);
+    CompositionBatchEngine.queueOperation("AddSection", newSection);
 
     // Track History
     CompositionHistoryEngine.push({
-      type: 'AddSection',
+      type: "AddSection",
       description: `Added Section: ${title}`,
       undo: () => {
-        if (this.graph) this.graph.sections = this.graph.sections.filter(s => s.id !== newSection.id);
+        if (this.graph)
+          this.graph.sections = this.graph.sections.filter((s) => s.id !== newSection.id);
       },
       redo: () => {
         if (this.graph) this.graph.sections.push(newSection);
-      }
+      },
     });
 
-    EventBus.publish('SectionCreated', newSection);
+    EventBus.publish("SectionCreated", newSection);
   }
 
   // Future Transactions (MoveQuestion, ReplaceQuestion, DeleteSection, etc) would follow the same pattern

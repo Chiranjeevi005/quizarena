@@ -1,6 +1,6 @@
 /**
  * Confidence Engine
- * 
+ *
  * Scores recommendations dynamically (0-100%).
  * Evaluates Question Volume, Data Freshness, and Statistical Sample Size.
  */
@@ -12,13 +12,12 @@ export interface ConfidenceScore {
 }
 
 class ConfidenceEngineService {
-  
   /**
    * Generates a confidence score based on the underlying data constraints.
    */
   calculateConfidence(
-    sampleSize: number, 
-    dataFreshnessHours: number, 
+    sampleSize: number,
+    dataFreshnessHours: number,
     analyzerReliability: number = 0.9
   ): ConfidenceScore {
     let score = 100;
@@ -37,8 +36,8 @@ class ConfidenceEngineService {
 
     return {
       percentage: Math.max(0, score),
-      reason: sampleSize < 10 ? 'Low sample size reduces confidence' : 'High statistical validity',
-      calculationSource: 'ConfidenceEngine_v1'
+      reason: sampleSize < 10 ? "Low sample size reduces confidence" : "High statistical validity",
+      calculationSource: "ConfidenceEngine_v1",
     };
   }
 }

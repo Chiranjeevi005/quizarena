@@ -11,7 +11,7 @@ export default async function CompetitionLeaderboardPage({ params }: { params: {
   // Translate slug to competitionId
   const comp = await prisma.competition.findUnique({
     where: { slug: params.slug },
-    select: { id: true }
+    select: { id: true },
   });
 
   if (!comp) notFound();
@@ -34,7 +34,7 @@ export default async function CompetitionLeaderboardPage({ params }: { params: {
     <div className="min-h-screen bg-slate-950 p-6 md:p-12 font-sans selection:bg-blue-500/30">
       <div className="max-w-6xl mx-auto space-y-12">
         <HeroRegion data={data} />
-        
+
         <CurrentUserRegion data={data} />
 
         <div className="grid lg:grid-cols-4 gap-8">
@@ -45,7 +45,10 @@ export default async function CompetitionLeaderboardPage({ params }: { params: {
           <div className="space-y-8">
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Competition Rules</h3>
-              <p className="text-slate-400 text-sm">Rankings are determined by Highest Score. Ties are broken by Highest Accuracy, then Lowest Time.</p>
+              <p className="text-slate-400 text-sm">
+                Rankings are determined by Highest Score. Ties are broken by Highest Accuracy, then
+                Lowest Time.
+              </p>
             </div>
             {/* For competition leaderboard, filters may not be necessary as it's isolated, 
                 but we can reuse Statistics */}
@@ -62,7 +65,9 @@ export default async function CompetitionLeaderboardPage({ params }: { params: {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400">Avg Accuracy</span>
-                  <span className="text-white font-medium">{data.statistics.averageAccuracy.toFixed(1)}%</span>
+                  <span className="text-white font-medium">
+                    {data.statistics.averageAccuracy.toFixed(1)}%
+                  </span>
                 </div>
               </div>
             </div>

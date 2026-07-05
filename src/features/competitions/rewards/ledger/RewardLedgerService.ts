@@ -24,10 +24,12 @@ export class RewardLedgerService {
           referenceId: params.referenceId,
           pipelineStage: params.pipelineStage,
           status: params.status,
-          failureReason: params.failureReason
-        }
+          failureReason: params.failureReason,
+        },
       });
-      console.log(`[RewardLedger] Recorded ${params.rewardEvent} for User: ${params.recipientId} Status: ${params.status}`);
+      console.log(
+        `[RewardLedger] Recorded ${params.rewardEvent} for User: ${params.recipientId} Status: ${params.status}`
+      );
     } catch (error: any) {
       console.error("[RewardLedger] CRITICAL: Failed to write to audit ledger", error);
       // In a strict financial/reward system, we might alert devops here or use a fallback queue

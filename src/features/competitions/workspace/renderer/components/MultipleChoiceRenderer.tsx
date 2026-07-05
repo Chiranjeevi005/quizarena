@@ -1,13 +1,18 @@
 import { QuestionRendererProps, rendererRegistry } from "../registry";
 import { Check } from "lucide-react";
 
-export function MultipleChoiceRenderer({ question, selectedOptionId, onSelectOption, isSubmitting }: QuestionRendererProps) {
+export function MultipleChoiceRenderer({
+  question,
+  selectedOptionId,
+  onSelectOption,
+  isSubmitting,
+}: QuestionRendererProps) {
   // Assume selectedOptionId is a comma-separated string of IDs for multiple choice
   const selectedIds = selectedOptionId ? selectedOptionId.split(",") : [];
 
   const handleToggle = (id: string) => {
     if (selectedIds.includes(id)) {
-      onSelectOption(selectedIds.filter(i => i !== id).join(","));
+      onSelectOption(selectedIds.filter((i) => i !== id).join(","));
     } else {
       onSelectOption([...selectedIds, id].join(","));
     }

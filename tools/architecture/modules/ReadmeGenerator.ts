@@ -1,10 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from "fs";
+import * as path from "path";
 
 export class ReadmeGenerator {
   static generate(modulePath: string, featureName: string) {
-    const readmePath = path.join(modulePath, 'README.md');
-    
+    const readmePath = path.join(modulePath, "README.md");
+
     const content = `# ${featureName}
 
 ## Purpose

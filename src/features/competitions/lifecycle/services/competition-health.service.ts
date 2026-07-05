@@ -1,12 +1,12 @@
-import { prisma } from '@/lib/prisma';
-import { CompetitionHealthStatus } from '@/generated/prisma';
+import { prisma } from "@/lib/prisma";
+import { CompetitionHealthStatus } from "@/generated/prisma";
 
 export class CompetitionHealthService {
   async evaluateHealth(competitionId: string): Promise<CompetitionHealthStatus> {
     // 1. Check for recent submission failures
     const recentSubmissionFailures = await this.checkRecentSubmissionFailures(competitionId);
     if (recentSubmissionFailures > 10) return CompetitionHealthStatus.CRITICAL;
-    
+
     // 2. Check leaderboard sync
     const leaderboardLag = await this.checkLeaderboardLag(competitionId);
     if (leaderboardLag > 5) return CompetitionHealthStatus.WARNING;
@@ -22,7 +22,7 @@ export class CompetitionHealthService {
     const healthStatus = await this.evaluateHealth(competitionId);
     await prisma.competition.update({
       where: { id: competitionId },
-      data: { healthStatus }
+      data: { healthStatus },
     });
   }
 

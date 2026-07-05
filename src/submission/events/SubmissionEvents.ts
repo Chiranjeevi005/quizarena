@@ -5,34 +5,34 @@ export interface SubmissionEvent {
 }
 
 export interface SubmissionStarted extends SubmissionEvent {
-  type: 'SubmissionStarted';
+  type: "SubmissionStarted";
 }
 
 export interface SubmissionValidated extends SubmissionEvent {
-  type: 'SubmissionValidated';
+  type: "SubmissionValidated";
 }
 
 export interface FraudChecked extends SubmissionEvent {
-  type: 'FraudChecked';
+  type: "FraudChecked";
   assessment: any;
 }
 
 export interface EvaluationCompleted extends SubmissionEvent {
-  type: 'EvaluationCompleted';
+  type: "EvaluationCompleted";
   evaluationSnapshot: any;
 }
 
 export interface SubmissionFinalized extends SubmissionEvent {
-  type: 'SubmissionFinalized';
+  type: "SubmissionFinalized";
 }
 
 export interface ResultGenerated extends SubmissionEvent {
-  type: 'ResultGenerated';
+  type: "ResultGenerated";
   submissionResult: any;
 }
 
 export interface RankingCandidateSnapshotEvent extends SubmissionEvent {
-  type: 'RankingCandidateSnapshot';
+  type: "RankingCandidateSnapshot";
   snapshot: {
     attemptId: string;
     userId: string;

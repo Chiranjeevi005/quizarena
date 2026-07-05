@@ -159,7 +159,6 @@ export function CompetitionReviewStep() {
               </dd>
             </div>
 
-
             <div className="flex justify-between">
               <dt className="text-gray-500">Starts At</dt>
               <dd className="font-semibold text-right">

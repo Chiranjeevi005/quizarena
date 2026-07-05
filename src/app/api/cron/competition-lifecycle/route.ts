@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { CompetitionLifecycle, LifecycleActorType } from '@/generated/prisma';
-import { competitionLifecycle } from '@/features/competitions/lifecycle/services/competition-lifecycle.service';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { CompetitionLifecycle, LifecycleActorType } from "@/generated/prisma";
+import { competitionLifecycle } from "@/features/competitions/lifecycle/services/competition-lifecycle.service";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   // Security check: verify this is called by a trusted cron scheduler
-  const authHeader = request.headers.get('authorization');
+  const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const now = new Date();
@@ -22,13 +22,17 @@ export async function GET(request: Request) {
     const toSchedule = await prisma.competition.findMany({
       where: {
         lifecycleState: CompetitionLifecycle.READY,
-        scheduledPublishAt: { lte: now }
-      }
+        scheduledPublishAt: { lte: now },
+      },
     });
 
     for (const comp of toSchedule) {
       try {
-        await competitionLifecycle.scheduleCompetition(comp.id, 'SYSTEM', LifecycleActorType.SYSTEM);
+        await competitionLifecycle.scheduleCompetition(
+          comp.id,
+          "SYSTEM",
+          LifecycleActorType.SYSTEM
+        );
         processedCount++;
       } catch (e: any) {
         errors.push(`Failed to schedule ${comp.id}: ${e.message}`);
@@ -39,13 +43,13 @@ export async function GET(request: Request) {
     const toLive = await prisma.competition.findMany({
       where: {
         lifecycleState: CompetitionLifecycle.SCHEDULED,
-        startsAt: { lte: now }
-      }
+        startsAt: { lte: now },
+      },
     });
 
     for (const comp of toLive) {
       try {
-        await competitionLifecycle.startCompetition(comp.id, 'SYSTEM', LifecycleActorType.SYSTEM);
+        await competitionLifecycle.startCompetition(comp.id, "SYSTEM", LifecycleActorType.SYSTEM);
         processedCount++;
       } catch (e: any) {
         errors.push(`Failed to start ${comp.id}: ${e.message}`);
@@ -56,13 +60,17 @@ export async function GET(request: Request) {
     const toComplete = await prisma.competition.findMany({
       where: {
         lifecycleState: CompetitionLifecycle.LIVE,
-        endsAt: { lte: now }
-      }
+        endsAt: { lte: now },
+      },
     });
 
     for (const comp of toComplete) {
       try {
-        await competitionLifecycle.completeCompetition(comp.id, 'SYSTEM', LifecycleActorType.SYSTEM);
+        await competitionLifecycle.completeCompetition(
+          comp.id,
+          "SYSTEM",
+          LifecycleActorType.SYSTEM
+        );
         processedCount++;
       } catch (e: any) {
         errors.push(`Failed to complete ${comp.id}: ${e.message}`);
@@ -74,13 +82,13 @@ export async function GET(request: Request) {
     const toArchive = await prisma.competition.findMany({
       where: {
         lifecycleState: CompetitionLifecycle.COMPLETED,
-        completedAt: { lte: thirtyDaysAgo }
-      }
+        completedAt: { lte: thirtyDaysAgo },
+      },
     });
 
     for (const comp of toArchive) {
       try {
-        await competitionLifecycle.archiveCompetition(comp.id, 'SYSTEM', LifecycleActorType.SYSTEM);
+        await competitionLifecycle.archiveCompetition(comp.id, "SYSTEM", LifecycleActorType.SYSTEM);
         processedCount++;
       } catch (e: any) {
         errors.push(`Failed to archive ${comp.id}: ${e.message}`);
@@ -89,7 +97,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, processedCount, errors });
   } catch (error: any) {
-    console.error('Lifecycle Cron Error:', error);
+    console.error("Lifecycle Cron Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

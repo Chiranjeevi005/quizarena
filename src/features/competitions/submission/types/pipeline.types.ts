@@ -45,7 +45,7 @@ export interface PipelineContext {
   userId: string;
   competitionId: string;
   sessionId: string;
-  
+
   // Data populated during validation
   competition?: any;
   session?: any;
@@ -56,7 +56,7 @@ export interface PipelineContext {
   fraudAssessment?: FraudAssessment;
   evaluationSnapshot?: EvaluationSnapshot;
   resultSnapshot?: ResultSnapshot;
-  
+
   // Observability
   metrics: PipelineMetrics;
 }

@@ -1,9 +1,8 @@
-import { DeploymentStrategy, DeploymentEnvironment, DeploymentStageType } from '@/generated/prisma';
-import { DeploymentPlan, DeploymentStagePlan } from '../types/deployment.types';
-import { StageRegistry } from './StageRegistry';
+import { DeploymentStrategy, DeploymentEnvironment, DeploymentStageType } from "@/generated/prisma";
+import { DeploymentPlan, DeploymentStagePlan } from "../types/deployment.types";
+import { StageRegistry } from "./StageRegistry";
 
 export class DeploymentPlanner {
-  
   /**
    * Generates a deterministic deployment plan based on the environment,
    * strategy, and the registered stages in the StageRegistry.
@@ -13,14 +12,13 @@ export class DeploymentPlanner {
     environment: DeploymentEnvironment,
     strategy: DeploymentStrategy
   ): Promise<DeploymentPlan> {
-    
     const sortedStages = StageRegistry.getSortedStages();
-    const stagePlans: DeploymentStagePlan[] = sortedStages.map(stage => {
+    const stagePlans: DeploymentStagePlan[] = sortedStages.map((stage) => {
       const config = StageRegistry.getConfig(stage);
       return {
         stage: config.stage,
         order: config.order,
-        isMandatory: config.isMandatory
+        isMandatory: config.isMandatory,
       };
     });
 
@@ -30,7 +28,7 @@ export class DeploymentPlanner {
       strategy,
       environment,
       stages: stagePlans,
-      rollbackStrategy: strategy === DeploymentStrategy.BLUE_GREEN ? 'SWAP_ROUTER' : 'REVERT_STATE'
+      rollbackStrategy: strategy === DeploymentStrategy.BLUE_GREEN ? "SWAP_ROUTER" : "REVERT_STATE",
     };
   }
 }

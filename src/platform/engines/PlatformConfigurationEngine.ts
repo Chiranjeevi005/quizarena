@@ -22,18 +22,20 @@ export class PlatformConfigurationEngine {
   }
 
   public getPolicy(name: string): PolicyConfig {
-    return this.policies.get(name) || {
-      retryCount: 3,
-      timeoutMs: 5000,
-      concurrency: 1,
-      batchSize: 100
-    };
+    return (
+      this.policies.get(name) || {
+        retryCount: 3,
+        timeoutMs: 5000,
+        concurrency: 1,
+        batchSize: 100,
+      }
+    );
   }
 
   public getSnapshot(): any {
     return {
       features: Object.fromEntries(this.featureFlags),
-      policies: Object.fromEntries(this.policies)
+      policies: Object.fromEntries(this.policies),
     };
   }
 }

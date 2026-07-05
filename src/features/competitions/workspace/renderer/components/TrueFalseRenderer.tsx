@@ -1,6 +1,11 @@
 import { QuestionRendererProps, rendererRegistry } from "../registry";
 
-export function TrueFalseRenderer({ question, selectedOptionId, onSelectOption, isSubmitting }: QuestionRendererProps) {
+export function TrueFalseRenderer({
+  question,
+  selectedOptionId,
+  onSelectOption,
+  isSubmitting,
+}: QuestionRendererProps) {
   return (
     <div className="space-y-3 max-w-xl">
       {["True", "False"].map((value) => {

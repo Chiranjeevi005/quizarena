@@ -1,12 +1,20 @@
 import { QuestionRendererProps, rendererRegistry } from "../registry";
 import { useState, useEffect } from "react";
 
-export function NumericRenderer({ question, selectedOptionId, onSelectOption, isSubmitting }: QuestionRendererProps) {
+export function NumericRenderer({
+  question,
+  selectedOptionId,
+  onSelectOption,
+  isSubmitting,
+}: QuestionRendererProps) {
   const [value, setValue] = useState(selectedOptionId || "");
 
-  useEffect(() => {
+  const [prevSelectedOptionId, setPrevSelectedOptionId] = useState(selectedOptionId);
+
+  if (selectedOptionId !== prevSelectedOptionId) {
     setValue(selectedOptionId || "");
-  }, [selectedOptionId]);
+    setPrevSelectedOptionId(selectedOptionId);
+  }
 
   const handleBlur = () => {
     if (value !== selectedOptionId) {

@@ -10,7 +10,7 @@ export interface WorkflowDefinition {
 }
 
 export class WorkflowTimeline {
-  private events: Array<{ state: string, timestamp: Date, metadata?: any }> = [];
+  private events: Array<{ state: string; timestamp: Date; metadata?: any }> = [];
 
   public record(state: string, metadata?: any): void {
     this.events.push({ state, timestamp: new Date(), metadata });

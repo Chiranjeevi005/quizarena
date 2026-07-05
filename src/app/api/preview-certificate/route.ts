@@ -24,11 +24,11 @@ export async function GET(request: Request) {
     issuer: "QuizArena Official",
     userId: "user-123",
     competitionId: "comp-123",
-    pdfUrl: null
+    pdfUrl: null,
   };
 
   const html = CertificateRenderer.renderHtml(mockSnapshot);
-  
+
   return new NextResponse(html, {
     headers: {
       "Content-Type": "text/html",

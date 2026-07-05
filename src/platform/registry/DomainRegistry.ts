@@ -1,4 +1,4 @@
-export type DomainLifecycle = 'INITIALIZED' | 'REGISTERED' | 'READY' | 'ACTIVE' | 'DISABLED';
+export type DomainLifecycle = "INITIALIZED" | "REGISTERED" | "READY" | "ACTIVE" | "DISABLED";
 
 export interface DomainManifest {
   name: string;
@@ -9,7 +9,7 @@ export interface DomainManifest {
   capabilities: string[];
   dependencies: string[];
   exports: string[];
-  visibility: 'PUBLIC' | 'PRIVATE' | 'INTERNAL';
+  visibility: "PUBLIC" | "PRIVATE" | "INTERNAL";
   experimental: boolean;
   enabled: boolean;
   eventsPublished: string[];

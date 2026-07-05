@@ -25,7 +25,7 @@ export function MandatoryInstructions({ competitionId, version }: MandatoryInstr
 
   const handleToggle = () => {
     if (hasPreviouslyAccepted) return; // don't let them un-check if previously accepted
-    
+
     const newState = !acknowledged;
     setAcknowledged(newState);
     if (newState) {
@@ -40,7 +40,7 @@ export function MandatoryInstructions({ competitionId, version }: MandatoryInstr
     "Do not refresh repeatedly.",
     "Timer cannot be paused.",
     "Answers are auto-saved.",
-    "Do not copy content."
+    "Do not copy content.",
   ];
 
   if (hasPreviouslyAccepted) {
@@ -48,7 +48,9 @@ export function MandatoryInstructions({ competitionId, version }: MandatoryInstr
       <section className="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl shadow-xl flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-white">Instructions Acknowledged</h2>
-          <p className="text-sm text-slate-400 mt-1">You have already accepted the instructions for this version.</p>
+          <p className="text-sm text-slate-400 mt-1">
+            You have already accepted the instructions for this version.
+          </p>
         </div>
         <CheckSquare className="w-6 h-6 text-green-500" />
       </section>
@@ -67,12 +69,12 @@ export function MandatoryInstructions({ competitionId, version }: MandatoryInstr
         ))}
       </ul>
 
-      <button 
+      <button
         onClick={handleToggle}
         className={cn(
           "w-full flex items-center justify-center gap-3 p-4 rounded-xl border transition-all",
-          acknowledged 
-            ? "bg-green-500/10 border-green-500/30 text-green-400" 
+          acknowledged
+            ? "bg-green-500/10 border-green-500/30 text-green-400"
             : "bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300"
         )}
       >

@@ -1,10 +1,10 @@
-import { 
-  CompetitionVersionArtifact, 
-  VersionManifestDTO, 
+import {
+  CompetitionVersionArtifact,
+  VersionManifestDTO,
   VersionCompatibilityDTO,
-  ArtifactStatus
-} from '../types/artifact.types';
-import { CompetitionSnapshotDTO } from '../types/version.types';
+  ArtifactStatus,
+} from "../types/artifact.types";
+import { CompetitionSnapshotDTO } from "../types/version.types";
 
 export class ArtifactBuilder {
   /**
@@ -26,7 +26,7 @@ export class ArtifactBuilder {
       snapshotHash: manifest.snapshotHash,
       manifestHash: manifest.manifestHash,
       fingerprint: manifest.fingerprint,
-      
+
       competitionSnapshot: snapshot.metadata,
       sectionsSnapshot: snapshot.sections,
       questionsSnapshot: snapshot.questions,
@@ -36,7 +36,7 @@ export class ArtifactBuilder {
       manifest,
       compatibilities,
       buildAudits: [],
-      artifactStatus: ArtifactStatus.BUILDING
+      artifactStatus: ArtifactStatus.BUILDING,
     };
   }
 }

@@ -111,10 +111,6 @@ export function CompetitionAccessScheduleStep({ onValidationChange }: Props) {
           {errors.endsAt && <p className="text-xs text-red-500">{errors.endsAt.message}</p>}
         </div>
 
-
-
-
-
         <div className="md:col-span-2">
           <div className="flex items-start justify-between p-4 border border-gray-100 rounded-xl bg-white hover:border-orange-200 transition-colors">
             <div className="flex-1 pr-4">

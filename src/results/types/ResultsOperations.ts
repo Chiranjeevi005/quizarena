@@ -1,6 +1,6 @@
 export interface ResultTimeline {
   events: Array<{
-    action: 'Generated' | 'Viewed' | 'Downloaded' | 'Shared' | 'Retaken';
+    action: "Generated" | "Viewed" | "Downloaded" | "Shared" | "Retaken";
     timestamp: Date;
     actorId?: string;
   }>;

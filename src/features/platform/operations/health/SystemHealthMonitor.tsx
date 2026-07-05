@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
 
 export function SystemHealthMonitor() {
   return (
     <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">System Infrastructure</h3>
+      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+        System Infrastructure
+      </h3>
       <div className="grid grid-cols-2 gap-4">
         {/* Placeholder indicators */}
         <HealthIndicator name="Database" status="Healthy" />

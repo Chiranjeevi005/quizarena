@@ -1,4 +1,4 @@
-import { SubmissionPackage } from './SubmissionPackage';
+import { SubmissionPackage } from "./SubmissionPackage";
 
 export class SubmissionGateway {
   /**
@@ -6,8 +6,9 @@ export class SubmissionGateway {
    * Ensures Runtime doesn't call Submission logic directly.
    */
   public async submit(payload: SubmissionPackage): Promise<void> {
-    console.log(`[SubmissionGateway] Handoff to Submission domain for attempt ${payload.attemptId}`);
+    console.log(
+      `[SubmissionGateway] Handoff to Submission domain for attempt ${payload.attemptId}`
+    );
     // Issue SubmissionCommand here to Phase 09 Submission Domain
   }
 }
-

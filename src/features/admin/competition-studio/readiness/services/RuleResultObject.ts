@@ -1,11 +1,11 @@
 /**
  * Rule Result Object
- * 
+ *
  * Strict deterministic return type for every Readiness Rule.
  */
 
-export type RuleStatus = 'PASS' | 'FAIL' | 'SKIPPED';
-export type RuleSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
+export type RuleStatus = "PASS" | "FAIL" | "SKIPPED";
+export type RuleSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
 
 export interface RuleResultObject {
   ruleId: string;

@@ -9,7 +9,7 @@ export class MultipleChoiceEvaluator implements IQuestionEvaluator {
     const correctOptions = question.options.filter((o: any) => o.isCorrect).map((o: any) => o.id);
     const selectedOptions = answer.selectedOptionIds;
 
-    const isCorrect = 
+    const isCorrect =
       correctOptions.length === selectedOptions.length &&
       correctOptions.every((id: string) => selectedOptions.includes(id));
 

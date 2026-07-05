@@ -1,6 +1,9 @@
-import React from 'react';
+import React from "react";
 
-export const ArtifactBuildProgress: React.FC<{ status: string; progress: number }> = ({ status, progress }) => {
+export const ArtifactBuildProgress: React.FC<{ status: string; progress: number }> = ({
+  status,
+  progress,
+}) => {
   return (
     <div className="p-4 border rounded-md shadow-sm bg-white">
       <h3 className="text-lg font-semibold mb-2">Artifact Build Progress</h3>

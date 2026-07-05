@@ -1,6 +1,6 @@
 /**
  * Question Collections
- * 
+ *
  * Supports reusable collections across competitions.
  */
 
@@ -15,7 +15,7 @@ export interface QuestionCollection {
 class QuestionCollectionsService {
   private collections: Map<string, QuestionCollection> = new Map();
 
-  createCollection(collection: Omit<QuestionCollection, 'id'>): QuestionCollection {
+  createCollection(collection: Omit<QuestionCollection, "id">): QuestionCollection {
     const id = `col_${Date.now()}`;
     const newCollection = { ...collection, id };
     this.collections.set(id, newCollection);

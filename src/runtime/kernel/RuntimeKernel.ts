@@ -1,11 +1,11 @@
-import { RuntimeContext } from '../context/RuntimeContext';
-import { EligibilityEngine } from '../services/EligibilityEngine';
-import { SessionManager } from '../services/SessionManager';
-import { WorkspaceManager } from '../workspace/WorkspaceManager';
-import { NavigationManager } from '../services/NavigationManager';
-import { AnswerStateManager } from '../services/AnswerStateManager';
-import { AutoSavePipeline } from '../services/AutoSavePipeline';
-import { RecoveryManager } from '../services/RecoveryManager';
+import { RuntimeContext } from "../context/RuntimeContext";
+import { EligibilityEngine } from "../services/EligibilityEngine";
+import { SessionManager } from "../services/SessionManager";
+import { WorkspaceManager } from "../workspace/WorkspaceManager";
+import { NavigationManager } from "../services/NavigationManager";
+import { AnswerStateManager } from "../services/AnswerStateManager";
+import { AutoSavePipeline } from "../services/AutoSavePipeline";
+import { RecoveryManager } from "../services/RecoveryManager";
 
 export class RuntimeKernel {
   constructor(
@@ -23,10 +23,10 @@ export class RuntimeKernel {
    */
   public async boot(context: RuntimeContext): Promise<void> {
     console.log(`[RuntimeKernel] Booting runtime for session ${context.session?.id}`);
-    
+
     // 1. Check Eligibility
     const eligibilityResult = await this.eligibility.evaluate(context);
-    if (!eligibilityResult.isEligible) throw new Error('Ineligible');
+    if (!eligibilityResult.isEligible) throw new Error("Ineligible");
 
     // 2. Initialize Session
     await this.sessionManager.initializeSession(context);
@@ -35,11 +35,11 @@ export class RuntimeKernel {
     await this.workspaceManager.initializeWorkspace(context);
 
     // 4. Setup Navigation & Answer State (implicit readiness)
-    
+
     // 5. Attempt Recovery
     const snapshot = await this.recoveryManager.recoverSession(context);
     if (snapshot) {
-      console.log('[RuntimeKernel] Recovered from snapshot', snapshot.snapshotId);
+      console.log("[RuntimeKernel] Recovered from snapshot", snapshot.snapshotId);
       // Hydrate state managers
     }
   }

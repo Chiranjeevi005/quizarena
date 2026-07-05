@@ -1,4 +1,4 @@
-import { PlatformEventContract } from '../contracts/PlatformEventContract';
+import { PlatformEventContract } from "../contracts/PlatformEventContract";
 
 export interface DeadLetterEntry {
   id: string;
@@ -15,21 +15,27 @@ export interface DeadLetterEntry {
 export class DeadLetterQueue {
   private queue: DeadLetterEntry[] = [];
 
-  public async push(event: PlatformEventContract, error: Error, retryCount: number = 0): Promise<void> {
+  public async push(
+    event: PlatformEventContract,
+    error: Error,
+    retryCount: number = 0
+  ): Promise<void> {
     const entry: DeadLetterEntry = {
       id: event.eventId || `dlq-${Date.now()}`,
       failedAt: new Date(),
       event,
       error: {
         message: error.message,
-        code: (error as any).code || 'UNKNOWN',
-        stack: error.stack
+        code: (error as any).code || "UNKNOWN",
+        stack: error.stack,
       },
-      retryCount
+      retryCount,
     };
-    
+
     this.queue.push(entry);
-    console.error(`[DLQ] Event ${event.eventName} failed and moved to DLQ. Reason: ${error.message}`);
+    console.error(
+      `[DLQ] Event ${event.eventName} failed and moved to DLQ. Reason: ${error.message}`
+    );
   }
 
   public async getPending(): Promise<DeadLetterEntry[]> {
@@ -37,6 +43,6 @@ export class DeadLetterQueue {
   }
 
   public async remove(id: string): Promise<void> {
-    this.queue = this.queue.filter(e => e.id !== id);
+    this.queue = this.queue.filter((e) => e.id !== id);
   }
 }

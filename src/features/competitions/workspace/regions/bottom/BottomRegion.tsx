@@ -1,6 +1,9 @@
 "use client";
 
-import { useRuntimeState, useRuntimeCommand } from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
+import {
+  useRuntimeState,
+  useRuntimeCommand,
+} from "@/features/competitions/runtime/providers/CompetitionRuntimeProvider";
 import { WorkspaceConfiguration } from "../../types/workspace.types";
 import { ChevronLeft, ChevronRight, Flag } from "lucide-react";
 

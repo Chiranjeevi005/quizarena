@@ -22,7 +22,7 @@ export function CenterRegion() {
           </span>
           <span className="text-slate-400 text-sm font-medium">of {questions.length}</span>
         </div>
-        
+
         {isMarked && (
           <span className="text-amber-500 text-xs font-semibold uppercase tracking-wider flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded">
             <Flag className="w-3 h-3 fill-current" />

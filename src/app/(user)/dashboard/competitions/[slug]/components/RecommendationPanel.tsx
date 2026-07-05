@@ -18,7 +18,10 @@ export async function RecommendationPanel({ slug }: RecommendationPanelProps) {
       </h2>
       <ul className="space-y-4">
         {recommendations.map((rec, idx) => (
-          <li key={idx} className="flex items-start gap-3 p-4 bg-slate-950 rounded-xl border border-slate-800/50">
+          <li
+            key={idx}
+            className="flex items-start gap-3 p-4 bg-slate-950 rounded-xl border border-slate-800/50"
+          >
             <Lightbulb className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <span className="text-slate-300 font-medium leading-relaxed">{rec.reason}</span>
           </li>
