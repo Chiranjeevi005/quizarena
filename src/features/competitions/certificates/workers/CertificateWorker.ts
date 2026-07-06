@@ -21,7 +21,9 @@ export class CertificateWorker {
     const WINNER_THRESHOLD = 90; // Just an example for WINNER tier
 
     if (payload.percentage < PASSING_THRESHOLD) {
-      console.log(`[CertificateWorker] User did not meet the passing threshold (${payload.percentage}% < ${PASSING_THRESHOLD}%).`);
+      console.log(
+        `[CertificateWorker] User did not meet the passing threshold (${payload.percentage}% < ${PASSING_THRESHOLD}%).`
+      );
       return;
     }
 
@@ -92,7 +94,9 @@ export class CertificateWorker {
       },
     });
 
-    console.log(`[CertificateWorker] CertificateSnapshot issued: ${snapshot.id} (${certificateType})`);
+    console.log(
+      `[CertificateWorker] CertificateSnapshot issued: ${snapshot.id} (${certificateType})`
+    );
 
     return snapshot;
   }

@@ -5,7 +5,13 @@ export class RankingWorker {
   /**
    * Processes a finalized attempt to update leaderboards asynchronously.
    */
-  async processAttempt(payload: { sessionId: string; competitionId: string; userId: string; scoreData: any; attemptResult: any }): Promise<void> {
+  async processAttempt(payload: {
+    sessionId: string;
+    competitionId: string;
+    userId: string;
+    scoreData: any;
+    attemptResult: any;
+  }): Promise<void> {
     // 1. Check if the competition uses ranking / leaderboards
     const compId = payload.competitionId;
     const userId = payload.userId;

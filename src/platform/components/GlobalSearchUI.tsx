@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Search, X, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Search, X, Loader2 } from "lucide-react";
 
 interface SearchResult {
   type: string;
@@ -13,26 +13,27 @@ interface SearchResult {
 
 export function GlobalSearchUI() {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         setIsOpen(true);
       }
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setIsOpen(false);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
     if (query.trim().length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([]);
       return;
     }
@@ -60,26 +61,32 @@ export function GlobalSearchUI() {
       <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col">
         <div className="flex items-center px-4 py-3 border-b border-gray-800">
           <Search className="w-5 h-5 text-gray-400 mr-3" />
-          <input 
-            type="text" 
+          <input
+            type="text"
             autoFocus
             className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder-gray-500"
             placeholder="Search competitions, users, questions..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          {isSearching ? <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" /> : (
+          {isSearching ? (
+            <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+          ) : (
             <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
           )}
         </div>
-        
+
         <div className="max-h-[60vh] overflow-y-auto">
           {results.length > 0 ? (
             <div className="p-2 space-y-1">
-              {results.map(r => (
-                <a key={r.id} href={r.url} className="block p-3 rounded-lg hover:bg-gray-800 transition-colors">
+              {results.map((r) => (
+                <a
+                  key={r.id}
+                  href={r.url}
+                  className="block p-3 rounded-lg hover:bg-gray-800 transition-colors"
+                >
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-medium text-gray-200">{r.title}</p>
@@ -94,14 +101,15 @@ export function GlobalSearchUI() {
             </div>
           ) : query.length >= 2 && !isSearching ? (
             <div className="p-8 text-center text-gray-500">
-              No results found for "{query}"
+              No results found for &quot;{query}&quot;
             </div>
           ) : null}
         </div>
-        
+
         <div className="bg-gray-950 px-4 py-2 border-t border-gray-800 flex justify-between items-center">
           <div className="text-xs text-gray-500">
-            Navigate with <kbd className="font-mono bg-gray-800 px-1 rounded">↑</kbd> <kbd className="font-mono bg-gray-800 px-1 rounded">↓</kbd>
+            Navigate with <kbd className="font-mono bg-gray-800 px-1 rounded">↑</kbd>{" "}
+            <kbd className="font-mono bg-gray-800 px-1 rounded">↓</kbd>
           </div>
           <div className="text-xs text-gray-500">
             Close with <kbd className="font-mono bg-gray-800 px-1 rounded">ESC</kbd>

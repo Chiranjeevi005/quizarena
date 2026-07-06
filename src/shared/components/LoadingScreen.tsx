@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
-import { Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function LoadingScreen({ message = "Loading..." }: { message?: string }) {
   return (
@@ -28,7 +28,17 @@ export function LoadingScreen({ message = "Loading..." }: { message?: string }) 
   );
 }
 
-export function EmptyState({ title, description, icon: Icon, action }: { title: string, description: string, icon: any, action?: React.ReactNode }) {
+export function EmptyState({
+  title,
+  description,
+  icon: Icon,
+  action,
+}: {
+  title: string;
+  description: string;
+  icon: any;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-gray-700 bg-gray-900/50">
       <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-6">

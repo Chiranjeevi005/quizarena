@@ -1,4 +1,5 @@
 # Architecture Metrics
+
 - Domain Count: 13
 - Average Coupling: 0.00
 - Average Cohesion: 100%

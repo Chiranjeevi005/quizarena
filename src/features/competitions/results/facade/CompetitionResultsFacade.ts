@@ -111,10 +111,11 @@ export class CompetitionResultsFacade {
       incorrectAnswers: submissionResult.wrongAnswers,
       skippedQuestions: submissionResult.unansweredCount,
       marksAwarded: submissionResult.score,
-      negativeMarks: 0, 
+      negativeMarks: 0,
       percentage: submissionResult.percentage,
       completionRate:
-        ((submissionResult.correctAnswers + submissionResult.wrongAnswers) / evalAnswers.length) * 100,
+        ((submissionResult.correctAnswers + submissionResult.wrongAnswers) / evalAnswers.length) *
+        100,
       averageTimePerQuestion: attempt.timeTakenInSeconds / evalAnswers.length,
       questionReviews,
       sections,

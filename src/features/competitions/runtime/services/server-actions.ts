@@ -23,7 +23,7 @@ async function requireAuth() {
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
-  
+
   const userId = session.user.id;
   const limit = apiRateLimiter.checkAndRegister(userId);
   if (limit.isLimited) {
@@ -36,13 +36,13 @@ async function requireAuth() {
 export async function heartbeat(sessionId: string) {
   try {
     const userId = await requireAuth();
-    
+
     // Ownership check
     const session = await prisma.competitionSession.findUnique({
       where: { id: sessionId },
       select: { userId: true },
     });
-    
+
     if (!session || session.userId !== userId) {
       return { success: false, error: "Unauthorized access to session" };
     }
@@ -74,7 +74,8 @@ export async function syncAnswers(sessionId: string, payload: { answers: any[] }
     });
 
     if (!session) return { success: false, error: "Session not found." };
-    if (session.userId !== userId) return { success: false, error: "Unauthorized access to session" };
+    if (session.userId !== userId)
+      return { success: false, error: "Unauthorized access to session" };
     if (session.status === "SUBMITTED" || session.status === "EXPIRED") {
       return { success: false, error: "Session cannot accept changes." };
     }
@@ -123,29 +124,35 @@ export async function submitSession(sessionId: string) {
     return await prisma.$transaction(async (tx) => {
       const session = await tx.competitionSession.findUnique({
         where: { id: sessionId },
-        include: { answers: true }
+        include: { answers: true },
       });
 
       if (!session) throw new Error("Session not found");
       if (session.userId !== userId) throw new Error("Unauthorized access to session");
 
       if (session.status === "SUBMITTED") {
-        const existingAttempt = await tx.competitionAttempt.findUnique({ 
+        const existingAttempt = await tx.competitionAttempt.findUnique({
           where: { sessionId },
-          include: { submissionRecord: true } 
+          include: { submissionRecord: true },
         });
-        return { success: true, data: { attemptId: existingAttempt?.id, submissionRecordId: existingAttempt?.submissionRecord?.id } };
+        return {
+          success: true,
+          data: {
+            attemptId: existingAttempt?.id,
+            submissionRecordId: existingAttempt?.submissionRecord?.id,
+          },
+        };
       }
 
       // Generate Immutable Snapshot of Answers & Timing
       const evaluationSnapshot = {
         questionOrder: session.questionOrder,
         optionOrder: session.optionOrder,
-        answers: session.answers.map(a => ({
+        answers: session.answers.map((a) => ({
           questionId: a.questionId,
           selectedOptionId: a.selectedOptionId,
           answeredAt: a.answeredAt,
-          isMarkedForReview: a.isMarkedForReview
+          isMarkedForReview: a.isMarkedForReview,
         })),
         submittedAt: new Date().toISOString(),
       };
@@ -180,16 +187,19 @@ export async function submitSession(sessionId: string) {
           manifests: {
             schemaVersion: "1.0",
             runtimeVersion: "1.0",
-            generatedAt: new Date().toISOString()
+            generatedAt: new Date().toISOString(),
           },
           hashes: {
             // MVP Hash mock
-            payloadHash: "sha256-mock-hash"
-          }
+            payloadHash: "sha256-mock-hash",
+          },
         },
       });
 
-      return { success: true, data: { attemptId: attempt.id, submissionRecordId: submissionRecord.id } };
+      return {
+        success: true,
+        data: { attemptId: attempt.id, submissionRecordId: submissionRecord.id },
+      };
     });
   } catch (error) {
     console.error("[submitSession] Error:", error);

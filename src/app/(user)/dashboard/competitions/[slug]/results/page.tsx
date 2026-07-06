@@ -59,7 +59,7 @@ export default async function CompetitionResultsPage({
             {readModel.sections && readModel.sections.length > 0 && (
               <SectionAnalysisRegion data={readModel} />
             )}
-            
+
             <QuestionReviewRegion data={readModel} />
           </div>
 

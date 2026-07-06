@@ -42,9 +42,12 @@ export class CandidateProfileFacade {
   public static async toggleBookmark(userId: string, competitionId: string): Promise<boolean> {
     const current = this.mockBookmarks.get(userId) || [];
     const isBookmarked = current.includes(competitionId);
-    
+
     if (isBookmarked) {
-      this.mockBookmarks.set(userId, current.filter(id => id !== competitionId));
+      this.mockBookmarks.set(
+        userId,
+        current.filter((id) => id !== competitionId)
+      );
       return false; // Removed
     } else {
       this.mockBookmarks.set(userId, [...current, competitionId]);

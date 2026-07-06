@@ -71,7 +71,7 @@ export const ROUTES = {
 
     // ─── COMPETITION STUDIO ──────────────────────────────────
     COMPETITIONS: "/admin/dashboard/competitions",
-    COMPETITION_CREATE: "/admin/dashboard/competitions/create",
+    COMPETITION_CREATE: "/dashboard/admin/competitions/wizard",
     COMPETITION_OVERVIEW: (id: string) => `/admin/dashboard/competitions/${id}/overview`,
     COMPETITION_QUESTIONS: (id: string) => `/admin/dashboard/competitions/${id}/questions`,
     COMPETITION_BUILDER: (id: string) => `/admin/dashboard/competitions/${id}/builder`,

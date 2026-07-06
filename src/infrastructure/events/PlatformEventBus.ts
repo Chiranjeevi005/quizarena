@@ -5,7 +5,7 @@ import { PrismaClient } from "../../generated/prisma";
 /**
  * PlatformEventBus is responsible for handling domain events.
  * It uses a Node EventEmitter for in-process memory distribution.
- * 
+ *
  * To ensure reliability, events should be saved to the OutboxMessage table
  * during the same database transaction that modifies the business entities.
  * The OutboxRelay will then pick them up and emit them through this bus.
@@ -22,7 +22,13 @@ class EventBus implements IEventBus {
    * Publishes an event by saving it to the Outbox table.
    * MUST be called within a Prisma transaction to guarantee atomicity.
    */
-  async publishTx(event: PlatformEvent, tx: Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">): Promise<void> {
+  async publishTx(
+    event: PlatformEvent,
+    tx: Omit<
+      PrismaClient,
+      "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+    >
+  ): Promise<void> {
     // Mocked outbox: since OutboxMessage doesn't exist in schema, we emit immediately
     this.emit(event);
   }

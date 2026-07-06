@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
-import { certificateVerificationService } from '../../../../certificates/services/CertificateVerificationService';
+import { NextResponse } from "next/server";
+import { certificateVerificationService } from "../../../../certificates/services/CertificateVerificationService";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
+  const id = searchParams.get("id");
 
   if (!id) {
-    return NextResponse.json({ error: 'Certificate ID is required' }, { status: 400 });
+    return NextResponse.json({ error: "Certificate ID is required" }, { status: 400 });
   }
 
   try {
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('[Verify API] Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("[Verify API] Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

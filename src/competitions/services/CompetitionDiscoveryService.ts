@@ -45,8 +45,8 @@ export class CompetitionDiscoveryService {
           select: {
             entryFee: true,
             rewardPool: true,
-          }
-        }
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -59,7 +59,7 @@ export class CompetitionDiscoveryService {
     }
 
     const competitions = await prisma.competition.findMany(queryArgs);
-    
+
     let nextCursor: string | undefined = undefined;
     if (competitions.length > limit) {
       const nextItem = competitions.pop();
@@ -68,7 +68,7 @@ export class CompetitionDiscoveryService {
 
     return {
       items: competitions,
-      nextCursor
+      nextCursor,
     };
   }
 }

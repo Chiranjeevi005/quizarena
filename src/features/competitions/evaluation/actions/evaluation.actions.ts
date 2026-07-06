@@ -12,7 +12,7 @@ export async function processEvaluation(submissionRecordId: string) {
       return { success: false, error: "Unauthorized" };
     }
     const userId = session.user.id;
-    
+
     const limit = apiRateLimiter.checkAndRegister(userId);
     if (limit.isLimited) {
       return { success: false, error: "Rate limit exceeded. Please try again later." };
@@ -20,7 +20,7 @@ export async function processEvaluation(submissionRecordId: string) {
 
     const record = await prisma.submissionRecord.findUnique({
       where: { id: submissionRecordId },
-      select: { userId: true }
+      select: { userId: true },
     });
 
     if (!record) {

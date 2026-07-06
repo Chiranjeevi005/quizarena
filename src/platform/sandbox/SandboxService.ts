@@ -7,7 +7,7 @@ export class SandboxService {
   async createSandbox(competitionId: string, smeUserId: string) {
     const original = await prisma.challenge.findUnique({
       where: { id: competitionId },
-      include: { questions: { include: { question: { include: { options: true } } } } }
+      include: { questions: { include: { question: { include: { options: true } } } } },
     });
 
     if (!original) throw new Error("Original competition not found");
@@ -23,15 +23,15 @@ export class SandboxService {
         totalQuestions: original.totalQuestions,
         status: "LIVE",
         visibility: "PRIVATE",
-        createdById: smeUserId
-      }
+        createdById: smeUserId,
+      },
     });
 
     // Copy questions
     await Promise.all(
-      original.questions.map((cq) => 
+      original.questions.map((cq) =>
         prisma.challengeQuestion.create({
-          data: { challengeId: sandbox.id, questionId: cq.questionId, orderIndex: cq.orderIndex }
+          data: { challengeId: sandbox.id, questionId: cq.questionId, orderIndex: cq.orderIndex },
         })
       )
     );
@@ -45,7 +45,7 @@ export class SandboxService {
   async cleanupSandboxes() {
     console.log("[SandboxService] Cleaning up expired sandboxes...");
     const expiredSandboxes = await prisma.challenge.findMany({
-      where: { title: { startsWith: "[SANDBOX]" } } // Simple heuristic for demo
+      where: { title: { startsWith: "[SANDBOX]" } }, // Simple heuristic for demo
     });
 
     for (const sandbox of expiredSandboxes) {

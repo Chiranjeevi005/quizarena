@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 export interface NotificationPayload {
   to: string;
@@ -16,7 +16,7 @@ export class NotificationService implements INotificationService {
   private isDevelopment: boolean;
 
   constructor() {
-    this.isDevelopment = process.env.NODE_ENV !== 'production';
+    this.isDevelopment = process.env.NODE_ENV !== "production";
     if (process.env.RESEND_API_KEY) {
       this.resend = new Resend(process.env.RESEND_API_KEY);
     }
@@ -26,7 +26,7 @@ export class NotificationService implements INotificationService {
     if (this.resend && !this.isDevelopment) {
       try {
         await this.resend.emails.send({
-          from: 'QuizArena <noreply@quizarena.com>',
+          from: "QuizArena <noreply@quizarena.com>",
           to: payload.to,
           subject: payload.subject,
           html: payload.html,
@@ -34,16 +34,16 @@ export class NotificationService implements INotificationService {
         });
         return true;
       } catch (error) {
-        console.error('[NotificationService] Failed to send email via Resend:', error);
+        console.error("[NotificationService] Failed to send email via Resend:", error);
         return false;
       }
     } else {
       // Console Logger Fallback
-      console.log('===================================================');
+      console.log("===================================================");
       console.log(`[NotificationService] Sending Email to: ${payload.to}`);
       console.log(`[NotificationService] Subject: ${payload.subject}`);
       console.log(`[NotificationService] HTML: ${payload.html}`);
-      console.log('===================================================');
+      console.log("===================================================");
       return true;
     }
   }

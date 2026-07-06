@@ -43,7 +43,7 @@ export const QuestionPreviewSidebar: React.FC = () => {
 
   if (!previewId) {
     return (
-      <aside className="w-96 border-l border-gray-200 bg-gray-50 hidden xl:flex flex-col shrink-0">
+      <aside className="w-96 border-l border-gray-200 bg-gray-50 hidden lg:flex flex-col shrink-0">
         <header className="h-14 border-b border-gray-200 flex items-center px-4 font-semibold text-gray-800 bg-white">
           Question Preview
         </header>
@@ -61,7 +61,7 @@ export const QuestionPreviewSidebar: React.FC = () => {
   const isSelected = selectionBasket.has(previewId);
 
   return (
-    <aside className="w-96 border-l border-gray-200 bg-white hidden xl:flex flex-col shrink-0 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-10 relative">
+    <aside className="w-96 border-l border-gray-200 bg-white hidden lg:flex flex-col shrink-0 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.05)] z-10 relative">
       <header className="h-14 border-b border-gray-200 flex items-center px-4 font-semibold text-gray-800 justify-between">
         <span>Preview</span>
         <div className="flex gap-2">

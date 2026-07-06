@@ -47,20 +47,20 @@ interface DashboardShellProps {
 }
 
 const userNavItems = [
-  { href: "/dashboard/home", label: "Workspace", icon: LayoutDashboard },
+  { href: "/dashboard/home", label: "Workspace", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/competitions", label: "Competitions", icon: Trophy },
   // Feature Flags: Practice and Analytics are hidden for MVP
 ];
 
 const moderatorNavItems = [
-  { href: "/dashboard/home", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/home", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/manage-challenges", label: "Manage Challenges", icon: Trophy },
   { href: "/dashboard/questions", label: "Question Bank", icon: FileText },
   { href: "/dashboard/content", label: "Content Queue", icon: ClipboardList },
 ];
 
 const adminNavItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS" },
+  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS", exact: true },
   { href: "/dashboard/admin/users", label: "Users", icon: Users, group: "OPERATIONS" },
   {
     href: "/dashboard/admin/moderation",
@@ -76,7 +76,7 @@ const adminNavItems = [
   },
 
   {
-    href: "/dashboard/admin/questions",
+    href: "/dashboard/admin/question-bank",
     label: "Question Bank",
     icon: BookOpen,
     group: "QUESTION BANK",
@@ -97,7 +97,7 @@ const adminNavItems = [
 ];
 
 const superAdminNavItems = [
-  { href: "/dashboard/super-admin/home", label: "Command Center", icon: LayoutDashboard },
+  { href: "/dashboard/super-admin/home", label: "Command Center", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/super-admin/monitoring", label: "Monitoring", icon: Activity },
   { href: "/dashboard/super-admin/intelligence", label: "Intelligence", icon: BarChart3 },
   { href: "/dashboard/super-admin/roles", label: "Role Management", icon: Shield },
@@ -322,7 +322,9 @@ export function DashboardShell({ children, userStatsNode, freshUser }: Dashboard
               const prevGroup = index > 0 ? (navItems[index - 1] as any).group : null;
               const showGroupHeader = group && group !== prevGroup;
 
-              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              const isActive = (item as any).exact
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(item.href + "/");
               const Icon = item.icon;
               return (
                 <div key={item.href}>
@@ -472,7 +474,9 @@ export function DashboardShell({ children, userStatsNode, freshUser }: Dashboard
                     const prevGroup = index > 0 ? (navItems[index - 1] as any).group : null;
                     const showGroupHeader = group && group !== prevGroup;
 
-                    const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+                    const isActive = (item as any).exact
+                      ? pathname === item.href
+                      : pathname === item.href || pathname.startsWith(item.href + "/");
                     const Icon = item.icon;
                     return (
                       <div key={item.href}>

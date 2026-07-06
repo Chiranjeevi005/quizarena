@@ -15,7 +15,10 @@ export class CompetitionHistoryFacade {
   /**
    * Retrieves a candidate's complete competition history using the V2 Schema.
    */
-  public static async getCandidateHistory(userId: string, limit: number = 10): Promise<CompetitionHistoryEntry[]> {
+  public static async getCandidateHistory(
+    userId: string,
+    limit: number = 10
+  ): Promise<CompetitionHistoryEntry[]> {
     const attempts = await prisma.competitionAttempt.findMany({
       where: {
         userId,
@@ -26,21 +29,25 @@ export class CompetitionHistoryFacade {
         submissionRecord: {
           include: {
             result: true,
-          }
+          },
         },
-        session: true
+        session: true,
       },
       orderBy: {
-        session: { startedAt: "desc" }
-      }
+        session: { startedAt: "desc" },
+      },
     });
 
-    return attempts.map(attempt => {
+    return attempts.map((attempt) => {
       const submission = attempt.submissionRecord;
       const result = submission?.result;
 
       let rank = null;
-      if (result?.rankingSnapshot && typeof result.rankingSnapshot === 'object' && 'rank' in (result.rankingSnapshot as any)) {
+      if (
+        result?.rankingSnapshot &&
+        typeof result.rankingSnapshot === "object" &&
+        "rank" in (result.rankingSnapshot as any)
+      ) {
         rank = (result.rankingSnapshot as any).rank;
       }
 
@@ -52,7 +59,8 @@ export class CompetitionHistoryFacade {
         percentage: result?.percentage || null,
         rank: rank,
         status: submission ? "COMPLETED" : "INCOMPLETE",
-        submittedAt: submission?.submittedAt.toISOString() || attempt.session.startedAt.toISOString()
+        submittedAt:
+          submission?.submittedAt.toISOString() || attempt.session.startedAt.toISOString(),
       };
     });
   }

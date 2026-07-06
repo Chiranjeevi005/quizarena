@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export interface SessionState {
   attemptId: string;
@@ -8,17 +8,18 @@ export interface SessionState {
 
 export function useSessionReconciliation(attemptId: string) {
   const [recoveredState, setRecoveredState] = useState<SessionState | null>(null);
-  
+
   useEffect(() => {
     if (!attemptId) return;
     const key = `quizarena_session_${attemptId}`;
     try {
       const stored = localStorage.getItem(key);
       if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setRecoveredState(JSON.parse(stored));
       }
     } catch (e) {
-      console.error('Session reconciliation failed', e);
+      console.error("Session reconciliation failed", e);
     }
   }, [attemptId]);
 
@@ -31,7 +32,7 @@ export function useSessionReconciliation(attemptId: string) {
   const clearState = () => {
     if (!attemptId) return;
     localStorage.removeItem(`quizarena_session_${attemptId}`);
-  }
+  };
 
   return { recoveredState, saveState, clearState };
 }

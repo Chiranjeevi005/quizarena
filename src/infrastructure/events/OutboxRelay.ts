@@ -8,7 +8,7 @@ export class OutboxRelay {
   private isRunning = false;
   private intervalId: NodeJS.Timeout | null = null;
   private readonly pollIntervalMs = 5000; // Poll every 5 seconds for MVP
-  
+
   // In-memory queue for outbox messages since OutboxMessage is not in schema
   private inMemoryOutbox: any[] = [];
 
@@ -25,7 +25,7 @@ export class OutboxRelay {
     if (this.isRunning) return;
     this.isRunning = true;
     console.log(`[OutboxRelay] Started polling every ${this.pollIntervalMs}ms`);
-    
+
     this.intervalId = setInterval(() => {
       this.processOutbox().catch((err) => {
         console.error(`[OutboxRelay] Error processing outbox:`, err);
@@ -43,7 +43,7 @@ export class OutboxRelay {
 
   public async processOutbox() {
     // 1. Fetch unpublished messages
-    const messages = this.inMemoryOutbox.filter(m => !m.publishedAt).slice(0, 50);
+    const messages = this.inMemoryOutbox.filter((m) => !m.publishedAt).slice(0, 50);
 
     if (messages.length === 0) return;
 

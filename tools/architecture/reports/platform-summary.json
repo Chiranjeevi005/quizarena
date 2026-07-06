@@ -1,17 +1,7 @@
 {
   "status": "compliant",
   "phase": "04",
-  "tier1": [
-    "ui",
-    "feedback",
-    "dialogs"
-  ],
-  "tier2": [
-    "platform",
-    "charts"
-  ],
-  "tier3": [
-    "ai",
-    "notifications"
-  ]
+  "tier1": ["ui", "feedback", "dialogs"],
+  "tier2": ["platform", "charts"],
+  "tier3": ["ai", "notifications"]
 }

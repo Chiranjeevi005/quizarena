@@ -1,17 +1,19 @@
-import React from 'react';
-import { JobsDashboard } from '../../../operations/components/JobsDashboard';
-import { HealthDashboard } from '../../../operations/components/HealthDashboard';
+import React from "react";
+import { JobsDashboard } from "../../../operations/components/JobsDashboard";
+import { HealthDashboard } from "../../../operations/components/HealthDashboard";
 
 export default function OperationsCenterPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <div>
         <h2 className="text-2xl font-bold mb-2">Operations Center</h2>
-        <p className="text-gray-400 text-sm">Monitor platform health, queue processing, and system operations in real-time.</p>
+        <p className="text-gray-400 text-sm">
+          Monitor platform health, queue processing, and system operations in real-time.
+        </p>
       </div>
-      
+
       <HealthDashboard />
-      
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2">
           <JobsDashboard />

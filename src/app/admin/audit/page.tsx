@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Shield, Filter, Download } from 'lucide-react';
+import React, { useState } from "react";
+import { Shield, Filter, Download } from "lucide-react";
 
 interface AuditLog {
   id: string;
@@ -9,13 +9,34 @@ interface AuditLog {
   entity: string;
   actor: string;
   timestamp: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 }
 
 const mockLogs: AuditLog[] = [
-  { id: 'log-1', action: 'USER_ROLE_CHANGED', entity: 'User:alice', actor: 'SuperAdmin', timestamp: '10 mins ago', severity: 'HIGH' },
-  { id: 'log-2', action: 'COMPETITION_PUBLISHED', entity: 'Comp:cs-101', actor: 'Alice', timestamp: '1 hour ago', severity: 'MEDIUM' },
-  { id: 'log-3', action: 'LOGIN_FAILED', entity: 'Auth', actor: 'Unknown IP', timestamp: '2 hours ago', severity: 'LOW' },
+  {
+    id: "log-1",
+    action: "USER_ROLE_CHANGED",
+    entity: "User:alice",
+    actor: "SuperAdmin",
+    timestamp: "10 mins ago",
+    severity: "HIGH",
+  },
+  {
+    id: "log-2",
+    action: "COMPETITION_PUBLISHED",
+    entity: "Comp:cs-101",
+    actor: "Alice",
+    timestamp: "1 hour ago",
+    severity: "MEDIUM",
+  },
+  {
+    id: "log-3",
+    action: "LOGIN_FAILED",
+    entity: "Auth",
+    actor: "Unknown IP",
+    timestamp: "2 hours ago",
+    severity: "LOW",
+  },
 ];
 
 export default function AdminAuditPage() {
@@ -23,10 +44,30 @@ export default function AdminAuditPage() {
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL': return <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-semibold">CRITICAL</span>;
-      case 'HIGH': return <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded text-xs font-semibold">HIGH</span>;
-      case 'MEDIUM': return <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-semibold">MEDIUM</span>;
-      default: return <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-semibold">LOW</span>;
+      case "CRITICAL":
+        return (
+          <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-semibold">
+            CRITICAL
+          </span>
+        );
+      case "HIGH":
+        return (
+          <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded text-xs font-semibold">
+            HIGH
+          </span>
+        );
+      case "MEDIUM":
+        return (
+          <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-semibold">
+            MEDIUM
+          </span>
+        );
+      default:
+        return (
+          <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-semibold">
+            LOW
+          </span>
+        );
     }
   };
 
@@ -38,7 +79,9 @@ export default function AdminAuditPage() {
             <Shield className="w-6 h-6 text-indigo-400" />
             Audit Explorer
           </h2>
-          <p className="text-gray-400 text-sm">Track system changes, security events, and administrative actions.</p>
+          <p className="text-gray-400 text-sm">
+            Track system changes, security events, and administrative actions.
+          </p>
         </div>
         <button className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white px-3 py-2 text-sm font-medium rounded transition-colors">
           <Download className="w-4 h-4" /> Export CSV
@@ -54,7 +97,7 @@ export default function AdminAuditPage() {
             <Filter className="w-4 h-4" /> Filter by Severity
           </button>
         </div>
-        
+
         <table className="w-full text-left text-sm text-gray-300">
           <thead className="bg-gray-800/50 text-gray-400 uppercase text-xs">
             <tr>
@@ -66,7 +109,7 @@ export default function AdminAuditPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800/50">
-            {logs.map(log => (
+            {logs.map((log) => (
               <tr key={log.id} className="hover:bg-gray-800/30 transition-colors">
                 <td className="px-6 py-3 font-medium text-gray-200">{log.action}</td>
                 <td className="px-6 py-3 text-gray-400">{log.entity}</td>

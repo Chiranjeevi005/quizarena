@@ -1,7 +1,7 @@
 import { prisma } from "../../lib/prisma";
 
 export interface SearchResult {
-  type: 'COMPETITION' | 'USER' | 'QUESTION' | 'CERTIFICATE';
+  type: "COMPETITION" | "USER" | "QUESTION" | "CERTIFICATE";
   id: string;
   title: string;
   subtitle?: string;
@@ -23,59 +23,65 @@ export class GlobalSearchService {
     const challenges = await prisma.challenge.findMany({
       where: {
         OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } }
-        ]
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
       },
-      take: 5
+      take: 5,
     });
-    
-    challenges.forEach(c => results.push({
-      type: 'COMPETITION',
-      id: c.id,
-      title: c.title,
-      subtitle: c.status,
-      url: `/competitions/${c.slug}`
-    }));
+
+    challenges.forEach((c) =>
+      results.push({
+        type: "COMPETITION",
+        id: c.id,
+        title: c.title,
+        subtitle: c.status,
+        url: `/competitions/${c.slug}`,
+      })
+    );
 
     // 2. Search Users
     const users = await prisma.user.findMany({
       where: {
         OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { username: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } }
-        ]
+          { name: { contains: query, mode: "insensitive" } },
+          { username: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
       },
-      take: 5
+      take: 5,
     });
 
-    users.forEach(u => results.push({
-      type: 'USER',
-      id: u.id,
-      title: u.name || u.username || 'Unknown',
-      subtitle: u.role,
-      url: `/admin/users/${u.id}`
-    }));
+    users.forEach((u) =>
+      results.push({
+        type: "USER",
+        id: u.id,
+        title: u.name || u.username || "Unknown",
+        subtitle: u.role,
+        url: `/admin/users/${u.id}`,
+      })
+    );
 
     // 3. Search Questions (Drafts/Approved)
     const questions = await prisma.question.findMany({
       where: {
         OR: [
-          { questionCode: { contains: query, mode: 'insensitive' } },
-          { question: { contains: query, mode: 'insensitive' } }
-        ]
+          { questionCode: { contains: query, mode: "insensitive" } },
+          { question: { contains: query, mode: "insensitive" } },
+        ],
       },
-      take: 5
+      take: 5,
     });
 
-    questions.forEach(q => results.push({
-      type: 'QUESTION',
-      id: q.id,
-      title: q.questionCode || 'Question',
-      subtitle: q.subject || 'General',
-      url: `/admin/questions/${q.id}`
-    }));
+    questions.forEach((q) =>
+      results.push({
+        type: "QUESTION",
+        id: q.id,
+        title: q.questionCode || "Question",
+        subtitle: q.subject || "General",
+        url: `/admin/questions/${q.id}`,
+      })
+    );
 
     return results;
   }

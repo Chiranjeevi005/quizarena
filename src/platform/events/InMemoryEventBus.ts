@@ -60,10 +60,12 @@ const withRetry = async (fn: () => Promise<void>, maxRetries = 3, delayMs = 1000
       attempt++;
       console.warn(`[EventBus] Worker execution failed (Attempt ${attempt}/${maxRetries}):`, error);
       if (attempt >= maxRetries) {
-        console.error(`[EventBus] Worker execution permanently failed after ${maxRetries} attempts.`);
+        console.error(
+          `[EventBus] Worker execution permanently failed after ${maxRetries} attempts.`
+        );
         throw error;
       }
-      await new Promise(res => setTimeout(res, delayMs * Math.pow(2, attempt - 1))); // Exponential backoff
+      await new Promise((res) => setTimeout(res, delayMs * Math.pow(2, attempt - 1))); // Exponential backoff
     }
   }
 };
@@ -72,7 +74,7 @@ const withRetry = async (fn: () => Promise<void>, maxRetries = 3, delayMs = 1000
 eventBus.subscribe("RankingCandidateGenerated", async (event) => {
   const { competitionId } = event.payload;
   if (!competitionId) return;
-  
+
   await withRetry(async () => {
     const { RankingWorker } = await import("@/features/competitions/ranking/workers/RankingWorker");
     await RankingWorker.executeCompetitionRanking(competitionId);
@@ -81,7 +83,8 @@ eventBus.subscribe("RankingCandidateGenerated", async (event) => {
 
 eventBus.subscribe("CertificateEligibilityGenerated", async (event) => {
   await withRetry(async () => {
-    const { CertificateWorker } = await import("@/features/competitions/certificates/workers/CertificateWorker");
+    const { CertificateWorker } =
+      await import("@/features/competitions/certificates/workers/CertificateWorker");
     await CertificateWorker.processEligibility(event.payload as any);
   });
 });

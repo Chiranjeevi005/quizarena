@@ -13,7 +13,9 @@ export function initializeEventBus() {
   // 1. Subscribe to Domain Events
   PlatformEventBus.subscribe("competition.attempt.submitted", async (event: any) => {
     try {
-      console.log(`[EventBus] Handling competition.attempt.submitted for sessionId: ${event.payload.sessionId}`);
+      console.log(
+        `[EventBus] Handling competition.attempt.submitted for sessionId: ${event.payload.sessionId}`
+      );
       const worker = new RankingWorker();
       await worker.processAttempt({
         sessionId: event.payload.sessionId,
@@ -37,7 +39,7 @@ export function initializeEventBus() {
   });
 
   // Add more event subscriptions here as we build them out
-  
+
   // 2. Start the Outbox Relay
   platformOutboxRelay.start();
 }

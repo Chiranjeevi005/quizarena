@@ -10,11 +10,11 @@ export class TemplateManager {
 
   constructor() {
     // Seed with a default template
-    this.templates.set('default-1.0', {
-      id: 'default',
-      version: '1.0',
-      htmlTemplate: '<h1>Certificate of Completion</h1><p>Awarded to {{name}}</p>',
-      isLocked: true // Production templates are locked
+    this.templates.set("default-1.0", {
+      id: "default",
+      version: "1.0",
+      htmlTemplate: "<h1>Certificate of Completion</h1><p>Awarded to {{name}}</p>",
+      isLocked: true, // Production templates are locked
     });
   }
 
@@ -29,7 +29,7 @@ export class TemplateManager {
         throw new Error("Cannot modify a locked template. Create a new version.");
       }
     }
-    
+
     this.templates.set(key, { id, version, htmlTemplate, isLocked: false });
   }
 

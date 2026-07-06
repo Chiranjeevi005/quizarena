@@ -87,7 +87,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
 
   const performance = user.id ? await getPerformanceOverview(user.id) : null;
   const competitivePosition = user.id ? await getCompetitivePosition(user.id) : null;
-  
+
   // Use V2 Competition History alongside legacy
   const modernHistory = user.id ? await CompetitionHistoryFacade.getCandidateHistory(user.id) : [];
   const legacyAttempts = user.id ? await getRecentAttempts(user.id, 5) : [];
@@ -99,7 +99,10 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
   const checklist = [
     { title: "Create Account", completed: true },
     { title: "Complete First Challenge", completed: hasHistory },
-    { title: "Unlock Analytics", completed: hasHistory && ((performance?.totalAttempts ?? 0) > 2 || modernHistory.length > 2) },
+    {
+      title: "Unlock Analytics",
+      completed: hasHistory && ((performance?.totalAttempts ?? 0) > 2 || modernHistory.length > 2),
+    },
     { title: "Appear On Rankings", completed: competitivePosition?.globalRank !== null },
   ];
   const completedCount = checklist.filter((c) => c.completed).length;
@@ -397,7 +400,7 @@ export async function UserDashboardView({ user }: UserDashboardViewProps) {
           )}
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          {(modernHistory.length > 0 || legacyAttempts.length > 0) ? (
+          {modernHistory.length > 0 || legacyAttempts.length > 0 ? (
             <div className="divide-y divide-gray-50">
               {/* Render Modern History */}
               {modernHistory.slice(0, 3).map((entry) => {

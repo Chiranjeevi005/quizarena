@@ -9,7 +9,9 @@ interface CompetitionDiscoveryKernelProps {
   initialCompetitions: any[];
 }
 
-export function CompetitionDiscoveryKernel({ initialCompetitions }: CompetitionDiscoveryKernelProps) {
+export function CompetitionDiscoveryKernel({
+  initialCompetitions,
+}: CompetitionDiscoveryKernelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"ALL" | "LIVE" | "SCHEDULED" | "COMPLETED">("ALL");
 
@@ -33,11 +35,14 @@ export function CompetitionDiscoveryKernel({ initialCompetitions }: CompetitionD
             Discover and participate in active challenges.
           </p>
         </div>
-        
+
         {/* SEARCH & FILTERS */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              aria-hidden="true"
+            />
             <input
               type="text"
               placeholder="Search competitions..."
@@ -52,8 +57,8 @@ export function CompetitionDiscoveryKernel({ initialCompetitions }: CompetitionD
       </div>
 
       {/* TABS */}
-      <div 
-        role="tablist" 
+      <div
+        role="tablist"
         aria-label="Filter by status"
         className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide"
       >
@@ -88,7 +93,8 @@ export function CompetitionDiscoveryKernel({ initialCompetitions }: CompetitionD
           </div>
           <h3 className="text-lg font-bold text-navy mb-1">No Competitions Found</h3>
           <p className="text-sm font-medium text-gray-500 max-w-sm">
-            We couldn't find any competitions matching your current filters. Try adjusting your search criteria.
+            We couldn&apos;t find any competitions matching your current filters. Try adjusting your
+            search criteria.
           </p>
         </div>
       )}
@@ -99,7 +105,7 @@ export function CompetitionDiscoveryKernel({ initialCompetitions }: CompetitionD
 function CompetitionCard({ competition }: { competition: any }) {
   const isLive = competition.lifecycleState === "LIVE";
   const isScheduled = competition.lifecycleState === "SCHEDULED";
-  
+
   return (
     <Link href={`/dashboard/competitions/${competition.slug}`} className="group block">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 relative h-full flex flex-col">
@@ -115,12 +121,15 @@ function CompetitionCard({ competition }: { competition: any }) {
             <span className="text-[10px] font-bold uppercase tracking-wider">Upcoming</span>
           </div>
         )}
-        
+
         {/* Card Header Pattern */}
-        <div className={`h-24 w-full relative overflow-hidden ${
-          isLive ? "bg-gradient-to-br from-red-500/10 to-orange-500/10" 
-          : "bg-gradient-to-br from-gray-100 to-gray-50"
-        }`}>
+        <div
+          className={`h-24 w-full relative overflow-hidden ${
+            isLive
+              ? "bg-gradient-to-br from-red-500/10 to-orange-500/10"
+              : "bg-gradient-to-br from-gray-100 to-gray-50"
+          }`}
+        >
           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
           <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-current opacity-[0.02] rounded-full" />
         </div>
@@ -141,14 +150,18 @@ function CompetitionCard({ competition }: { competition: any }) {
           {/* Metadata Grid */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Category</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                Category
+              </span>
               <span className="text-sm font-semibold text-navy flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-blue-500" />
                 {competition.config?.category || "General"}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Difficulty</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                Difficulty
+              </span>
               <span className="text-sm font-semibold text-navy flex items-center gap-1.5">
                 <Swords className="w-3.5 h-3.5 text-purple-500" />
                 {competition.config?.difficulty || "Medium"}
@@ -156,7 +169,9 @@ function CompetitionCard({ competition }: { competition: any }) {
             </div>
             {competition.schedule?.startTime && (
               <div className="flex flex-col gap-1 col-span-2">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Starts At</span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  Starts At
+                </span>
                 <span className="text-sm font-semibold text-navy flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-emerald-500" />
                   {new Date(competition.schedule.startTime).toLocaleString()}

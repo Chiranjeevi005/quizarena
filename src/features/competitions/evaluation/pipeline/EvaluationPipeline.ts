@@ -34,7 +34,7 @@ export class EvaluationPipeline {
 
     // Check if result already exists to prevent duplicate evaluation
     const existingResult = await prisma.submissionResult.findUnique({
-      where: { submissionRecordId }
+      where: { submissionRecordId },
     });
 
     if (existingResult) {
@@ -54,11 +54,11 @@ export class EvaluationPipeline {
     let wrongCount = 0;
     let unansweredCount = 0;
     let score = 0; // Absolute marks
-    
+
     const evaluatedAnswers = answers.map((ans) => {
       const compQ = competitionQuestions.find((cq) => cq.questionId === ans.questionId);
       const q = compQ?.question;
-      
+
       let isCorrect = false;
       let isSkipped = false;
       let marksAwarded = 0;
@@ -135,7 +135,7 @@ export class EvaluationPipeline {
 
     // 4. RankingCandidateBuilder (Publish to EventBus / Queue in real life)
     const compId = submission.attempt.competitionId;
-    
+
     // We import eventBus dynamically to avoid circular dependencies if any
     const { eventBus } = await import("@/platform/events/InMemoryEventBus");
     const { v4: uuidv4 } = await import("uuid");
@@ -147,7 +147,7 @@ export class EvaluationPipeline {
       correlationId: submissionRecordId,
       version: "1.0",
       sourceDomain: "Evaluation",
-      payload: { resultId: result.id, attemptId: submission.attemptId }
+      payload: { resultId: result.id, attemptId: submission.attemptId },
     });
 
     await eventBus.publish({
@@ -157,16 +157,16 @@ export class EvaluationPipeline {
       correlationId: submissionRecordId,
       version: "1.0",
       sourceDomain: "Evaluation",
-      payload: { resultId: result.id, competitionId: compId }
+      payload: { resultId: result.id, competitionId: compId },
     });
-    
-    const eligibilityPayload = { 
-      resultId: result.id, 
+
+    const eligibilityPayload = {
+      resultId: result.id,
       competitionId: compId,
       score: result.score,
-      percentage: result.percentage
+      percentage: result.percentage,
     };
-    
+
     await eventBus.publish({
       eventId: uuidv4(),
       type: "CertificateEligibilityGenerated",
@@ -174,7 +174,7 @@ export class EvaluationPipeline {
       correlationId: submissionRecordId,
       version: "1.0",
       sourceDomain: "Evaluation",
-      payload: eligibilityPayload
+      payload: eligibilityPayload,
     });
 
     return result;

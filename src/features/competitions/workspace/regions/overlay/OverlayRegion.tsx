@@ -60,16 +60,19 @@ export function OverlayRegion() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400 text-sm">Unanswered</span>
-                <span className={`font-bold ${unansweredCount > 0 ? "text-red-400" : "text-slate-500"}`}>
+                <span
+                  className={`font-bold ${unansweredCount > 0 ? "text-red-400" : "text-slate-500"}`}
+                >
                   {unansweredCount}
                 </span>
               </div>
             </div>
-            
+
             {unansweredCount > 0 && (
               <p className="text-red-400 text-sm mb-6 flex items-start gap-2 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
                 <span className="font-bold mt-0.5">⚠️</span>
-                You have {unansweredCount} unanswered question{unansweredCount > 1 ? "s" : ""}. Are you sure you want to submit?
+                You have {unansweredCount} unanswered question{unansweredCount > 1 ? "s" : ""}. Are
+                you sure you want to submit?
               </p>
             )}
 

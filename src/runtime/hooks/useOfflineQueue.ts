@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export interface QueuedAnswer {
   id: string;
@@ -7,7 +7,7 @@ export interface QueuedAnswer {
   timestamp: number;
 }
 
-export function useOfflineQueue(queueKey: string = 'quizarena_offline_queue') {
+export function useOfflineQueue(queueKey: string = "quizarena_offline_queue") {
   const [queue, setQueue] = useState<QueuedAnswer[]>([]);
 
   // Load from local storage
@@ -15,34 +15,44 @@ export function useOfflineQueue(queueKey: string = 'quizarena_offline_queue') {
     try {
       const stored = localStorage.getItem(queueKey);
       if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setQueue(JSON.parse(stored));
       }
     } catch (e) {
-      console.error('Failed to load offline queue', e);
+      console.error("Failed to load offline queue", e);
     }
   }, [queueKey]);
 
   // Enqueue
-  const enqueue = useCallback((answer: Omit<QueuedAnswer, 'id' | 'timestamp'>) => {
-    setQueue(prev => {
-      const newQueue = [...prev, {
-        ...answer,
-        id: crypto.randomUUID(),
-        timestamp: Date.now()
-      }];
-      localStorage.setItem(queueKey, JSON.stringify(newQueue));
-      return newQueue;
-    });
-  }, [queueKey]);
+  const enqueue = useCallback(
+    (answer: Omit<QueuedAnswer, "id" | "timestamp">) => {
+      setQueue((prev) => {
+        const newQueue = [
+          ...prev,
+          {
+            ...answer,
+            id: crypto.randomUUID(),
+            timestamp: Date.now(),
+          },
+        ];
+        localStorage.setItem(queueKey, JSON.stringify(newQueue));
+        return newQueue;
+      });
+    },
+    [queueKey]
+  );
 
   // Dequeue (remove items that were successfully synced)
-  const dequeue = useCallback((idsToRemove: string[]) => {
-    setQueue(prev => {
-      const newQueue = prev.filter(item => !idsToRemove.includes(item.id));
-      localStorage.setItem(queueKey, JSON.stringify(newQueue));
-      return newQueue;
-    });
-  }, [queueKey]);
+  const dequeue = useCallback(
+    (idsToRemove: string[]) => {
+      setQueue((prev) => {
+        const newQueue = prev.filter((item) => !idsToRemove.includes(item.id));
+        localStorage.setItem(queueKey, JSON.stringify(newQueue));
+        return newQueue;
+      });
+    },
+    [queueKey]
+  );
 
   return { queue, enqueue, dequeue };
 }

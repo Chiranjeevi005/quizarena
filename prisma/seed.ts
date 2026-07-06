@@ -30,8 +30,8 @@ async function main() {
   );
   console.log(`Created ${users.length} persona accounts (Password: password123)`);
 
-  const adminUser = users.find(u => u.role === "ADMIN")!;
-  const candidateUser = users.find(u => u.role === "USER")!;
+  const adminUser = users.find((u) => u.role === "ADMIN")!;
+  const candidateUser = users.find((u) => u.role === "USER")!;
 
   // 2. Generate 50 Questions
   console.log("Generating 50 Questions...");
@@ -94,7 +94,7 @@ async function main() {
   // 4. Generate Leaderboard & Results for Ended Competition
   console.log("Generating Leaderboard & Certificates for Ended Competition...");
   const endedComp = comps[0];
-  
+
   const attempt = await prisma.attempt.create({
     data: {
       userId: candidateUser.id,
@@ -107,7 +107,7 @@ async function main() {
       timeTakenInSeconds: 1200,
       startedAt: new Date(),
       submittedAt: new Date(),
-    }
+    },
   });
 
   await prisma.leaderboardEntry.create({
@@ -119,7 +119,7 @@ async function main() {
       rank: 1,
       accuracy: 90.0,
       timeTakenInSeconds: 1200,
-    }
+    },
   });
 
   await prisma.certificateSnapshot.create({
@@ -138,7 +138,7 @@ async function main() {
       completionDate: new Date(),
       qrPayload: "dummy-payload",
       brandAssetsVersion: "1.0",
-    }
+    },
   });
 
   console.log("Robust seed completed successfully!");

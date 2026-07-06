@@ -5,5 +5,5 @@ import { redirect } from "next/navigation";
  * Automatically redirects unmatched admin routes back to the Admin Operational Dashboard.
  */
 export default function AdminCatchAllPage() {
-  redirect("/dashboard/admin");
+  redirect("/admin/dashboard");
 }

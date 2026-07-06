@@ -40,10 +40,16 @@ export class WorkflowOrchestrator {
   }
 
   private async handleResultsReady(event: PlatformEvent): Promise<void> {
-    await this.sagaCoordinator.advanceSubmissionProcessingSaga(event.payload.sagaId || event.workflowId, "RESULTS_GENERATED");
+    await this.sagaCoordinator.advanceSubmissionProcessingSaga(
+      event.payload.sagaId || event.workflowId,
+      "RESULTS_GENERATED"
+    );
   }
 
   private async handleLeaderboardReady(event: PlatformEvent): Promise<void> {
-    await this.sagaCoordinator.advanceSubmissionProcessingSaga(event.payload.sagaId || event.workflowId, "LEADERBOARD_UPDATED");
+    await this.sagaCoordinator.advanceSubmissionProcessingSaga(
+      event.payload.sagaId || event.workflowId,
+      "LEADERBOARD_UPDATED"
+    );
   }
 }

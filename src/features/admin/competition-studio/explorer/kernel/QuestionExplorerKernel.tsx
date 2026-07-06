@@ -13,7 +13,11 @@ import { useExplorerStore } from "../stores/useExplorerStore";
  * The main module for the Question Explorer Engine.
  * Supports multiple operating modes (Browse, Selection, Replace, etc.)
  */
-export const QuestionExplorerKernel: React.FC = () => {
+interface QuestionExplorerKernelProps {
+  onReviewSelection?: () => void;
+}
+
+export const QuestionExplorerKernel: React.FC<QuestionExplorerKernelProps> = ({ onReviewSelection }) => {
   const { eventBus } = useCompetitionStudioContext();
   const { selectionBasket } = useExplorerStore();
 
@@ -30,7 +34,18 @@ export const QuestionExplorerKernel: React.FC = () => {
       <main className="flex-1 flex flex-col overflow-hidden relative">
         <header className="h-14 border-b border-gray-200 flex items-center px-6 shrink-0 bg-white shadow-sm z-10">
           <h3 className="font-medium text-gray-700">Results</h3>
-          <div className="ml-auto text-xs text-gray-500">Mode: Browse</div>
+          <div className="ml-auto flex items-center gap-4">
+            <a 
+              href="/dashboard/admin/question-bank/create" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-md text-xs font-semibold transition-colors flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+              Create Question
+            </a>
+            <div className="text-xs text-gray-500 border-l border-gray-200 pl-4">Mode: Browse</div>
+          </div>
         </header>
 
         {/* Grid Area */}
@@ -57,6 +72,7 @@ export const QuestionExplorerKernel: React.FC = () => {
             )}
           </div>
           <button
+            onClick={onReviewSelection}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             disabled={selectionBasket.size === 0}
           >

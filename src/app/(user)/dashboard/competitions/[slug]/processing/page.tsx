@@ -10,12 +10,13 @@ export default function CompetitionProcessingPage({ params }: { params: any }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sid = searchParams.get("sid");
-  
+
   const [status, setStatus] = useState<"QUEUED" | "EVALUATING" | "COMPLETED" | "FAILED">("QUEUED");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     if (!sid) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("FAILED");
       setErrorMsg("No submission ID provided.");
       return;
@@ -34,7 +35,9 @@ export default function CompetitionProcessingPage({ params }: { params: any }) {
           // Add a small delay for better UX before redirecting
           setTimeout(() => {
             if (isMounted) {
-              router.push(`/dashboard/competitions/${params.slug}/results?rid=${res.data.resultId}`);
+              router.push(
+                `/dashboard/competitions/${params.slug}/results?rid=${res.data.resultId}`
+              );
             }
           }, 1500);
         } else {
@@ -60,7 +63,9 @@ export default function CompetitionProcessingPage({ params }: { params: any }) {
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl text-center flex flex-col items-center">
         <div className="relative mb-6">
-          <div className={`absolute inset-0 rounded-full animate-ping ${status === "FAILED" ? "bg-red-500/20" : status === "COMPLETED" ? "bg-emerald-500/20" : "bg-blue-500/20"}`} />
+          <div
+            className={`absolute inset-0 rounded-full animate-ping ${status === "FAILED" ? "bg-red-500/20" : status === "COMPLETED" ? "bg-emerald-500/20" : "bg-blue-500/20"}`}
+          />
           <div className="relative bg-slate-800 p-4 rounded-full border border-slate-700">
             {status === "FAILED" ? (
               <AlertTriangle className="w-12 h-12 text-red-500" />
@@ -73,14 +78,24 @@ export default function CompetitionProcessingPage({ params }: { params: any }) {
         </div>
 
         <h1 className="text-2xl font-bold text-white mb-2">
-          {status === "FAILED" ? "Evaluation Failed" : status === "COMPLETED" ? "Evaluation Complete" : "Processing Submission"}
+          {status === "FAILED"
+            ? "Evaluation Failed"
+            : status === "COMPLETED"
+              ? "Evaluation Complete"
+              : "Processing Submission"}
         </h1>
         <p className="text-slate-400 mb-8">
-          {status === "FAILED" ? errorMsg : status === "COMPLETED" ? "Redirecting to your results..." : "Your answers have been securely saved. The evaluation engine is currently processing your submission. Results will be available shortly."}
+          {status === "FAILED"
+            ? errorMsg
+            : status === "COMPLETED"
+              ? "Redirecting to your results..."
+              : "Your answers have been securely saved. The evaluation engine is currently processing your submission. Results will be available shortly."}
         </p>
 
         {status !== "COMPLETED" && (
-          <div className={`flex items-center justify-center gap-3 text-sm font-medium ${status === "FAILED" ? "text-red-500" : "text-slate-500"} bg-slate-950/50 py-3 px-6 rounded-xl border border-slate-800 mb-8 w-full`}>
+          <div
+            className={`flex items-center justify-center gap-3 text-sm font-medium ${status === "FAILED" ? "text-red-500" : "text-slate-500"} bg-slate-950/50 py-3 px-6 rounded-xl border border-slate-800 mb-8 w-full`}
+          >
             {status === "EVALUATING" && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
             {status === "FAILED" ? "Processing halted." : "Evaluating answers..."}
           </div>

@@ -8,7 +8,7 @@ export class CertificateVerificationService {
   async verifyCertificate(certificateId: string) {
     const cert = await prisma.certificateSnapshot.findUnique({
       where: { id: certificateId },
-      include: { user: true }
+      include: { user: true },
     });
 
     if (!cert) {
@@ -28,7 +28,7 @@ export class CertificateVerificationService {
       competitionId: cert.competitionId,
       certificateType: cert.certificateType,
       issuedAt: cert.issueDate,
-      qrUrl: this.generateQRUrl(certificateId)
+      qrUrl: this.generateQRUrl(certificateId),
     };
   }
 
@@ -36,9 +36,9 @@ export class CertificateVerificationService {
    * Generates a URL for a QR code linking to the verification page.
    */
   generateQRUrl(certificateId: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const verifyUrl = `${baseUrl}/verify/${certificateId}`;
-    
+
     // Using Google Chart API for quick QR generation without external npm deps
     return `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(verifyUrl)}`;
   }
@@ -52,7 +52,9 @@ export class CertificateVerificationService {
 
     // Without a revoked status in the schema, we cannot store the revocation status natively.
     // In a production system, we would add an `isRevoked` boolean and `revokeReason` string.
-    console.warn(`[CertificateVerificationService] Simulated revoking certificate ${certificateId} for reason: ${reason}`);
+    console.warn(
+      `[CertificateVerificationService] Simulated revoking certificate ${certificateId} for reason: ${reason}`
+    );
     return cert;
   }
 }
