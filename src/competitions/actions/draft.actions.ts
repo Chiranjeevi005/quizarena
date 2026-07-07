@@ -12,7 +12,7 @@ export async function saveCompetitionDraftAction(
   try {
     const user = await getCurrentUser();
     if (!user) throw new Error("Unauthorized");
-    
+
     const draftService = new CompetitionDraftService();
     const competition = await draftService.saveDraft(sessionId, user.id, draftData);
 

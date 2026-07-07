@@ -60,7 +60,13 @@ const moderatorNavItems = [
 ];
 
 const adminNavItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, group: "OPERATIONS", exact: true },
+  {
+    href: "/admin/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    group: "OPERATIONS",
+    exact: true,
+  },
   { href: "/dashboard/admin/users", label: "Users", icon: Users, group: "OPERATIONS" },
   {
     href: "/dashboard/admin/moderation",
@@ -97,7 +103,12 @@ const adminNavItems = [
 ];
 
 const superAdminNavItems = [
-  { href: "/dashboard/super-admin/home", label: "Command Center", icon: LayoutDashboard, exact: true },
+  {
+    href: "/dashboard/super-admin/home",
+    label: "Command Center",
+    icon: LayoutDashboard,
+    exact: true,
+  },
   { href: "/dashboard/super-admin/monitoring", label: "Monitoring", icon: Activity },
   { href: "/dashboard/super-admin/intelligence", label: "Intelligence", icon: BarChart3 },
   { href: "/dashboard/super-admin/roles", label: "Role Management", icon: Shield },
