@@ -1,4 +1,4 @@
-import { PolicyEngine, PolicyContext, ResolvedPermissionSnapshot } from "../engines/PolicyEngine";
+import { PolicyEngine, PolicyContext } from "../engines/PolicyEngine";
 import { Capability } from "../models/PermissionModels";
 
 export interface AuthorizationRequest {
