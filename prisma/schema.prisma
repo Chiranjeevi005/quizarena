@@ -99,6 +99,10 @@ model User {
   acknowledgedAlerts      PlatformAlert[]           @relation("AlertAcknowledger")
   monitoringAudits        PlatformMonitoringAudit[] @relation("MonitoringAuditActor")
 
+  // Revenue Domain
+  registrations           Registration[]
+  paymentOrders           PaymentOrder[]
+
   @@index([email])
   @@index([username])
   @@index([accountState])
@@ -2105,6 +2109,12 @@ model Competition {
   alerts                PlatformAlert[]
   operationalMetrics    PlatformOperationalMetric[]
 
+  // Revenue Domain
+  pricingPolicies       CompetitionPricingPolicy[]
+  registrations         Registration[]
+  paymentOrders         PaymentOrder[]
+  coupons               Coupon[]
+
   @@index([slug])
   @@index([competitionType])
   @@index([status])
@@ -3137,3 +3147,343 @@ model PlatformMonitoringAudit {
   @@index([timestamp])
   @@map("platform_monitoring_audits")
 }
+
+// ─── Revenue Domain & Competition Monetization ──────────────────────────────
+
+enum PricingPolicyType {
+  FREE
+  PAID
+  INVITE_ONLY
+  COUPON_ONLY
+  HIDDEN
+}
+
+model CompetitionPricingPolicy {
+  id            String            @id @default(cuid())
+  competitionId String
+  version       Int               @default(1)
+  type          PricingPolicyType @default(PAID)
+  currency      String            @default("INR")
+  baseFee       Float             @default(0)
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+
+  competition   Competition       @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+
+  @@unique([competitionId, version])
+  @@index([competitionId])
+  @@map("competition_pricing_policies")
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+enum CouponState {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  DISABLED
+  ARCHIVED
+}
+
+model Coupon {
+  id             String       @id @default(cuid())
+  code           String       @unique
+  type           CouponType
+  value          Float
+  state          CouponState  @default(DRAFT)
+  competitionId  String?      // If null, it's global
+  maxUsage       Int?         // Limit total usages
+  currentUsage   Int          @default(0)
+  expiresAt      DateTime?
+  firstUserOnly  Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  competition    Competition? @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  paymentOrders  PaymentOrder[]
+
+  @@index([code])
+  @@index([competitionId])
+  @@index([state])
+  @@map("coupons")
+}
+
+enum RegistrationState {
+  NOT_REGISTERED
+  REGISTERING
+  PAYMENT_PENDING
+  PAYMENT_VERIFIED
+  ENROLLED
+  CANCELLED
+  REFUNDED
+}
+
+model Registration {
+  id               String            @id @default(cuid())
+  userId           String
+  competitionId    String
+  pricingPolicyId  String
+  state            RegistrationState @default(REGISTERING)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  enrolledAt       DateTime?
+
+  user             User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  competition      Competition              @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  pricingPolicy    CompetitionPricingPolicy @relation(fields: [pricingPolicyId], references: [id])
+  paymentOrders    PaymentOrder[]
+
+  @@unique([userId, competitionId])
+  @@index([userId])
+  @@index([competitionId])
+  @@index([state])
+  @@map("registrations")
+}
+
+enum PaymentOrderStatus {
+  CREATED
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  CANCELLED
+}
+
+model PaymentOrder {
+  id             String             @id @default(cuid())
+  registrationId String
+  userId         String
+  competitionId  String
+  couponId       String?
+  razorpayOrderId String?           @unique
+  amount         Float
+  currency       String             @default("INR")
+  status         PaymentOrderStatus @default(CREATED)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  registration   Registration       @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  competition    Competition        @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  coupon         Coupon?            @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  attempts       PaymentAttempt[]
+  revenueTransaction RevenueTransaction?
+
+  @@index([registrationId])
+  @@index([userId])
+  @@index([competitionId])
+  @@index([razorpayOrderId])
+  @@index([status])
+  @@map("payment_orders")
+}
+
+model PaymentAttempt {
+  id             String       @id @default(cuid())
+  paymentOrderId String
+  razorpayPaymentId String?   @unique
+  status         PaymentOrderStatus
+  amount         Float
+  currency       String       @default("INR")
+  errorReason    String?      @db.Text
+  
+  // Fraud Signals
+  ipAddress      String?
+  userAgent      String?      @db.Text
+  deviceId       String?
+  country        String?
+  attemptCount   Int          @default(1)
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  paymentOrder   PaymentOrder @relation(fields: [paymentOrderId], references: [id], onDelete: Cascade)
+
+  @@index([paymentOrderId])
+  @@index([razorpayPaymentId])
+  @@map("payment_attempts")
+}
+
+model RevenueTransaction {
+  id               String         @id @default(cuid())
+  paymentOrderId   String         @unique
+  amount           Float
+  currency         String         @default("INR")
+  taxAmount        Float          @default(0)
+  platformFee      Float          @default(0)
+  netAmount        Float
+  capturedAt       DateTime       @default(now())
+
+  paymentOrder     PaymentOrder   @relation(fields: [paymentOrderId], references: [id], onDelete: Cascade)
+  refunds          RefundRecord[]
+
+  @@index([paymentOrderId])
+  @@index([capturedAt])
+  @@map("revenue_transactions")
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  PROCESSED
+  FAILED
+  REJECTED
+}
+
+model RefundRecord {
+  id                   String             @id @default(cuid())
+  revenueTransactionId String
+  razorpayRefundId     String?            @unique
+  amount               Float
+  currency             String             @default("INR")
+  reason               String?            @db.Text
+  status               RefundStatus       @default(PENDING)
+  approvedById         String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  revenueTransaction   RevenueTransaction @relation(fields: [revenueTransactionId], references: [id], onDelete: Cascade)
+
+  @@index([revenueTransactionId])
+  @@index([razorpayRefundId])
+  @@index([status])
+  @@map("refund_records")
+}
+
+model SettlementRecord {
+  id                   String   @id @default(cuid())
+  razorpaySettlementId String   @unique
+  status               String
+  amount               Float
+  currency             String   @default("INR")
+  fees                 Float    @default(0)
+  tax                  Float    @default(0)
+  utr                  String?
+  settledAt            DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([razorpaySettlementId])
+  @@index([status])
+  @@map("settlement_records")
+}
+
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  eventId    String   @unique
+  eventType  String
+  payload    Json
+  processed  Boolean  @default(false)
+  processedAt DateTime?
+  retries    Int      @default(0)
+  status     String   @default("PENDING")
+  error      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([eventType])
+  @@index([status])
+  @@map("webhook_events")
+}
+
+model GstConfiguration {
+  id            String   @id @default(cuid())
+  gstEnabled    Boolean  @default(true)
+  gstPercentage Float    @default(18.0)
+  invoicePrefix String   @default("QA-")
+  hsnSacCode    String?
+  businessName  String?
+  panNumber     String?
+  gstin         String?
+  version       Int      @default(1)
+  isActive      Boolean  @default(true)
+  validFrom     DateTime @default(now())
+  validTo       DateTime?
+  updatedAt     DateTime @updatedAt
+
+  @@map("gst_configuration")
+}
+
+model PaymentPolicy {
+  id              String   @id @default(cuid())
+  timeoutMinutes  Int      @default(15)
+  retryLimit      Int      @default(3)
+  autoCapture     Boolean  @default(true)
+  partialRefunds  Boolean  @default(false)
+  defaultCurrency String   @default("INR")
+  receiptPrefix   String   @default("RCT-")
+  version         Int      @default(1)
+  isActive        Boolean  @default(true)
+  validFrom       DateTime @default(now())
+  validTo         DateTime?
+  updatedAt       DateTime @updatedAt
+
+  @@map("payment_policies")
+}
+
+model RevenueAuditLog {
+  id            String   @id @default(cuid())
+  action        String
+  actorId       String?
+  targetId      String?
+  metadata      Json?
+  beforeSnapshot Json?
+  afterSnapshot Json?
+  reason        String?
+  ipAddress     String?
+  timestamp     DateTime @default(now())
+
+  @@index([action])
+  @@index([targetId])
+  @@index([timestamp])
+  @@map("revenue_audit_logs")
+}
+
+model PaymentReconciliationReport {
+  id              String   @id @default(cuid())
+  dateRun         DateTime @default(now())
+  totalChecked    Int      @default(0)
+  mismatchesFound Int      @default(0)
+  status          String   @default("COMPLETED")
+  snapshots       ReconciliationSnapshot[]
+
+  @@map("payment_reconciliation_reports")
+}
+
+model ReconciliationSnapshot {
+  id                  String   @id @default(cuid())
+  reportId            String
+  paymentOrderId      String
+  razorpayPaymentId   String?
+  razorpayStatus      String
+  databaseStatus      String
+  resolved            Boolean  @default(false)
+  resolutionAction    String?
+  createdAt           DateTime @default(now())
+
+  report              PaymentReconciliationReport @relation(fields: [reportId], references: [id])
+
+  @@map("reconciliation_snapshots")
+}
+
+model WebhookDeadLetterQueue {
+  id              String   @id @default(cuid())
+  eventId         String   @unique
+  eventType       String
+  payload         Json
+  failureReason   String?
+  retryCount      Int      @default(0)
+  nextRetryAt     DateTime?
+  status          String   @default("FAILED") // FAILED, RETRYING, ARCHIVED, RECOVERED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("webhook_dlq")
+}
+

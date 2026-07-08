@@ -1,5 +1,5 @@
 import React from "react";
-import { IdentityEventStore, IdentityEvent } from "../../events/IdentityEventStore";
+import { IdentityEventStore } from "../../events/IdentityEventStore";
 
 export const UserTimelineEngine = ({ identityId }: { identityId: string }) => {
   const events = IdentityEventStore.getEventsForIdentity(identityId);
