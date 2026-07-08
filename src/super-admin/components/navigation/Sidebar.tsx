@@ -125,6 +125,22 @@ export const Sidebar = ({
             })}
           </div>
         </div>
+
+        {/* Dashboard Version Footer */}
+        <div className="px-4 py-3 border-t border-gray-800 text-[10px] text-gray-500 font-mono tracking-tighter flex flex-col space-y-1 bg-gray-950">
+          <div className="flex justify-between">
+            <span>QuizArena Platform</span>
+            <span>v1.0.0</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Env: Production</span>
+            <span>Region: US-East</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Schema: 3.4</span>
+            <span>Build: 128 (a1b2c3d)</span>
+          </div>
+        </div>
       </aside>
     </>
   );

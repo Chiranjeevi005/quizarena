@@ -16,6 +16,20 @@ export interface NavigationItem {
   icon: LucideIcon;
   permission?: string;
   category: "core" | "system" | "help";
+
+  // Feature Flags
+  enabled?: boolean;
+  experimental?: boolean;
+  deprecated?: boolean;
+  comingSoon?: boolean;
+
+  // Metadata
+  badge?: string;
+  beta?: boolean;
+  hidden?: boolean;
+  workspace?: string;
+  parent?: string;
+  priority?: number;
 }
 
 class NavigationRegistryClass {
