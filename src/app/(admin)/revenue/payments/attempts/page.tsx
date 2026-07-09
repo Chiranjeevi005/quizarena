@@ -1,31 +1,38 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
 
 export default function PaymentAttemptsPage() {
   const attempts = [
     {
-      id: 'attempt_1',
-      orderId: 'order_def456',
-      status: 'FAILED',
+      id: "attempt_1",
+      orderId: "order_def456",
+      status: "FAILED",
       amount: 1500,
-      errorReason: 'Insufficient Funds',
-      ipAddress: '192.168.1.1',
-      country: 'IN',
+      errorReason: "Insufficient Funds",
+      ipAddress: "192.168.1.1",
+      country: "IN",
       attemptCount: 1,
-      createdAt: '2023-10-27T10:15:00Z'
+      createdAt: "2023-10-27T10:15:00Z",
     },
     {
-      id: 'attempt_2',
-      orderId: 'order_abc123',
-      status: 'CAPTURED',
+      id: "attempt_2",
+      orderId: "order_abc123",
+      status: "CAPTURED",
       amount: 1500,
       errorReason: null,
-      ipAddress: '192.168.1.5',
-      country: 'IN',
+      ipAddress: "192.168.1.5",
+      country: "IN",
       attemptCount: 1,
-      createdAt: '2023-10-27T10:05:00Z'
-    }
+      createdAt: "2023-10-27T10:05:00Z",
+    },
   ];
 
   return (
@@ -58,15 +65,22 @@ export default function PaymentAttemptsPage() {
                   <TableCell className="font-mono text-xs">{attempt.id}</TableCell>
                   <TableCell className="font-mono text-xs">{attempt.orderId}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      attempt.status === 'CAPTURED' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        attempt.status === "CAPTURED"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {attempt.status}
                     </span>
                   </TableCell>
                   <TableCell>₹{attempt.amount}</TableCell>
-                  <TableCell className="text-red-500 max-w-[200px] truncate" title={attempt.errorReason || ''}>
-                    {attempt.errorReason || '-'}
+                  <TableCell
+                    className="text-red-500 max-w-[200px] truncate"
+                    title={attempt.errorReason || ""}
+                  >
+                    {attempt.errorReason || "-"}
                   </TableCell>
                   <TableCell>{attempt.ipAddress}</TableCell>
                   <TableCell>{attempt.country}</TableCell>

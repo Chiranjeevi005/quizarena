@@ -4,7 +4,10 @@ export class AlertEngine {
   public async evaluateThresholds(metrics: any): Promise<void> {
     // Detect Revenue Drop, High Refund Rate, Submission Delay, etc.
     if (metrics.revenueDrop > 20) {
-      await this.incidentEngine.createFromAlert({ type: 'REVENUE_DROP', value: metrics.revenueDrop });
+      await this.incidentEngine.createFromAlert({
+        type: "REVENUE_DROP",
+        value: metrics.revenueDrop,
+      });
     }
   }
 

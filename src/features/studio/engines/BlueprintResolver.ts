@@ -8,6 +8,6 @@ export class BlueprintResolver {
     // 4. Check Health
     // 5. Check Usage
     // Returns matched certified QuestionVersionIds
-    return ['V2_Q123', 'V1_Q456'];
+    return ["V2_Q123", "V1_Q456"];
   }
 }

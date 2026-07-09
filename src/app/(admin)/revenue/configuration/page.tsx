@@ -1,8 +1,8 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import { Input } from "@/components/primitives/Input";
+import { Button } from "@/components/primitives/Button";
+import { Label } from "@/components/primitives/label";
 
 export default function ConfigurationPage() {
   return (
@@ -20,10 +20,16 @@ export default function ConfigurationPage() {
             <div className="h-3 w-3 rounded-full bg-green-500"></div>
             <span className="font-semibold text-green-700">Connected (Test Mode)</span>
           </div>
-          <p className="text-sm text-muted-foreground">Secrets are securely managed via environment variables (.env).</p>
+          <p className="text-sm text-muted-foreground">
+            Secrets are securely managed via environment variables (.env).
+          </p>
           <div className="text-sm">
-            <p><strong>Last Webhook Received:</strong> Just now</p>
-            <p><strong>Last Signature Verification:</strong> Success</p>
+            <p>
+              <strong>Last Webhook Received:</strong> Just now
+            </p>
+            <p>
+              <strong>Last Signature Verification:</strong> Success
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -54,7 +60,7 @@ export default function ConfigurationPage() {
           <Button>Save GST Configuration</Button>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Payment Policies</CardTitle>

@@ -1,4 +1,4 @@
-import { GstConfiguration, PaymentPolicy, PricingPolicyType } from '../../../generated/prisma';
+import { GstConfiguration, PaymentPolicy, PricingPolicyType } from "../../../generated/prisma";
 
 export interface GstConfigResolution {
   version: number;
@@ -25,7 +25,7 @@ export interface RevenueConfigurationProvider {
    * Resolve active payment policy (timeouts, retries).
    */
   getActivePaymentPolicy(): Promise<PaymentPolicy>;
-  
+
   /**
    * Resolve pricing policy by version
    */
@@ -39,19 +39,19 @@ export class DefaultRevenueConfigurationProvider implements RevenueConfiguration
   public async getActiveGstConfiguration(): Promise<GstConfigResolution> {
     const config = await this.db.gstConfiguration.findFirst({
       where: { isActive: true },
-      orderBy: { version: 'desc' }
+      orderBy: { version: "desc" },
     });
 
     if (!config) {
       throw new Error("No active GST configuration found.");
     }
-    
+
     return this.mapToResolution(config);
   }
 
   public async getGstConfigurationByVersion(version: number): Promise<GstConfigResolution> {
     const config = await this.db.gstConfiguration.findFirst({
-      where: { version }
+      where: { version },
     });
 
     if (!config) {
@@ -64,27 +64,29 @@ export class DefaultRevenueConfigurationProvider implements RevenueConfiguration
   public async getActivePaymentPolicy(): Promise<PaymentPolicy> {
     const policy = await this.db.paymentPolicy.findFirst({
       where: { isActive: true },
-      orderBy: { version: 'desc' }
+      orderBy: { version: "desc" },
     });
-    
+
     if (!policy) {
       throw new Error("No active Payment Policy found.");
     }
     return policy;
   }
-  
+
   public async getPricingPolicyVersion(competitionId: string, version: number): Promise<any> {
     const policy = await this.db.competitionPricingPolicy.findUnique({
       where: {
         competitionId_version: {
           competitionId,
-          version
-        }
-      }
+          version,
+        },
+      },
     });
-    
+
     if (!policy) {
-      throw new Error(`Pricing policy version ${version} for competition ${competitionId} not found.`);
+      throw new Error(
+        `Pricing policy version ${version} for competition ${competitionId} not found.`
+      );
     }
     return policy;
   }
@@ -95,9 +97,9 @@ export class DefaultRevenueConfigurationProvider implements RevenueConfiguration
       enabled: config.gstEnabled,
       percentage: config.gstPercentage,
       invoicePrefix: config.invoicePrefix,
-      businessName: config.businessName || '',
-      panNumber: config.panNumber || '',
-      gstin: config.gstin || ''
+      businessName: config.businessName || "",
+      panNumber: config.panNumber || "",
+      gstin: config.gstin || "",
     };
   }
 }

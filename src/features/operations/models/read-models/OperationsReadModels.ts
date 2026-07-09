@@ -1,5 +1,5 @@
 export interface PlatformHealthReadModel {
-  status: 'HEALTHY' | 'DEGRADED' | 'DOWN';
+  status: "HEALTHY" | "DEGRADED" | "DOWN";
   components: Record<string, string>;
   lastUpdated: Date;
 }

@@ -1,4 +1,4 @@
-import { Discrepancy } from './PaymentReconciliationPlanner';
+import { Discrepancy } from "./PaymentReconciliationPlanner";
 
 export class PaymentReconciliationExecutor {
   constructor(
@@ -15,20 +15,20 @@ export class PaymentReconciliationExecutor {
 
     for (const discrepancy of discrepancies) {
       const success = await this.repairEngine.repair(discrepancy);
-      
+
       await this.reportGenerator.logSnapshot(reportId, {
         paymentOrderId: discrepancy.paymentOrderId,
         razorpayStatus: discrepancy.razorpayStatus,
         databaseStatus: discrepancy.databaseStatus,
         resolved: success,
-        resolutionAction: success ? 'Repaired via engine' : 'Manual intervention required'
+        resolutionAction: success ? "Repaired via engine" : "Manual intervention required",
       });
 
       if (success) resolvedCount++;
     }
 
     await this.reportGenerator.completeReport(reportId, resolvedCount);
-    
+
     return reportId;
   }
 }

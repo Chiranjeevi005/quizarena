@@ -1,4 +1,4 @@
-import { getRazorpayInstance } from './RazorpayConfig';
+import { getRazorpayInstance } from "./RazorpayConfig";
 
 export class RazorpayPaymentService {
   public async fetchPayment(paymentId: string): Promise<any> {
@@ -6,8 +6,8 @@ export class RazorpayPaymentService {
     try {
       return await razorpay.payments.fetch(paymentId);
     } catch (error) {
-      console.error('Razorpay Fetch Payment Failed:', error);
-      throw new Error('Failed to fetch payment from Razorpay');
+      console.error("Razorpay Fetch Payment Failed:", error);
+      throw new Error("Failed to fetch payment from Razorpay");
     }
   }
 
@@ -16,8 +16,8 @@ export class RazorpayPaymentService {
     try {
       return await razorpay.payments.capture(paymentId, amount, currency);
     } catch (error) {
-      console.error('Razorpay Capture Payment Failed:', error);
-      throw new Error('Failed to capture payment in Razorpay');
+      console.error("Razorpay Capture Payment Failed:", error);
+      throw new Error("Failed to capture payment in Razorpay");
     }
   }
 }

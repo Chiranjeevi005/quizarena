@@ -3,7 +3,7 @@
 export interface PaymentTimelineEvent {
   title: string;
   timestamp: string;
-  status: 'PENDING' | 'SUCCESS' | 'FAILED';
+  status: "PENDING" | "SUCCESS" | "FAILED";
   description?: string;
 }
 
@@ -13,19 +13,24 @@ export interface PaymentTimelineReadModel {
   amount: string;
   currency: string;
   events: PaymentTimelineEvent[];
-  currentState: 'REGISTRATION_STARTED' | 'PAYMENT_PENDING' | 'PAYMENT_CAPTURED' | 'ENROLLED' | 'REFUNDED';
+  currentState:
+    | "REGISTRATION_STARTED"
+    | "PAYMENT_PENDING"
+    | "PAYMENT_CAPTURED"
+    | "ENROLLED"
+    | "REFUNDED";
 }
 
 export interface RevenueHealthReadModel {
   currentGateway: string;
-  gatewayMode: 'TEST' | 'LIVE';
+  gatewayMode: "TEST" | "LIVE";
   paymentSuccessRate: number; // e.g. 98.5
   webhookDelayMs: number;
   lastSuccessfulPaymentAt: string;
   lastSuccessfulRefundAt: string | null;
   lastSettlementAt: string | null;
-  webhookStatus: 'HEALTHY' | 'DELAYED' | 'FAILING';
-  databaseSyncStatus: 'SYNCED' | 'MISMATCHES_FOUND';
+  webhookStatus: "HEALTHY" | "DELAYED" | "FAILING";
+  databaseSyncStatus: "SYNCED" | "MISMATCHES_FOUND";
 }
 
 export interface RevenueWorkspaceDashboardReadModel {

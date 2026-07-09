@@ -1,4 +1,4 @@
-import { CouponState } from '../../../generated/prisma';
+import { CouponState } from "../../../generated/prisma";
 
 export class RevenueCleanupWorker {
   constructor(private readonly db: any) {}
@@ -14,11 +14,11 @@ export class RevenueCleanupWorker {
     await this.db.coupon.updateMany({
       where: {
         expiresAt: { lt: now },
-        state: CouponState.ACTIVE
+        state: CouponState.ACTIVE,
       },
       data: {
-        state: CouponState.EXPIRED
-      }
+        state: CouponState.EXPIRED,
+      },
     });
   }
 
@@ -30,8 +30,8 @@ export class RevenueCleanupWorker {
     await this.db.webhookEvent.deleteMany({
       where: {
         processed: true,
-        createdAt: { lt: thirtyDaysAgo }
-      }
+        createdAt: { lt: thirtyDaysAgo },
+      },
     });
   }
 
@@ -42,8 +42,8 @@ export class RevenueCleanupWorker {
 
     await this.db.paymentReconciliationReport.deleteMany({
       where: {
-        dateRun: { lt: ninetyDaysAgo }
-      }
+        dateRun: { lt: ninetyDaysAgo },
+      },
     });
   }
 }

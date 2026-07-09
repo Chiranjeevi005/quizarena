@@ -1,5 +1,9 @@
 export class PlatformIntelligenceCertificationService {
-  public async runFullCertification(): Promise<{ isCertified: boolean; score: number; checks: Record<string, boolean> }> {
+  public async runFullCertification(): Promise<{
+    isCertified: boolean;
+    score: number;
+    checks: Record<string, boolean>;
+  }> {
     console.log("Running Platform Intelligence & Analytics Certification...");
 
     const checks = {
@@ -11,7 +15,7 @@ export class PlatformIntelligenceCertificationService {
       recommendation: true,
       reports: true,
       quality: true,
-      health: true
+      health: true,
     };
 
     const passedCount = Object.values(checks).filter(Boolean).length;
@@ -21,7 +25,7 @@ export class PlatformIntelligenceCertificationService {
     return {
       isCertified: score === 100,
       score,
-      checks
+      checks,
     };
   }
 }
@@ -31,9 +35,9 @@ async function certify() {
   const result = await service.runFullCertification();
 
   console.log(`\nPlatform Intelligence Certification Result:`);
-  
+
   for (const [check, passed] of Object.entries(result.checks)) {
-    console.log(`${check.padEnd(20, ' ')} ${passed ? 'PASS' : 'FAIL'}`);
+    console.log(`${check.padEnd(20, " ")} ${passed ? "PASS" : "FAIL"}`);
   }
 
   console.log(`\nOverall Score: ${result.score}%`);

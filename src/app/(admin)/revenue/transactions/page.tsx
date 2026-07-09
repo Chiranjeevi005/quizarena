@@ -1,25 +1,32 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
 
 export default function TransactionsLedgerPage() {
   const transactions = [
     {
-      id: 'tx_123',
-      orderId: 'order_abc',
+      id: "tx_123",
+      orderId: "order_abc",
       amount: 1500,
       netAmount: 1400,
-      status: 'CAPTURED',
-      date: '2023-10-27T10:00:00Z'
+      status: "CAPTURED",
+      date: "2023-10-27T10:00:00Z",
     },
     {
-      id: 'tx_124',
-      orderId: 'order_def',
+      id: "tx_124",
+      orderId: "order_def",
       amount: 500,
       netAmount: 480,
-      status: 'CAPTURED',
-      date: '2023-10-27T11:30:00Z'
-    }
+      status: "CAPTURED",
+      date: "2023-10-27T11:30:00Z",
+    },
   ];
 
   return (

@@ -17,19 +17,24 @@ export class CompetitionGovernanceKernel {
     }
 
     await this.approvalEngine.requestApproval(competitionId, actor);
-    await this.auditEngine.logAction(competitionId, actor, 'REQUESTED_APPROVAL');
+    await this.auditEngine.logAction(competitionId, actor, "REQUESTED_APPROVAL");
   }
 
   public async orchestratePublishFlow(competitionId: string, actor: string): Promise<void> {
     // Pipeline for publishing
-    await this.lifecycleEngine.transition(competitionId, 'PUBLISHED', actor);
+    await this.lifecycleEngine.transition(competitionId, "PUBLISHED", actor);
     await this.deploymentEngine.deploy(competitionId);
-    await this.auditEngine.logAction(competitionId, actor, 'PUBLISHED');
+    await this.auditEngine.logAction(competitionId, actor, "PUBLISHED");
   }
 
-  public async executeEmergencyPause(competitionId: string, actor: string, reason: string, mode: 'SOFT' | 'HARD'): Promise<void> {
+  public async executeEmergencyPause(
+    competitionId: string,
+    actor: string,
+    reason: string,
+    mode: "SOFT" | "HARD"
+  ): Promise<void> {
     await this.emergencyEngine.pause(competitionId, mode);
-    await this.lifecycleEngine.transition(competitionId, 'PAUSED', actor);
+    await this.lifecycleEngine.transition(competitionId, "PAUSED", actor);
     await this.auditEngine.logAction(competitionId, actor, `EMERGENCY_PAUSE_${mode}`, reason);
   }
 }

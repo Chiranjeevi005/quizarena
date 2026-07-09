@@ -10,6 +10,7 @@ import { Footer } from "@/shared/layout/Footer";
 import { MaintenanceFallback } from "@/shared/error-state/maintenance-fallback";
 import { NotificationCenter } from "@/shared/feedback/NotificationCenter";
 import { getPlatformState } from "@/features/super-admin/services/infrastructure/platform-controls";
+import { AppProvider } from "@/providers";
 
 const hanken = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-hanken" });
 
@@ -82,20 +83,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={hanken.variable}>
       <body className="antialiased min-h-screen bg-background font-sans text-navy flex flex-col">
         <SecureClientAuthProvider>
-          {/* Global Desktop Navbar - Visible only when not logged in and not on auth pages */}
-          {!isLoggedIn && !isOnboarding && !isAuthPage && <Navbar session={session} />}
+          <AppProvider>
+            {/* Global Desktop Navbar - Visible only when not logged in and not on auth pages */}
+            {!isLoggedIn && !isOnboarding && !isAuthPage && <Navbar session={session} />}
 
-          {/* Global Mobile Navigation Drawer - Visible only when not logged in and not on auth pages */}
-          {!isLoggedIn && !isOnboarding && !isAuthPage && <MobileNav session={session} />}
+            {/* Global Mobile Navigation Drawer - Visible only when not logged in and not on auth pages */}
+            {!isLoggedIn && !isOnboarding && !isAuthPage && <MobileNav session={session} />}
 
-          {/* Main Application Content */}
-          <main className={!isOnboarding ? "flex-1 w-full" : "flex-1 w-full"}>{children}</main>
+            {/* Main Application Content */}
+            <main className={!isOnboarding ? "flex-1 w-full" : "flex-1 w-full"}>{children}</main>
 
-          {/* Global Footer - Visible only when not logged in and not on auth pages */}
-          {!isLoggedIn && !isOnboarding && !isAuthPage && <Footer />}
+            {/* Global Footer - Visible only when not logged in and not on auth pages */}
+            {!isLoggedIn && !isOnboarding && !isAuthPage && <Footer />}
 
-          {/* Global Notification Center */}
-          <NotificationCenter />
+            {/* Global Notification Center */}
+            <NotificationCenter />
+          </AppProvider>
         </SecureClientAuthProvider>
       </body>
     </html>

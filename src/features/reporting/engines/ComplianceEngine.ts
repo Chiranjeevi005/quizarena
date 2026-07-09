@@ -11,7 +11,7 @@ export interface ComplianceScore {
 export interface ComplianceTimelineEntry {
   action: string;
   evidenceId: string;
-  approvalStatus: 'Pending' | 'Approved' | 'Rejected';
+  approvalStatus: "Pending" | "Approved" | "Rejected";
   auditId: string;
   timestamp: string;
 }
@@ -25,11 +25,11 @@ export class ComplianceEngine {
       retention: 100,
       integrity: 100,
       certification: 100,
-      reporting: 100
+      reporting: 100,
     };
   }
 
-  public recordTimelineAction(entry: Omit<ComplianceTimelineEntry, 'timestamp'>): void {
+  public recordTimelineAction(entry: Omit<ComplianceTimelineEntry, "timestamp">): void {
     // Record action in timeline
   }
 }

@@ -1,5 +1,5 @@
-import { RegistrationEngine } from '../engines/RegistrationEngine';
-import { RefundEngine } from '../engines/RefundEngine';
+import { RegistrationEngine } from "../engines/RegistrationEngine";
+import { RefundEngine } from "../engines/RefundEngine";
 
 export class RevenueGateway {
   private registrationEngine = new RegistrationEngine();
@@ -16,7 +16,12 @@ export class RevenueGateway {
   /**
    * Manual refund by Super Admin
    */
-  public async issueRefund(revenueTransactionId: string, amount: number, reason: string, adminId: string) {
+  public async issueRefund(
+    revenueTransactionId: string,
+    amount: number,
+    reason: string,
+    adminId: string
+  ) {
     return this.refundEngine.initiateRefund(revenueTransactionId, amount, reason, adminId);
   }
 }

@@ -1,4 +1,4 @@
-import { getRazorpayInstance } from './RazorpayConfig';
+import { getRazorpayInstance } from "./RazorpayConfig";
 
 export class RazorpayRefundService {
   public async createRefund(options: {
@@ -13,17 +13,17 @@ export class RazorpayRefundService {
       const refund = await razorpay.payments.refund(options.paymentId, {
         amount: options.amount,
         receipt: options.receipt,
-        notes: options.notes
+        notes: options.notes,
       });
 
       return {
         id: refund.id,
         amount: Number(refund.amount),
-        status: refund.status
+        status: refund.status,
       };
     } catch (error) {
-      console.error('Razorpay Refund Creation Failed:', error);
-      throw new Error('Failed to create refund in Razorpay');
+      console.error("Razorpay Refund Creation Failed:", error);
+      throw new Error("Failed to create refund in Razorpay");
     }
   }
 

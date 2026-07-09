@@ -11,10 +11,10 @@ export class AnalyticsManifest {
 
   public static generateCurrent(dataWindowStart: Date, dataWindowEnd: Date): AnalyticsManifest {
     return new AnalyticsManifest(
-      '1.0.0',
-      '1.1.0',
-      '1.0.0',
-      '1.0.0',
+      "1.0.0",
+      "1.1.0",
+      "1.0.0",
+      "1.0.0",
       new Date(),
       dataWindowStart,
       dataWindowEnd

@@ -3,21 +3,21 @@ export class NotificationEngine {
 
   public registerPlatformListeners(eventBus: any): void {
     // Transform platform events into structured notification requests
-    eventBus.subscribe('CERTIFICATE_ISSUED', async (eventData: any) => {
+    eventBus.subscribe("CERTIFICATE_ISSUED", async (eventData: any) => {
       await this.communicationKernel.orchestrateDelivery({
-        type: 'EMAIL',
-        templateId: 'CERTIFICATE_READY',
+        type: "EMAIL",
+        templateId: "CERTIFICATE_READY",
         recipient: eventData.userId,
-        variables: { certificateUrl: eventData.url }
+        variables: { certificateUrl: eventData.url },
       });
     });
 
-    eventBus.subscribe('COMPETITION_PUBLISHED', async (eventData: any) => {
+    eventBus.subscribe("COMPETITION_PUBLISHED", async (eventData: any) => {
       await this.communicationKernel.orchestrateDelivery({
-        type: 'PUSH',
-        templateId: 'NEW_COMPETITION',
-        recipient: 'ALL_SUBSCRIBERS',
-        variables: { competitionName: eventData.name }
+        type: "PUSH",
+        templateId: "NEW_COMPETITION",
+        recipient: "ALL_SUBSCRIBERS",
+        variables: { competitionName: eventData.name },
       });
     });
   }

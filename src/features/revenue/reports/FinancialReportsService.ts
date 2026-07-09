@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../generated/prisma';
+import { PrismaClient } from "../../../generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -12,8 +12,8 @@ export class FinancialReportsService {
 
     const transactions = await prisma.revenueTransaction.findMany({
       where: {
-        capturedAt: { gte: startDate, lte: endDate }
-      }
+        capturedAt: { gte: startDate, lte: endDate },
+      },
     });
 
     const gross = transactions.reduce((acc, tx) => acc + tx.amount, 0);
@@ -22,12 +22,12 @@ export class FinancialReportsService {
     const net = transactions.reduce((acc, tx) => acc + tx.netAmount, 0);
 
     return {
-      period: `${year}-${month.toString().padStart(2, '0')}`,
+      period: `${year}-${month.toString().padStart(2, "0")}`,
       totalTransactions: transactions.length,
       grossRevenue: gross,
       taxCollected: tax,
       platformFees: fees,
-      netRevenue: net
+      netRevenue: net,
     };
   }
 
@@ -38,9 +38,9 @@ export class FinancialReportsService {
     const orders = await prisma.paymentOrder.findMany({
       where: {
         competitionId,
-        status: 'CAPTURED'
+        status: "CAPTURED",
       },
-      include: { revenueTransaction: true }
+      include: { revenueTransaction: true },
     });
 
     const gross = orders.reduce((acc, order) => acc + order.amount, 0);
@@ -50,7 +50,7 @@ export class FinancialReportsService {
       competitionId,
       totalPaidRegistrations: orders.length,
       grossRevenue: gross,
-      netRevenue: net
+      netRevenue: net,
     };
   }
 
@@ -62,26 +62,26 @@ export class FinancialReportsService {
       where: { code: couponCode },
       include: {
         paymentOrders: {
-          where: { status: 'CAPTURED' }
-        }
-      }
+          where: { status: "CAPTURED" },
+        },
+      },
     });
 
-    if (!coupon) throw new Error('Coupon not found');
+    if (!coupon) throw new Error("Coupon not found");
 
     // Reconstruct the discount given
     // (This requires looking at the original price vs final amount, simplified here)
     const totalOrders = coupon.paymentOrders.length;
     let estimatedDiscountGiven = 0;
-    
-    if (coupon.type === 'FIXED') {
+
+    if (coupon.type === "FIXED") {
       estimatedDiscountGiven = totalOrders * coupon.value;
     } else {
       // Percentage involves math against original fee
       estimatedDiscountGiven = coupon.paymentOrders.reduce((acc, order) => {
-         // rough math assuming amount = original - discount
-         // For a real system we'd log the literal discount amount in the order
-         return acc + (order.amount * (coupon.value / (100 - coupon.value)));
+        // rough math assuming amount = original - discount
+        // For a real system we'd log the literal discount amount in the order
+        return acc + order.amount * (coupon.value / (100 - coupon.value));
       }, 0);
     }
 
@@ -89,7 +89,7 @@ export class FinancialReportsService {
       couponCode,
       uses: totalOrders,
       discountGiven: estimatedDiscountGiven,
-      revenueGenerated: coupon.paymentOrders.reduce((acc, order) => acc + order.amount, 0)
+      revenueGenerated: coupon.paymentOrders.reduce((acc, order) => acc + order.amount, 0),
     };
   }
 }

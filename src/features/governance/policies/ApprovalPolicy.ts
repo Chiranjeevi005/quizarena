@@ -1,7 +1,7 @@
 export class ApprovalPolicy {
   public canApprove(actorRole: string, competitionRiskScore: number): boolean {
-    if (actorRole === 'SUPER_ADMIN') return true;
-    if (actorRole === 'GOVERNANCE_ADMIN' && competitionRiskScore < 20) return true;
+    if (actorRole === "SUPER_ADMIN") return true;
+    if (actorRole === "GOVERNANCE_ADMIN" && competitionRiskScore < 20) return true;
     return false;
   }
 

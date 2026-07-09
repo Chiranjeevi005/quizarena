@@ -1,11 +1,11 @@
 export interface PlatformService {
   name: string;
-  status: 'HEALTHY' | 'DEGRADED' | 'DOWN';
+  status: "HEALTHY" | "DEGRADED" | "DOWN";
   version: string;
   capabilities: string[];
   owner: string;
   dependencies: string[];
-  criticality: 'P0' | 'P1' | 'P2';
+  criticality: "P0" | "P1" | "P2";
 }
 
 export class PlatformServiceRegistry {

@@ -1,28 +1,35 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
+import { Button } from "@/components/primitives/Button";
 
 export default function RefundsPage() {
   const refunds = [
     {
-      id: 'rfd_123',
-      revenueTxId: 'tx_123',
-      razorpayRefundId: 'rf_abc123',
+      id: "rfd_123",
+      revenueTxId: "tx_123",
+      razorpayRefundId: "rf_abc123",
       amount: 1500,
-      reason: 'Duplicate Payment',
-      status: 'PROCESSED',
-      createdAt: '2023-10-28T14:30:00Z'
+      reason: "Duplicate Payment",
+      status: "PROCESSED",
+      createdAt: "2023-10-28T14:30:00Z",
     },
     {
-      id: 'rfd_124',
-      revenueTxId: 'tx_124',
+      id: "rfd_124",
+      revenueTxId: "tx_124",
       razorpayRefundId: null,
       amount: 500,
-      reason: 'Customer Request',
-      status: 'PENDING',
-      createdAt: '2023-10-29T09:00:00Z'
-    }
+      reason: "Customer Request",
+      status: "PENDING",
+      createdAt: "2023-10-29T09:00:00Z",
+    },
   ];
 
   return (
@@ -57,16 +64,22 @@ export default function RefundsPage() {
                   <TableCell>₹{refund.amount}</TableCell>
                   <TableCell>{refund.reason}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      refund.status === 'PROCESSED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        refund.status === "PROCESSED"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {refund.status}
                     </span>
                   </TableCell>
                   <TableCell>{new Date(refund.createdAt).toLocaleString()}</TableCell>
                   <TableCell className="text-right">
-                    {refund.status === 'PENDING' && (
-                      <Button variant="outline" size="sm">Approve</Button>
+                    {refund.status === "PENDING" && (
+                      <Button variant="outline" size="sm">
+                        Approve
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>

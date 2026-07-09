@@ -1,5 +1,8 @@
 export class SearchEngine {
-  constructor(private readonly semanticSearch: any, private readonly similarityIndex: any) {}
+  constructor(
+    private readonly semanticSearch: any,
+    private readonly similarityIndex: any
+  ) {}
 
   public async search(query: string, filters: any): Promise<any[]> {
     // Executes Keyword, Semantic, and Filtered searches

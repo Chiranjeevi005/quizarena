@@ -5,7 +5,7 @@ export class QuestionLibrary {
     return {
       totalQuestions: 105420,
       certified: 85000,
-      drafts: 20420
+      drafts: 20420,
     };
   }
 

@@ -1,5 +1,9 @@
 export class PlatformScheduler {
-  public async scheduleCronJob(name: string, cron: string, task: () => Promise<void>): Promise<void> {
+  public async scheduleCronJob(
+    name: string,
+    cron: string,
+    task: () => Promise<void>
+  ): Promise<void> {
     // Schedule cron
   }
 
@@ -8,7 +12,7 @@ export class PlatformScheduler {
       upcomingJobs: [],
       runningJobs: [],
       failedJobs: [],
-      completedJobs: []
+      completedJobs: [],
     };
   }
 }

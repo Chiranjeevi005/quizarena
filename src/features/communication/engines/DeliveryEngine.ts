@@ -8,14 +8,17 @@ export class DeliveryEngine {
 
   public async process(notificationPayload: any): Promise<void> {
     // Pipeline: Prepare → Render → Queue → Deliver → Retry → Audit → Analytics
-    
+
     // Prepare & Render
-    const renderedContent = await this.templateEngine.render(notificationPayload.templateId, notificationPayload.variables);
-    
+    const renderedContent = await this.templateEngine.render(
+      notificationPayload.templateId,
+      notificationPayload.variables
+    );
+
     // Queue
     const jobId = await this.communicationQueue.enqueue({
       ...notificationPayload,
-      content: renderedContent
+      content: renderedContent,
     });
 
     // Deliver / Retry

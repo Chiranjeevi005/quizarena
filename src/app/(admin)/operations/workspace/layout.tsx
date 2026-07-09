@@ -1,16 +1,14 @@
-import React from 'react';
+import React from "react";
 
-export default function OperationsWorkspaceLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OperationsWorkspaceLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
       <header className="flex items-center justify-between bg-zinc-900 px-6 py-4 text-white shadow-md">
         <div className="flex items-center gap-4">
           <div className="text-xl font-bold tracking-tight">Enterprise Operations Platform</div>
-          <div className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-100">SA-07 Control Center</div>
+          <div className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-zinc-100">
+            SA-07 Control Center
+          </div>
         </div>
       </header>
 
@@ -35,21 +33,31 @@ export default function OperationsWorkspaceLayout({
             <NavItem href="/operations/workspace/reports" label="Reports" />
             <NavItem href="/operations/workspace/audit" label="Audit" />
             <NavItem href="/operations/workspace/runbooks" label="Runbooks" />
-            <NavItem href="/operations/workspace/command-center" label="Command Center" className="font-bold text-red-600 bg-red-50 mt-4" />
+            <NavItem
+              href="/operations/workspace/command-center"
+              label="Command Center"
+              className="font-bold text-red-600 bg-red-50 mt-4"
+            />
             <NavItem href="/operations/workspace/status" label="Status" />
             <NavItem href="/operations/workspace/settings" label="Settings" />
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-y-auto p-8">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>
   );
 }
 
-function NavItem({ href, label, className = '' }: { href: string; label: string; className?: string }) {
+function NavItem({
+  href,
+  label,
+  className = "",
+}: {
+  href: string;
+  label: string;
+  className?: string;
+}) {
   return (
     <a
       href={href}

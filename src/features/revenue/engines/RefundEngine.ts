@@ -1,22 +1,29 @@
-import { PrismaClient, RefundStatus, PaymentOrderStatus } from '../../../generated/prisma';
+import { PrismaClient, RefundStatus, PaymentOrderStatus } from "../../../generated/prisma";
 
 const prisma = new PrismaClient();
-import { RazorpayRefundService } from '../adapters/razorpay/RazorpayRefundService';
+import { RazorpayRefundService } from "../adapters/razorpay/RazorpayRefundService";
 
 export class RefundEngine {
   private refundService = new RazorpayRefundService();
 
-  public async initiateRefund(revenueTransactionId: string, amount: number, reason: string, adminId: string): Promise<any> {
+  public async initiateRefund(
+    revenueTransactionId: string,
+    amount: number,
+    reason: string,
+    adminId: string
+  ): Promise<any> {
     const transaction = await prisma.revenueTransaction.findUnique({
       where: { id: revenueTransactionId },
-      include: { paymentOrder: { include: { attempts: true } } }
+      include: { paymentOrder: { include: { attempts: true } } },
     });
 
-    if (!transaction) throw new Error('Transaction not found');
+    if (!transaction) throw new Error("Transaction not found");
 
-    const successfulAttempt = transaction.paymentOrder.attempts.find(a => a.status === PaymentOrderStatus.CAPTURED);
+    const successfulAttempt = transaction.paymentOrder.attempts.find(
+      (a) => a.status === PaymentOrderStatus.CAPTURED
+    );
     if (!successfulAttempt || !successfulAttempt.razorpayPaymentId) {
-      throw new Error('No successful payment attempt found to refund');
+      throw new Error("No successful payment attempt found to refund");
     }
 
     // Create a pending RefundRecord
@@ -27,8 +34,8 @@ export class RefundEngine {
         currency: transaction.currency,
         reason,
         status: RefundStatus.PENDING,
-        approvedById: adminId
-      }
+        approvedById: adminId,
+      },
     });
 
     try {
@@ -36,7 +43,7 @@ export class RefundEngine {
       const razorpayRefund = await this.refundService.createRefund({
         paymentId: successfulAttempt.razorpayPaymentId,
         amount: amount * 100, // convert to minor units
-        receipt: `RFD-${refundRecord.id}`
+        receipt: `RFD-${refundRecord.id}`,
       });
 
       // Update RefundRecord with gateway response
@@ -44,25 +51,25 @@ export class RefundEngine {
         where: { id: refundRecord.id },
         data: {
           razorpayRefundId: razorpayRefund.id,
-          status: RefundStatus.PROCESSED
-        }
+          status: RefundStatus.PROCESSED,
+        },
       });
 
       // Audit Log
       await prisma.revenueAuditLog.create({
         data: {
-          action: 'REFUND_PROCESSED',
+          action: "REFUND_PROCESSED",
           actorId: adminId,
           targetId: refundRecord.id,
-          metadata: { amount, reason, razorpayRefundId: razorpayRefund.id }
-        }
+          metadata: { amount, reason, razorpayRefundId: razorpayRefund.id },
+        },
       });
 
       return refundRecord;
     } catch (error) {
       await prisma.refundRecord.update({
         where: { id: refundRecord.id },
-        data: { status: RefundStatus.FAILED }
+        data: { status: RefundStatus.FAILED },
       });
       throw error;
     }

@@ -6,8 +6,8 @@ export class StudioIntelligenceAdapter {
     // Returns Expected Drop-off, Expected Revenue, Audience Fit, etc.
     return {
       expectedRevenue: 45000,
-      expectedDropoff: '15%',
-      publishingSuggestions: ['Release on Tuesday morning for maximum engagement']
+      expectedDropoff: "15%",
+      publishingSuggestions: ["Release on Tuesday morning for maximum engagement"],
     };
   }
 }

@@ -1,9 +1,9 @@
-export type MaintenanceMode = 'NONE' | 'SCHEDULED' | 'EMERGENCY' | 'READ_ONLY';
+export type MaintenanceMode = "NONE" | "SCHEDULED" | "EMERGENCY" | "READ_ONLY";
 
 export class MaintenanceModeEngine {
-  private currentMode: MaintenanceMode = 'NONE';
+  private currentMode: MaintenanceMode = "NONE";
   private eta: Date | null = null;
-  private message: string = '';
+  private message: string = "";
 
   public setMode(mode: MaintenanceMode, eta: Date, message: string): void {
     this.currentMode = mode;
@@ -16,8 +16,8 @@ export class MaintenanceModeEngine {
       mode: this.currentMode,
       eta: this.eta,
       message: this.message,
-      publishingDisabled: this.currentMode !== 'NONE',
-      registrationsDisabled: this.currentMode === 'EMERGENCY' || this.currentMode === 'READ_ONLY'
+      publishingDisabled: this.currentMode !== "NONE",
+      registrationsDisabled: this.currentMode === "EMERGENCY" || this.currentMode === "READ_ONLY",
     };
   }
 }

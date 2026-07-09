@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { IndianRupee, TrendingUp, Users, AlertCircle, ShoppingCart } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import { IndianRupee, TrendingUp, Users, AlertCircle, ShoppingCart } from "lucide-react";
 
 export default function RevenueDashboardPage() {
   return (
@@ -20,7 +20,7 @@ export default function RevenueDashboardPage() {
             <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Revenue</CardTitle>

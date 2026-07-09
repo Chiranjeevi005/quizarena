@@ -1,4 +1,4 @@
-export type FlagScope = 'GLOBAL' | 'WORKSPACE' | 'ROLE' | 'USER';
+export type FlagScope = "GLOBAL" | "WORKSPACE" | "ROLE" | "USER";
 
 export class FeatureFlagEngine {
   public isEnabled(flagKey: string, context: any): boolean {

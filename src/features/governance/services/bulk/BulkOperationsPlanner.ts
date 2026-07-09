@@ -6,18 +6,20 @@ export class BulkOperationsPlanner {
 
   public async planPublish(competitionIds: string[], actorRole: string): Promise<any> {
     // 1. Preview
-    const preview = competitionIds.map(id => ({ id, action: 'PUBLISH' }));
-    
+    const preview = competitionIds.map((id) => ({ id, action: "PUBLISH" }));
+
     // 2. Validate
-    const validations = await Promise.all(preview.map(async (item) => {
-      // Logic to check policies
-      return { ...item, valid: true, errors: [] };
-    }));
+    const validations = await Promise.all(
+      preview.map(async (item) => {
+        // Logic to check policies
+        return { ...item, valid: true, errors: [] };
+      })
+    );
 
     return {
-      batchId: 'BATCH_' + Date.now(),
+      batchId: "BATCH_" + Date.now(),
       validations,
-      canExecute: validations.every(v => v.valid)
+      canExecute: validations.every((v) => v.valid),
     };
   }
 

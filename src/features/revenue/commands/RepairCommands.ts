@@ -1,4 +1,4 @@
-import { User } from '../../../generated/prisma';
+import { User } from "../../../generated/prisma";
 
 export interface BaseCommand {
   actor: User;
@@ -38,26 +38,28 @@ export class RevenueRepairCommandHandler {
 
   public async handleReplayWebhook(command: ReplayWebhookCommand): Promise<CommandResult> {
     // Logic to fetch DLQ event, push to processor, and audit
-    return { success: true, message: 'Webhook replayed successfully' };
+    return { success: true, message: "Webhook replayed successfully" };
   }
 
   public async handleRepairEnrollment(command: RepairEnrollmentCommand): Promise<CommandResult> {
     // Logic to verify payment and force enrollment
-    return { success: true, message: 'Enrollment repaired successfully' };
+    return { success: true, message: "Enrollment repaired successfully" };
   }
 
   public async handleResyncSettlement(command: ResyncSettlementCommand): Promise<CommandResult> {
     // Logic to fetch settlement from Razorpay and update DB
-    return { success: true, message: 'Settlement resynced successfully' };
+    return { success: true, message: "Settlement resynced successfully" };
   }
 
   public async handleResyncOrder(command: ResyncOrderCommand): Promise<CommandResult> {
     // Logic to fetch order from Razorpay and update PaymentOrder/Attempts
-    return { success: true, message: 'Order resynced successfully' };
+    return { success: true, message: "Order resynced successfully" };
   }
 
-  public async handleRebuildTimeline(command: RebuildRevenueTimelineCommand): Promise<CommandResult> {
+  public async handleRebuildTimeline(
+    command: RebuildRevenueTimelineCommand
+  ): Promise<CommandResult> {
     // Logic to re-aggregate events and update TimelineReadModel
-    return { success: true, message: 'Timeline rebuilt successfully' };
+    return { success: true, message: "Timeline rebuilt successfully" };
   }
 }

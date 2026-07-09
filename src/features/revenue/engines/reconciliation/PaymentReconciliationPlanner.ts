@@ -1,11 +1,11 @@
-import { PaymentOrder, PaymentOrderStatus } from '../../../../generated/prisma';
+import { PaymentOrder, PaymentOrderStatus } from "../../../../generated/prisma";
 
 export interface Discrepancy {
   paymentOrderId: string;
   razorpayPaymentId?: string;
   databaseStatus: PaymentOrderStatus;
   razorpayStatus: string;
-  issueType: 'MISSING_WEBHOOK' | 'STATUS_MISMATCH' | 'AMOUNT_MISMATCH';
+  issueType: "MISSING_WEBHOOK" | "STATUS_MISMATCH" | "AMOUNT_MISMATCH";
 }
 
 export class PaymentReconciliationPlanner {
@@ -19,14 +19,20 @@ export class PaymentReconciliationPlanner {
    */
   public async plan(startDate: Date, endDate: Date): Promise<Discrepancy[]> {
     const discrepancies: Discrepancy[] = [];
-    
+
     // Fetch all pending/authorized orders that are older than say 30 minutes
     const suspiciousOrders = await this.db.paymentOrder.findMany({
       where: {
         createdAt: { gte: startDate, lte: endDate },
-        status: { in: [PaymentOrderStatus.PENDING, PaymentOrderStatus.AUTHORIZED, PaymentOrderStatus.CREATED] }
+        status: {
+          in: [
+            PaymentOrderStatus.PENDING,
+            PaymentOrderStatus.AUTHORIZED,
+            PaymentOrderStatus.CREATED,
+          ],
+        },
       },
-      include: { attempts: true }
+      include: { attempts: true },
     });
 
     for (const order of suspiciousOrders) {
@@ -37,13 +43,13 @@ export class PaymentReconciliationPlanner {
       if (!remoteOrder) continue;
 
       const remoteStatus = remoteOrder.status; // e.g. "paid", "created", "attempted"
-      
-      if (remoteStatus === 'paid' && order.status !== PaymentOrderStatus.CAPTURED) {
+
+      if (remoteStatus === "paid" && order.status !== PaymentOrderStatus.CAPTURED) {
         discrepancies.push({
           paymentOrderId: order.id,
           databaseStatus: order.status,
           razorpayStatus: remoteStatus,
-          issueType: 'MISSING_WEBHOOK'
+          issueType: "MISSING_WEBHOOK",
         });
       }
     }

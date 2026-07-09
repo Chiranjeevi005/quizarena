@@ -1,33 +1,40 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
 
 export default function RevenueAuditPage() {
   const auditLogs = [
     {
-      id: 'log_1',
-      action: 'PAYMENT_CAPTURED_AND_ENROLLED',
-      actorId: 'system',
-      targetId: 'tx_123',
-      timestamp: '2023-10-27T10:06:00Z',
+      id: "log_1",
+      action: "PAYMENT_CAPTURED_AND_ENROLLED",
+      actorId: "system",
+      targetId: "tx_123",
+      timestamp: "2023-10-27T10:06:00Z",
     },
     {
-      id: 'log_2',
-      action: 'REFUND_PROCESSED',
-      actorId: 'admin_xyz',
-      targetId: 'rfd_456',
-      timestamp: '2023-10-28T14:30:00Z',
-    }
+      id: "log_2",
+      action: "REFUND_PROCESSED",
+      actorId: "admin_xyz",
+      targetId: "rfd_456",
+      timestamp: "2023-10-28T14:30:00Z",
+    },
   ];
 
   const webhookEvents = [
     {
-      eventId: 'evt_abc',
-      eventType: 'payment.captured',
+      eventId: "evt_abc",
+      eventType: "payment.captured",
       processed: true,
       retries: 0,
-      timestamp: '2023-10-27T10:06:00Z'
-    }
+      timestamp: "2023-10-27T10:06:00Z",
+    },
   ];
 
   return (

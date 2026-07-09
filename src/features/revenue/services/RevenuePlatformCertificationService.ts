@@ -13,7 +13,7 @@ export interface CertificationResult {
     databaseSync: boolean;
     readModelsActive: boolean;
   };
-  status: 'Production Certified' | 'Warning' | 'Critical Failure';
+  status: "Production Certified" | "Warning" | "Critical Failure";
 }
 
 export class RevenuePlatformCertificationService {
@@ -41,14 +41,14 @@ export class RevenuePlatformCertificationService {
     const totalChecks = Object.keys(checks).length;
     const score = Math.round((passedChecks / totalChecks) * 100);
 
-    let status: 'Production Certified' | 'Warning' | 'Critical Failure' = 'Production Certified';
-    if (score < 100) status = 'Warning';
-    if (score < 80) status = 'Critical Failure';
+    let status: "Production Certified" | "Warning" | "Critical Failure" = "Production Certified";
+    if (score < 100) status = "Warning";
+    if (score < 80) status = "Critical Failure";
 
     return {
       score,
       checks,
-      status
+      status,
     };
   }
 
@@ -83,7 +83,7 @@ export class RevenuePlatformCertificationService {
 
   private async checkWorkers(): Promise<boolean> {
     // Check if worker processes or cron jobs are registered/healthy
-    return true; 
+    return true;
   }
 
   private async checkDatabaseSync(): Promise<boolean> {

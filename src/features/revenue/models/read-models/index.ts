@@ -17,7 +17,7 @@ export interface PaymentTimelineReadModel {
   events: {
     eventType: string;
     timestamp: Date;
-    status: 'SUCCESS' | 'WARNING' | 'FAILED';
+    status: "SUCCESS" | "WARNING" | "FAILED";
     metadata?: Record<string, any>;
   }[];
 }

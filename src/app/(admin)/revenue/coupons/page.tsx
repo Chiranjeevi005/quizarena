@@ -1,27 +1,34 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
+import { Button } from "@/components/primitives/Button";
 
 export default function CouponsPage() {
   const coupons = [
     {
-      id: 'coupon_1',
-      code: 'WELCOME50',
-      type: 'PERCENTAGE',
+      id: "coupon_1",
+      code: "WELCOME50",
+      type: "PERCENTAGE",
       value: 50,
-      state: 'ACTIVE',
-      usage: '12 / 100',
-      expiresAt: '2023-12-31T23:59:59Z'
+      state: "ACTIVE",
+      usage: "12 / 100",
+      expiresAt: "2023-12-31T23:59:59Z",
     },
     {
-      id: 'coupon_2',
-      code: 'FLAT200',
-      type: 'FIXED',
+      id: "coupon_2",
+      code: "FLAT200",
+      type: "FIXED",
       value: 200,
-      state: 'EXPIRED',
-      usage: '500 / 500',
-      expiresAt: '2023-10-01T23:59:59Z'
-    }
+      state: "EXPIRED",
+      usage: "500 / 500",
+      expiresAt: "2023-10-01T23:59:59Z",
+    },
   ];
 
   return (
@@ -54,18 +61,25 @@ export default function CouponsPage() {
                   <TableCell className="font-bold">{coupon.code}</TableCell>
                   <TableCell>{coupon.type}</TableCell>
                   <TableCell>
-                    {coupon.type === 'PERCENTAGE' ? `${coupon.value}%` : `₹${coupon.value}`}
+                    {coupon.type === "PERCENTAGE" ? `${coupon.value}%` : `₹${coupon.value}`}
                   </TableCell>
                   <TableCell>{coupon.usage}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${coupon.state === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        coupon.state === "ACTIVE"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
                       {coupon.state}
                     </span>
                   </TableCell>
                   <TableCell>{new Date(coupon.expiresAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">Manage</Button>
+                    <Button variant="outline" size="sm">
+                      Manage
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

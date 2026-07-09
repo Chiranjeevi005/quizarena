@@ -7,7 +7,7 @@
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
-import { DashboardShell } from "@/shared/layout/DashboardShell";
+import { WorkspaceShell } from "@/shared/layout/WorkspaceShell";
 import { Suspense } from "react";
 import { UserStats } from "@/shared/layout/UserStats";
 import { UserStatsSkeleton } from "@/shared/layout/UserStatsSkeleton";
@@ -37,7 +37,7 @@ export default async function UserAppLayout({ children }: { children: React.Reac
   }
 
   return (
-    <DashboardShell
+    <WorkspaceShell
       freshUser={freshUser}
       userStatsNode={
         isNotAdmin && session.user.id ? (
@@ -48,6 +48,6 @@ export default async function UserAppLayout({ children }: { children: React.Reac
       }
     >
       {children}
-    </DashboardShell>
+    </WorkspaceShell>
   );
 }

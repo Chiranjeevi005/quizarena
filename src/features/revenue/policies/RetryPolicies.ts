@@ -8,28 +8,28 @@ export interface RetryPolicy {
 export const RevenueRetryPolicies: Record<string, RetryPolicy> = {
   WebhookProcessing: {
     maxAttempts: 5,
-    baseDelayMs: 2000,     // 2 seconds
-    backoffMultiplier: 2,  // Exponential
-    maxDelayMs: 60000      // 1 minute max
+    baseDelayMs: 2000, // 2 seconds
+    backoffMultiplier: 2, // Exponential
+    maxDelayMs: 60000, // 1 minute max
   },
   SettlementSync: {
     maxAttempts: 3,
-    baseDelayMs: 300000,   // 5 minutes
-    backoffMultiplier: 1,  // Linear
-    maxDelayMs: 300000
+    baseDelayMs: 300000, // 5 minutes
+    backoffMultiplier: 1, // Linear
+    maxDelayMs: 300000,
   },
   RefundCreation: {
     maxAttempts: 2,
     baseDelayMs: 1000,
     backoffMultiplier: 2,
-    maxDelayMs: 5000
+    maxDelayMs: 5000,
   },
   ReconciliationJob: {
-    maxAttempts: 1,        // Runs daily, don't auto-retry on failure immediately
+    maxAttempts: 1, // Runs daily, don't auto-retry on failure immediately
     baseDelayMs: 0,
     backoffMultiplier: 1,
-    maxDelayMs: 0
-  }
+    maxDelayMs: 0,
+  },
 };
 
 /**

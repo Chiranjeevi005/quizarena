@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
  *
  * Architecture:
  * - Server-side DB-authoritative validation (fail-closed)
- * - Isolated visual system (SuperAdminShell — no DashboardShell dependency)
+ * - Isolated visual system (SuperAdminShell — no WorkspaceShell dependency)
  * - Sovereign session verification before any content renders
  *
  * This layout is LOGICALLY, VISUALLY, and OPERATIONALLY separated from

@@ -1,4 +1,12 @@
-export type QueueState = 'PENDING' | 'QUEUED' | 'PROCESSING' | 'DELIVERED' | 'FAILED' | 'RETRYING' | 'DEAD_LETTER' | 'ARCHIVED';
+export type QueueState =
+  | "PENDING"
+  | "QUEUED"
+  | "PROCESSING"
+  | "DELIVERED"
+  | "FAILED"
+  | "RETRYING"
+  | "DEAD_LETTER"
+  | "ARCHIVED";
 
 export class CommunicationQueue {
   public async enqueue(job: any): Promise<string> {

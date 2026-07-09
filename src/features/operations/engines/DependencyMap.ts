@@ -1,9 +1,9 @@
 export class DependencyMap {
   private graph: Record<string, string[]> = {
-    'Runtime': ['Submission', 'Revenue'],
-    'Submission': ['Results'],
-    'Results': ['Leaderboard'],
-    'Leaderboard': ['Certificates']
+    Runtime: ["Submission", "Revenue"],
+    Submission: ["Results"],
+    Results: ["Leaderboard"],
+    Leaderboard: ["Certificates"],
   };
 
   public getImpactZone(failedService: string): string[] {

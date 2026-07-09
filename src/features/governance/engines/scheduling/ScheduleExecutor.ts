@@ -1,4 +1,4 @@
-import { ProposedSchedule } from './SchedulePlanner';
+import { ProposedSchedule } from "./SchedulePlanner";
 
 export class ScheduleExecutor {
   constructor(
@@ -7,18 +7,22 @@ export class ScheduleExecutor {
     private readonly auditEngine: any
   ) {}
 
-  public async execute(competitionId: string, schedule: ProposedSchedule, actor: string): Promise<void> {
+  public async execute(
+    competitionId: string,
+    schedule: ProposedSchedule,
+    actor: string
+  ): Promise<void> {
     await this.db.competitionSchedule.create({
       data: {
         competitionId,
         publishAt: schedule.publishAt,
         startsAt: schedule.startAt,
         endsAt: schedule.endAt,
-        timezone: schedule.timezone
-      }
+        timezone: schedule.timezone,
+      },
     });
 
-    await this.lifecycleEngine.transition(competitionId, 'SCHEDULED', actor);
-    await this.auditEngine.logAction(competitionId, actor, 'SCHEDULE_APPLIED');
+    await this.lifecycleEngine.transition(competitionId, "SCHEDULED", actor);
+    await this.auditEngine.logAction(competitionId, actor, "SCHEDULE_APPLIED");
   }
 }

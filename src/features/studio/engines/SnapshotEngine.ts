@@ -21,8 +21,8 @@ export class SnapshotEngine {
       marks: 100,
       negativeMarks: 0.25,
       durationSeconds: 3600,
-      difficulty: 'MEDIUM',
-      metadata: {}
+      difficulty: "MEDIUM",
+      metadata: {},
     };
   }
 }

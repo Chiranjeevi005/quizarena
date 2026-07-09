@@ -1,6 +1,6 @@
 export interface CommunicationProvider {
   name: string;
-  type: 'EMAIL' | 'SMS' | 'PUSH' | 'WEBHOOK';
+  type: "EMAIL" | "SMS" | "PUSH" | "WEBHOOK";
   deliver(payload: any): Promise<boolean>;
 }
 

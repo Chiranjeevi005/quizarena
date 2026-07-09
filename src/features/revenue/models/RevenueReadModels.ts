@@ -4,8 +4,8 @@ import {
   CouponType,
   PaymentOrderStatus,
   RefundStatus,
-  RegistrationState
-} from '../../../generated/prisma';
+  RegistrationState,
+} from "../../../generated/prisma";
 
 export interface RevenueDashboardReadModel {
   grossRevenue: number;

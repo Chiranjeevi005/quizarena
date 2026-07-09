@@ -1,4 +1,4 @@
-import { PaymentTimelineReadModel } from '@/features/revenue/models/read-models/RevenueReadModels';
+import { PaymentTimelineReadModel } from "@/features/revenue/models/read-models/RevenueReadModels";
 
 interface TimelinePageProps {
   params: {
@@ -9,36 +9,36 @@ interface TimelinePageProps {
 // Mock ReadModel for demonstration
 const getMockTimeline = (orderId: string): PaymentTimelineReadModel => ({
   orderId,
-  competitionName: 'SSC CGL Grand Mock 2026',
-  amount: '499.00',
-  currency: 'INR',
-  currentState: 'ENROLLED',
+  competitionName: "SSC CGL Grand Mock 2026",
+  amount: "499.00",
+  currency: "INR",
+  currentState: "ENROLLED",
   events: [
     {
-      title: 'Registration Started',
+      title: "Registration Started",
       timestamp: new Date(Date.now() - 3600000).toISOString(),
-      status: 'SUCCESS',
-      description: 'You initiated registration for the competition.'
+      status: "SUCCESS",
+      description: "You initiated registration for the competition.",
     },
     {
-      title: 'Payment Started',
+      title: "Payment Started",
       timestamp: new Date(Date.now() - 3500000).toISOString(),
-      status: 'SUCCESS',
-      description: 'Razorpay checkout opened.'
+      status: "SUCCESS",
+      description: "Razorpay checkout opened.",
     },
     {
-      title: 'Payment Captured',
+      title: "Payment Captured",
       timestamp: new Date(Date.now() - 3000000).toISOString(),
-      status: 'SUCCESS',
-      description: 'Your payment was successfully received and verified.'
+      status: "SUCCESS",
+      description: "Your payment was successfully received and verified.",
     },
     {
-      title: 'Enrolled',
+      title: "Enrolled",
       timestamp: new Date(Date.now() - 2900000).toISOString(),
-      status: 'SUCCESS',
-      description: 'You have been successfully enrolled in the competition.'
-    }
-  ]
+      status: "SUCCESS",
+      description: "You have been successfully enrolled in the competition.",
+    },
+  ],
 });
 
 export default function CandidatePaymentTimelinePage({ params }: TimelinePageProps) {
@@ -61,7 +61,9 @@ export default function CandidatePaymentTimelinePage({ params }: TimelinePagePro
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-500">Amount Paid</p>
-              <p className="font-bold text-lg text-gray-900">{timeline.currency} {timeline.amount}</p>
+              <p className="font-bold text-lg text-gray-900">
+                {timeline.currency} {timeline.amount}
+              </p>
             </div>
           </div>
         </div>
@@ -73,14 +75,28 @@ export default function CandidatePaymentTimelinePage({ params }: TimelinePagePro
                 <li key={eventIdx}>
                   <div className="relative pb-8">
                     {eventIdx !== timeline.events.length - 1 ? (
-                      <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true" />
+                      <span
+                        className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
+                        aria-hidden="true"
+                      />
                     ) : null}
                     <div className="relative flex space-x-3">
                       <div>
-                        <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${event.status === 'SUCCESS' ? 'bg-green-500' : event.status === 'FAILED' ? 'bg-red-500' : 'bg-gray-300'}`}>
-                          {event.status === 'SUCCESS' && (
-                            <svg className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                              <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                        <span
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${event.status === "SUCCESS" ? "bg-green-500" : event.status === "FAILED" ? "bg-red-500" : "bg-gray-300"}`}
+                        >
+                          {event.status === "SUCCESS" && (
+                            <svg
+                              className="h-5 w-5 text-white"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           )}
                           {/* Add failure/pending icons if needed */}
@@ -95,9 +111,14 @@ export default function CandidatePaymentTimelinePage({ params }: TimelinePagePro
                         </div>
                         <div className="whitespace-nowrap text-right text-sm text-gray-500">
                           <time dateTime={event.timestamp}>
-                            {new Date(event.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(event.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </time>
-                          <p className="text-xs mt-1">{new Date(event.timestamp).toLocaleDateString()}</p>
+                          <p className="text-xs mt-1">
+                            {new Date(event.timestamp).toLocaleDateString()}
+                          </p>
                         </div>
                       </div>
                     </div>

@@ -4,6 +4,6 @@ export class ReleaseEngine {
   }
 
   public async getReleaseNotes(version: string): Promise<string> {
-    return 'Release notes for ' + version;
+    return "Release notes for " + version;
   }
 }

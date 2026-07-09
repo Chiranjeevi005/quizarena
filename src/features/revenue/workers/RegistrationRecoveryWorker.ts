@@ -1,4 +1,4 @@
-import { RegistrationState, PaymentOrderStatus } from '../../../generated/prisma';
+import { RegistrationState, PaymentOrderStatus } from "../../../generated/prisma";
 
 export class RegistrationRecoveryWorker {
   constructor(
@@ -12,7 +12,7 @@ export class RegistrationRecoveryWorker {
    */
   public async processRecoveries(): Promise<void> {
     const anomalies = await this.detect();
-    
+
     for (const anomaly of anomalies) {
       const verified = await this.verify(anomaly);
       if (verified) {
@@ -32,15 +32,15 @@ export class RegistrationRecoveryWorker {
         state: RegistrationState.PAYMENT_PENDING,
         paymentOrders: {
           some: {
-            status: PaymentOrderStatus.CAPTURED
-          }
-        }
+            status: PaymentOrderStatus.CAPTURED,
+          },
+        },
       },
       include: {
         paymentOrders: true,
         user: true,
-        competition: true
-      }
+        competition: true,
+      },
     });
   }
 
@@ -55,16 +55,16 @@ export class RegistrationRecoveryWorker {
       await this.registrationEngine.enrollUser(anomaly.userId, anomaly.competitionId);
       return true;
     } catch (e) {
-      console.error('Failed to repair enrollment', e);
+      console.error("Failed to repair enrollment", e);
       return false;
     }
   }
 
   private async audit(anomaly: any): Promise<void> {
     await this.auditEngine.log({
-      action: 'RECOVERY_ENROLLMENT',
+      action: "RECOVERY_ENROLLMENT",
       targetId: anomaly.id,
-      reason: 'Automated recovery of stuck registration'
+      reason: "Automated recovery of stuck registration",
     });
   }
 

@@ -19,7 +19,12 @@
       }
     ],
     "paths": {
-      "@/components/ui/*": ["./src/shared/ui/*"],
+      "@/theme/*": ["./src/theme/*"],
+      "@/providers/*": ["./src/providers/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/utilities/*": ["./src/utilities/*"],
+      "@/registry/*": ["./src/registry/*"],
+      "@/icons/*": ["./src/icons/*"],
       "@/*": ["./src/*"]
     }
   },

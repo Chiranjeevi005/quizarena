@@ -1,7 +1,7 @@
 export class RecoveryEngine {
   public async executeSafeRepair(domain: string, payload: any): Promise<void> {
     // Pipeline: Repair → Audit → Notify → Verify
-    
+
     // 1. Repair
     console.log(`Repairing ${domain}`);
 

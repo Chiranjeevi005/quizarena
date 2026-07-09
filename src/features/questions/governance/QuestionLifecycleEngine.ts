@@ -1,7 +1,18 @@
-export type QuestionState = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'ACTIVE' | 'DEPRECATED' | 'ARCHIVED';
+export type QuestionState =
+  | "DRAFT"
+  | "UNDER_REVIEW"
+  | "APPROVED"
+  | "PUBLISHED"
+  | "ACTIVE"
+  | "DEPRECATED"
+  | "ARCHIVED";
 
 export class QuestionLifecycleEngine {
-  public async transition(questionId: string, newState: QuestionState, actorId: string): Promise<void> {
+  public async transition(
+    questionId: string,
+    newState: QuestionState,
+    actorId: string
+  ): Promise<void> {
     // Audit log state transition
   }
 

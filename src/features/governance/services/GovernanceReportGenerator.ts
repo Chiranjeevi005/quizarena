@@ -4,19 +4,19 @@ export class GovernanceReportGenerator {
   public async generateComplianceReport(competitionId: string): Promise<any> {
     return {
       competitionId,
-      reportType: 'COMPLIANCE',
+      reportType: "COMPLIANCE",
       generatedAt: new Date(),
-      status: 'COMPLIANT'
+      status: "COMPLIANT",
     };
   }
 
   public async generateGovernanceReport(): Promise<any> {
     return {
-      reportType: 'SYSTEM_GOVERNANCE',
+      reportType: "SYSTEM_GOVERNANCE",
       generatedAt: new Date(),
       activeCompetitions: 120,
       recentApprovals: 15,
-      recentEmergencies: 0
+      recentEmergencies: 0,
     };
   }
 }

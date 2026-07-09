@@ -1,15 +1,21 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
 export default function RevenueTimelinePage() {
   const events = [
-    { id: 1, title: 'Order Generated', timestamp: '2023-10-27 10:00 AM', status: 'success' },
-    { id: 2, title: 'Coupon Reserved', timestamp: '2023-10-27 10:01 AM', status: 'success' },
-    { id: 3, title: 'Payment Attempted', timestamp: '2023-10-27 10:02 AM', status: 'warning', description: 'Failed: Insufficient Funds' },
-    { id: 4, title: 'Payment Authorized', timestamp: '2023-10-27 10:05 AM', status: 'success' },
-    { id: 5, title: 'Payment Captured', timestamp: '2023-10-27 10:06 AM', status: 'success' },
-    { id: 6, title: 'Enrollment Completed', timestamp: '2023-10-27 10:06 AM', status: 'success' },
+    { id: 1, title: "Order Generated", timestamp: "2023-10-27 10:00 AM", status: "success" },
+    { id: 2, title: "Coupon Reserved", timestamp: "2023-10-27 10:01 AM", status: "success" },
+    {
+      id: 3,
+      title: "Payment Attempted",
+      timestamp: "2023-10-27 10:02 AM",
+      status: "warning",
+      description: "Failed: Insufficient Funds",
+    },
+    { id: 4, title: "Payment Authorized", timestamp: "2023-10-27 10:05 AM", status: "success" },
+    { id: 5, title: "Payment Captured", timestamp: "2023-10-27 10:06 AM", status: "success" },
+    { id: 6, title: "Enrollment Completed", timestamp: "2023-10-27 10:06 AM", status: "success" },
   ];
 
   return (
@@ -27,9 +33,9 @@ export default function RevenueTimelinePage() {
             {events.map((event, idx) => (
               <div key={event.id} className="relative pl-6">
                 <div className="absolute -left-3.5 bg-background p-1 rounded-full">
-                  {event.status === 'success' ? (
+                  {event.status === "success" ? (
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  ) : event.status === 'warning' ? (
+                  ) : event.status === "warning" ? (
                     <AlertCircle className="w-5 h-5 text-orange-500" />
                   ) : (
                     <Clock className="w-5 h-5 text-blue-500" />

@@ -1,4 +1,4 @@
-import { PrismaClient, CouponState } from '../../../generated/prisma';
+import { PrismaClient, CouponState } from "../../../generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -9,26 +9,26 @@ export class CouponEngine {
   public async validateCoupon(code: string, competitionId: string, userId: string): Promise<any> {
     const coupon = await prisma.coupon.findUnique({ where: { code } });
 
-    if (!coupon) throw new Error('Coupon not found');
-    if (coupon.state !== CouponState.ACTIVE) throw new Error('Coupon is not active');
-    
+    if (!coupon) throw new Error("Coupon not found");
+    if (coupon.state !== CouponState.ACTIVE) throw new Error("Coupon is not active");
+
     if (coupon.competitionId && coupon.competitionId !== competitionId) {
-      throw new Error('Coupon is not valid for this competition');
+      throw new Error("Coupon is not valid for this competition");
     }
 
     if (coupon.expiresAt && coupon.expiresAt < new Date()) {
-      throw new Error('Coupon has expired');
+      throw new Error("Coupon has expired");
     }
 
     if (coupon.maxUsage && coupon.currentUsage >= coupon.maxUsage) {
-      throw new Error('Coupon usage limit reached');
+      throw new Error("Coupon usage limit reached");
     }
 
     if (coupon.firstUserOnly) {
       const pastOrders = await prisma.paymentOrder.findFirst({
-        where: { userId, status: { in: ['CAPTURED', 'AUTHORIZED'] } }
+        where: { userId, status: { in: ["CAPTURED", "AUTHORIZED"] } },
       });
-      if (pastOrders) throw new Error('Coupon is only valid for first-time users');
+      if (pastOrders) throw new Error("Coupon is only valid for first-time users");
     }
 
     return coupon;
@@ -39,15 +39,15 @@ export class CouponEngine {
    */
   public async reserveCoupon(code: string): Promise<void> {
     const coupon = await prisma.coupon.findUnique({ where: { code } });
-    if (!coupon) throw new Error('Coupon not found');
+    if (!coupon) throw new Error("Coupon not found");
 
     if (coupon.maxUsage) {
       await prisma.coupon.update({
         where: { code },
         data: {
           currentUsage: { increment: 1 },
-          state: coupon.currentUsage + 1 >= coupon.maxUsage ? CouponState.EXPIRED : undefined
-        }
+          state: coupon.currentUsage + 1 >= coupon.maxUsage ? CouponState.EXPIRED : undefined,
+        },
       });
     }
   }
@@ -72,8 +72,8 @@ export class CouponEngine {
         where: { code },
         data: {
           currentUsage: { decrement: 1 },
-          state: coupon.state === CouponState.EXPIRED ? CouponState.ACTIVE : undefined
-        }
+          state: coupon.state === CouponState.EXPIRED ? CouponState.ACTIVE : undefined,
+        },
       });
     }
   }

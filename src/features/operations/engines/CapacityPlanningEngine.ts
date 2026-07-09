@@ -4,7 +4,7 @@ export class CapacityPlanningEngine {
       forecastedConcurrentUsers: 15000,
       forecastedWorkersRequired: 12,
       forecastedStorageGB: 500,
-      forecastedDatabaseLoad: '85%'
+      forecastedDatabaseLoad: "85%",
     };
   }
 }

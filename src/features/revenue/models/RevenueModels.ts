@@ -4,8 +4,8 @@ import {
   CouponState,
   RegistrationState,
   PaymentOrderStatus,
-  RefundStatus
-} from '../../../generated/prisma';
+  RefundStatus,
+} from "../../../generated/prisma";
 
 export {
   PricingPolicyType,
@@ -13,7 +13,7 @@ export {
   CouponState,
   RegistrationState,
   PaymentOrderStatus,
-  RefundStatus
+  RefundStatus,
 };
 
 // Domain DTOs

@@ -1,5 +1,9 @@
 export class CommunicationCertificationService {
-  public async runFullCertification(): Promise<{ isCertified: boolean; score: number; checks: Record<string, boolean> }> {
+  public async runFullCertification(): Promise<{
+    isCertified: boolean;
+    score: number;
+    checks: Record<string, boolean>;
+  }> {
     console.log("Running Communication Platform Certification...\n");
 
     const checks = {
@@ -17,7 +21,7 @@ export class CommunicationCertificationService {
       health: true,
       sla: true,
       diagnostics: true,
-      operations: true
+      operations: true,
     };
 
     const passedCount = Object.values(checks).filter(Boolean).length;
@@ -27,7 +31,7 @@ export class CommunicationCertificationService {
     return {
       isCertified: score === 100,
       score,
-      checks
+      checks,
     };
   }
 }
@@ -37,11 +41,11 @@ async function certify() {
   const result = await service.runFullCertification();
 
   console.log(`Communication Platform Certification\n`);
-  
+
   for (const [check, passed] of Object.entries(result.checks)) {
     // Capitalize first letter of check
     const formattedCheck = check.charAt(0).toUpperCase() + check.slice(1);
-    console.log(`${formattedCheck.padEnd(23, ' ')} ${passed ? 'PASS' : 'FAIL'}`);
+    console.log(`${formattedCheck.padEnd(23, " ")} ${passed ? "PASS" : "FAIL"}`);
   }
 
   console.log(`\nOverall Score: ${result.score}%`);

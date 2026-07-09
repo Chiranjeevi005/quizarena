@@ -1,6 +1,13 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
-export type QuestionOrigin = 'IMPORTED' | 'COPIED' | 'AI_ASSISTED' | 'MANUAL' | 'MIGRATED' | 'DERIVED' | 'BLUEPRINT_GENERATED';
+export type QuestionOrigin =
+  | "IMPORTED"
+  | "COPIED"
+  | "AI_ASSISTED"
+  | "MANUAL"
+  | "MIGRATED"
+  | "DERIVED"
+  | "BLUEPRINT_GENERATED";
 
 export interface QuestionVersionPayload {
   body: string;
@@ -13,17 +20,21 @@ export interface QuestionVersionPayload {
 }
 
 export class QuestionVersionEngine {
-  public async branchNewVersion(questionId: string, payload: QuestionVersionPayload, actorId: string): Promise<string> {
+  public async branchNewVersion(
+    questionId: string,
+    payload: QuestionVersionPayload,
+    actorId: string
+  ): Promise<string> {
     const fingerprint = this.generateFingerprint(payload);
-    
+
     // Validate duplicate fingerprint globally
-    
+
     // Emits new QuestionVersion snapshot with fingerprint, origin, and timeline
     return `V2_${questionId}`;
   }
 
   public async getLatestPublishedVersion(questionId: string): Promise<any> {
-    return { version: 'V2', status: 'PUBLISHED' };
+    return { version: "V2", status: "PUBLISHED" };
   }
 
   private generateFingerprint(payload: QuestionVersionPayload): string {
@@ -33,9 +44,9 @@ export class QuestionVersionEngine {
       answer: payload.answer,
       media: payload.media,
       explanation: payload.explanation,
-      metadata: payload.metadata
+      metadata: payload.metadata,
     });
-    return crypto.createHash('sha256').update(dataString).digest('hex');
+    return crypto.createHash("sha256").update(dataString).digest("hex");
   }
 
   public async logTimelineEvent(questionVersionId: string, event: string): Promise<void> {

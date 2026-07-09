@@ -10,12 +10,12 @@ export interface EvidenceChain {
 export class EvidenceEngine {
   public generateEvidencePackage(reportId: string): EvidenceChain {
     return {
-      packageId: 'pkg-' + reportId,
-      hash: 'sha256-hash',
-      signature: 'digital-signature',
-      manifestId: 'manifest-id',
-      auditId: 'audit-id',
-      timelineId: 'timeline-id'
+      packageId: "pkg-" + reportId,
+      hash: "sha256-hash",
+      signature: "digital-signature",
+      manifestId: "manifest-id",
+      auditId: "audit-id",
+      timelineId: "timeline-id",
     };
   }
 }

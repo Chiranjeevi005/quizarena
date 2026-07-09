@@ -1,20 +1,27 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
+import { Button } from "@/components/primitives/Button";
+import Link from "next/link";
 
 export default function PricingPage() {
   const policies = [
     {
-      id: 'pol_1',
-      competition: 'Grand National Qualifier',
+      id: "pol_1",
+      competition: "Grand National Qualifier",
       version: 3,
-      type: 'PAID',
+      type: "PAID",
       baseFee: 1500,
       activeRegistrations: 450,
-      totalRevenue: 675000
-    }
+      totalRevenue: 675000,
+    },
   ];
 
   return (
@@ -52,7 +59,9 @@ export default function PricingPage() {
                   <TableCell>₹{policy.totalRevenue}</TableCell>
                   <TableCell className="text-right">
                     <Link href="/revenue/pricing/history">
-                      <Button variant="outline" size="sm">View History</Button>
+                      <Button variant="outline" size="sm">
+                        View History
+                      </Button>
                     </Link>
                   </TableCell>
                 </TableRow>

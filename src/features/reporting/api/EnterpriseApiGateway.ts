@@ -8,6 +8,6 @@ export class EnterpriseApiGateway {
 
   public async handleRequest(request: any): Promise<any> {
     // Gateway logic
-    return { status: 200, data: 'success' };
+    return { status: 200, data: "success" };
   }
 }

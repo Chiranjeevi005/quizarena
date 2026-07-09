@@ -4,9 +4,9 @@ export class DigestEngine {
   public async generateDailyDigest(userId: string): Promise<void> {
     // Rollup unread notifications
     await this.communicationKernel.orchestrateDelivery({
-      type: 'EMAIL',
-      templateId: 'DAILY_DIGEST',
-      recipient: userId
+      type: "EMAIL",
+      templateId: "DAILY_DIGEST",
+      recipient: userId,
     });
   }
 }

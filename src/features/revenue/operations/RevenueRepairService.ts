@@ -1,5 +1,5 @@
-import { PrismaClient } from '../../../generated/prisma';
-import { WebhookProcessor } from '../pipelines/WebhookProcessor';
+import { PrismaClient } from "../../../generated/prisma";
+import { WebhookProcessor } from "../pipelines/WebhookProcessor";
 
 const prisma = new PrismaClient();
 
@@ -11,12 +11,12 @@ export class RevenueRepairService {
    */
   public async replayWebhook(dlqId: string, adminId: string): Promise<boolean> {
     const dlqEntry = await prisma.webhookDeadLetterQueue.findUnique({ where: { id: dlqId } });
-    if (!dlqEntry) throw new Error('DLQ Entry not found');
+    if (!dlqEntry) throw new Error("DLQ Entry not found");
 
     try {
       await prisma.webhookDeadLetterQueue.update({
         where: { id: dlqId },
-        data: { status: 'RETRYING', retryCount: { increment: 1 } }
+        data: { status: "RETRYING", retryCount: { increment: 1 } },
       });
 
       // Pass the payload back through the processor
@@ -29,16 +29,16 @@ export class RevenueRepairService {
       // If successful, mark RECOVERED
       await prisma.webhookDeadLetterQueue.update({
         where: { id: dlqId },
-        data: { status: 'RECOVERED', updatedAt: new Date() }
+        data: { status: "RECOVERED", updatedAt: new Date() },
       });
 
       await prisma.revenueAuditLog.create({
         data: {
-          action: 'DLQ_WEBHOOK_REPLAY_SUCCESS',
+          action: "DLQ_WEBHOOK_REPLAY_SUCCESS",
           actorId: adminId,
           targetId: dlqId,
-          reason: 'Manual repair from Admin Console'
-        }
+          reason: "Manual repair from Admin Console",
+        },
       });
 
       return true;
@@ -46,7 +46,7 @@ export class RevenueRepairService {
       // If it fails again, mark FAILED
       await prisma.webhookDeadLetterQueue.update({
         where: { id: dlqId },
-        data: { status: 'FAILED', failureReason: error.message }
+        data: { status: "FAILED", failureReason: error.message },
       });
       return false;
     }
@@ -58,15 +58,15 @@ export class RevenueRepairService {
   public async archiveWebhook(dlqId: string, adminId: string): Promise<void> {
     await prisma.webhookDeadLetterQueue.update({
       where: { id: dlqId },
-      data: { status: 'ARCHIVED' }
+      data: { status: "ARCHIVED" },
     });
 
     await prisma.revenueAuditLog.create({
       data: {
-        action: 'DLQ_WEBHOOK_ARCHIVED',
+        action: "DLQ_WEBHOOK_ARCHIVED",
         actorId: adminId,
-        targetId: dlqId
-      }
+        targetId: dlqId,
+      },
     });
   }
 }

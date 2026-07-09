@@ -5,9 +5,9 @@ export class QuestionUsageEngine {
       timesPublished: 3,
       competitionsUsed: 42,
       certificatesGenerated: 850,
-      revenueGenerated: 12500.00,
-      dropRate: '2.5%',
-      averageRank: 15
+      revenueGenerated: 12500.0,
+      dropRate: "2.5%",
+      averageRank: 15,
     };
   }
 }

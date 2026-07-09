@@ -31,22 +31,22 @@ export class CompetitionReadinessEngine {
       schedule: true,
       runtime: true,
       notifications: true,
-      deployment: true
+      deployment: true,
     };
 
     // Example calculation
     const passedCount = Object.values(checklist).filter(Boolean).length;
     const totalCount = Object.keys(checklist).length;
-    
+
     // Risk score 0 is perfect, 100 is critical failure
-    const riskScore = Math.round((1 - (passedCount / totalCount)) * 100);
+    const riskScore = Math.round((1 - passedCount / totalCount) * 100);
     const isReady = riskScore < 10; // Threshold of acceptable risk
 
     return {
       isReady,
       riskScore,
       checklist,
-      reason: isReady ? undefined : `Risk score ${riskScore} exceeds threshold of 10`
+      reason: isReady ? undefined : `Risk score ${riskScore} exceeds threshold of 10`,
     };
   }
 }

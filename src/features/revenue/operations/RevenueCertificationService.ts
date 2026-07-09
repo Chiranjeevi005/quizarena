@@ -1,5 +1,5 @@
-import { getRazorpayInstance } from '../adapters/razorpay/RazorpayConfig';
-import { PrismaClient } from '../../../generated/prisma';
+import { getRazorpayInstance } from "../adapters/razorpay/RazorpayConfig";
+import { PrismaClient } from "../../../generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export class RevenueCertificationService {
       webhookSecret: false,
       gatewayConnectivity: false,
       environment: process.env.NODE_ENV,
-      gstConfiguration: false
+      gstConfiguration: false,
     };
 
     let passed = 0;
@@ -35,7 +35,7 @@ export class RevenueCertificationService {
       checks.gatewayConnectivity = true;
       passed += 2;
     } catch (e) {
-      console.error('Certification: Gateway Connectivity Failed', e);
+      console.error("Certification: Gateway Connectivity Failed", e);
     }
 
     // 3. GST Configuration
@@ -46,15 +46,15 @@ export class RevenueCertificationService {
         passed++;
       }
     } catch (e) {
-      console.error('Certification: GST Check Failed', e);
+      console.error("Certification: GST Check Failed", e);
     }
 
     const healthScore = Math.round((passed / total) * 100);
 
     return {
       healthScore,
-      status: healthScore === 100 ? 'Ready for Production' : 'Requires Attention',
-      details: checks
+      status: healthScore === 100 ? "Ready for Production" : "Requires Attention",
+      details: checks,
     };
   }
 }

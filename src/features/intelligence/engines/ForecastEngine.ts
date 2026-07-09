@@ -15,7 +15,7 @@ export class ForecastEngine {
     const growthRate = previous > 0 ? (latest - previous) / previous : 0;
 
     // Hybrid calculation weighing recent trends more heavily
-    const forecast = (avg7 * 0.5) + (avg30 * 0.3) + (latest * (1 + growthRate) * 0.2);
+    const forecast = avg7 * 0.5 + avg30 * 0.3 + latest * (1 + growthRate) * 0.2;
 
     return Math.round(forecast);
   }

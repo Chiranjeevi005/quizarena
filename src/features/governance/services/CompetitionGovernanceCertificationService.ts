@@ -1,5 +1,9 @@
 export class CompetitionGovernanceCertificationService {
-  public async runFullCertification(): Promise<{ isCertified: boolean; score: number; checks: Record<string, boolean> }> {
+  public async runFullCertification(): Promise<{
+    isCertified: boolean;
+    score: number;
+    checks: Record<string, boolean>;
+  }> {
     console.log("Running Competition Governance Platform Certification...");
 
     const checks = {
@@ -13,7 +17,7 @@ export class CompetitionGovernanceCertificationService {
       certificates: true,
       notifications: true,
       audit: true,
-      reports: true
+      reports: true,
     };
 
     const passedCount = Object.values(checks).filter(Boolean).length;
@@ -23,7 +27,7 @@ export class CompetitionGovernanceCertificationService {
     return {
       isCertified: score === 100,
       score,
-      checks
+      checks,
     };
   }
 }

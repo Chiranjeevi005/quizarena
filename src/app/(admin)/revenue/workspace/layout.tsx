@@ -1,6 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
-import { LayoutDashboard, Receipt, Ticket, ShieldAlert, Activity, FileText } from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import { LayoutDashboard, Receipt, Ticket, ShieldAlert, Activity, FileText } from "lucide-react";
 
 interface RevenueWorkspaceKernelProps {
   children: React.ReactNode;
@@ -8,12 +8,12 @@ interface RevenueWorkspaceKernelProps {
 
 export default function RevenueWorkspaceKernel({ children }: RevenueWorkspaceKernelProps) {
   const sidebarLinks = [
-    { name: 'Dashboard', href: '/revenue/workspace', icon: LayoutDashboard },
-    { name: 'Orders & Payments', href: '/revenue/workspace/orders', icon: Receipt },
-    { name: 'Coupons & Pricing', href: '/revenue/workspace/coupons', icon: Ticket },
-    { name: 'Financial Reports', href: '/revenue/workspace/reports', icon: FileText },
-    { name: 'Health & Alerts', href: '/revenue/workspace/health', icon: Activity },
-    { name: 'Audit & Repair', href: '/revenue/workspace/repair', icon: ShieldAlert },
+    { name: "Dashboard", href: "/revenue/workspace", icon: LayoutDashboard },
+    { name: "Orders & Payments", href: "/revenue/workspace/orders", icon: Receipt },
+    { name: "Coupons & Pricing", href: "/revenue/workspace/coupons", icon: Ticket },
+    { name: "Financial Reports", href: "/revenue/workspace/reports", icon: FileText },
+    { name: "Health & Alerts", href: "/revenue/workspace/health", icon: Activity },
+    { name: "Audit & Repair", href: "/revenue/workspace/repair", icon: ShieldAlert },
   ];
 
   return (
@@ -49,10 +49,8 @@ export default function RevenueWorkspaceKernel({ children }: RevenueWorkspaceKer
             <div className="h-2 w-2 rounded-full bg-green-500"></div>
           </div>
         </header>
-        
-        <div className="p-8 max-w-7xl mx-auto">
-          {children}
-        </div>
+
+        <div className="p-8 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>
   );

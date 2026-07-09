@@ -8,15 +8,23 @@ export class AnalyticsCollector {
       data: {
         eventType,
         payload,
-        collectedAt: new Date()
-      }
+        collectedAt: new Date(),
+      },
     });
   }
 
   public registerSubscriptions(eventBus: any): void {
-    eventBus.subscribe('COMPETITION_PUBLISHED', (data: any) => this.collectEvent('COMPETITION_PUBLISHED', data));
-    eventBus.subscribe('CANDIDATE_REGISTERED', (data: any) => this.collectEvent('CANDIDATE_REGISTERED', data));
-    eventBus.subscribe('PAYMENT_CAPTURED', (data: any) => this.collectEvent('PAYMENT_CAPTURED', data));
-    eventBus.subscribe('SESSION_COMPLETED', (data: any) => this.collectEvent('SESSION_COMPLETED', data));
+    eventBus.subscribe("COMPETITION_PUBLISHED", (data: any) =>
+      this.collectEvent("COMPETITION_PUBLISHED", data)
+    );
+    eventBus.subscribe("CANDIDATE_REGISTERED", (data: any) =>
+      this.collectEvent("CANDIDATE_REGISTERED", data)
+    );
+    eventBus.subscribe("PAYMENT_CAPTURED", (data: any) =>
+      this.collectEvent("PAYMENT_CAPTURED", data)
+    );
+    eventBus.subscribe("SESSION_COMPLETED", (data: any) =>
+      this.collectEvent("SESSION_COMPLETED", data)
+    );
   }
 }

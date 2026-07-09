@@ -1,9 +1,9 @@
 export enum ApprovalStage {
-  TECHNICAL_REVIEW = 'TECHNICAL_REVIEW',
-  CONTENT_REVIEW = 'CONTENT_REVIEW',
-  BUSINESS_REVIEW = 'BUSINESS_REVIEW',
-  COMPLIANCE_REVIEW = 'COMPLIANCE_REVIEW',
-  FINAL_APPROVAL = 'FINAL_APPROVAL'
+  TECHNICAL_REVIEW = "TECHNICAL_REVIEW",
+  CONTENT_REVIEW = "CONTENT_REVIEW",
+  BUSINESS_REVIEW = "BUSINESS_REVIEW",
+  COMPLIANCE_REVIEW = "COMPLIANCE_REVIEW",
+  FINAL_APPROVAL = "FINAL_APPROVAL",
 }
 
 export class CompetitionApprovalEngine {
@@ -17,7 +17,11 @@ export class CompetitionApprovalEngine {
     await this.transitionApprovalStage(competitionId, ApprovalStage.CONTENT_REVIEW, actor);
   }
 
-  public async approveStage(competitionId: string, currentStage: ApprovalStage, actor: string): Promise<void> {
+  public async approveStage(
+    competitionId: string,
+    currentStage: ApprovalStage,
+    actor: string
+  ): Promise<void> {
     const nextStage = this.getNextStage(currentStage);
     if (nextStage) {
       await this.transitionApprovalStage(competitionId, nextStage, actor);
@@ -27,7 +31,12 @@ export class CompetitionApprovalEngine {
     }
   }
 
-  public async rejectApproval(competitionId: string, stage: ApprovalStage, actor: string, reason: string): Promise<void> {
+  public async rejectApproval(
+    competitionId: string,
+    stage: ApprovalStage,
+    actor: string,
+    reason: string
+  ): Promise<void> {
     await this.auditEngine.logAction(competitionId, actor, `REJECTED_${stage}`, reason);
     // Logic to reset state to DRAFT or REJECTED
   }
@@ -44,12 +53,16 @@ export class CompetitionApprovalEngine {
     }
   }
 
-  private async transitionApprovalStage(competitionId: string, stage: ApprovalStage, actor: string): Promise<void> {
+  private async transitionApprovalStage(
+    competitionId: string,
+    stage: ApprovalStage,
+    actor: string
+  ): Promise<void> {
     await this.auditEngine.logAction(competitionId, actor, `ENTERED_${stage}`);
   }
 
   private async markFullyApproved(competitionId: string, actor: string): Promise<void> {
     // Logic to notify Kernel that approval is complete
-    await this.auditEngine.logAction(competitionId, actor, 'FULLY_APPROVED');
+    await this.auditEngine.logAction(competitionId, actor, "FULLY_APPROVED");
   }
 }

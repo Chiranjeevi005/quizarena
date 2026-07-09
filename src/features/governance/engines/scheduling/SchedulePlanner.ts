@@ -18,7 +18,7 @@ export class SchedulePlanner {
       leaderboardFreezeAt: new Date(),
       certificateReleaseAt: new Date(),
       archiveAt: new Date(),
-      timezone: 'UTC'
+      timezone: "UTC",
     };
   }
 }

@@ -1,31 +1,38 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/primitives/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/primitives/table";
+import { Button } from "@/components/primitives/Button";
+import { RefreshCw } from "lucide-react";
 
 export default function SettlementsPage() {
   const settlements = [
     {
-      id: 'stl_123',
-      razorpaySettlementId: 'setl_abc123',
-      status: 'processed',
+      id: "stl_123",
+      razorpaySettlementId: "setl_abc123",
+      status: "processed",
       amount: 1400,
       fees: 18,
       tax: 3.24,
-      utr: 'UTR123456789',
-      settledAt: '2023-10-29T10:00:00Z'
+      utr: "UTR123456789",
+      settledAt: "2023-10-29T10:00:00Z",
     },
     {
-      id: 'stl_124',
-      razorpaySettlementId: 'setl_def456',
-      status: 'created',
+      id: "stl_124",
+      razorpaySettlementId: "setl_def456",
+      status: "created",
       amount: 500,
       fees: 0,
       tax: 0,
       utr: null,
-      settledAt: null
-    }
+      settledAt: null,
+    },
   ];
 
   return (
@@ -59,11 +66,17 @@ export default function SettlementsPage() {
               {settlements.map((settlement) => (
                 <TableRow key={settlement.id}>
                   <TableCell className="font-mono text-xs">{settlement.id}</TableCell>
-                  <TableCell className="font-mono text-xs">{settlement.razorpaySettlementId}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {settlement.razorpaySettlementId}
+                  </TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      settlement.status === 'processed' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        settlement.status === "processed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
                       {settlement.status.toUpperCase()}
                     </span>
                   </TableCell>
@@ -71,8 +84,12 @@ export default function SettlementsPage() {
                   <TableCell className="text-xs text-muted-foreground">
                     F: ₹{settlement.fees} | T: ₹{settlement.tax}
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{settlement.utr || '-'}</TableCell>
-                  <TableCell>{settlement.settledAt ? new Date(settlement.settledAt).toLocaleDateString() : '-'}</TableCell>
+                  <TableCell className="font-mono text-xs">{settlement.utr || "-"}</TableCell>
+                  <TableCell>
+                    {settlement.settledAt
+                      ? new Date(settlement.settledAt).toLocaleDateString()
+                      : "-"}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

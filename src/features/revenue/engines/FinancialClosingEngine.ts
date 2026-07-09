@@ -1,5 +1,5 @@
 export interface FinancialClosingReport {
-  period: 'DAILY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+  period: "DAILY" | "MONTHLY" | "QUARTERLY" | "YEARLY";
   startDate: Date;
   endDate: Date;
   totalRevenue: number;
@@ -17,38 +17,42 @@ export class FinancialClosingEngine {
     start.setHours(0, 0, 0, 0);
     const end = new Date(date);
     end.setHours(23, 59, 59, 999);
-    
-    return this.generateReport('DAILY', start, end);
+
+    return this.generateReport("DAILY", start, end);
   }
 
   public async closeMonthly(year: number, month: number): Promise<FinancialClosingReport> {
     const start = new Date(year, month, 1);
     const end = new Date(year, month + 1, 0, 23, 59, 59, 999);
-    
-    return this.generateReport('MONTHLY', start, end);
+
+    return this.generateReport("MONTHLY", start, end);
   }
 
-  private async generateReport(period: 'DAILY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY', startDate: Date, endDate: Date): Promise<FinancialClosingReport> {
+  private async generateReport(
+    period: "DAILY" | "MONTHLY" | "QUARTERLY" | "YEARLY",
+    startDate: Date,
+    endDate: Date
+  ): Promise<FinancialClosingReport> {
     // 1. Fetch Revenue Transactions
     const transactions = await this.db.revenueTransaction.findMany({
       where: {
-        capturedAt: { gte: startDate, lte: endDate }
-      }
+        capturedAt: { gte: startDate, lte: endDate },
+      },
     });
 
     // 2. Fetch Refunds
     const refunds = await this.db.refundRecord.findMany({
       where: {
-        status: 'PROCESSED',
-        updatedAt: { gte: startDate, lte: endDate }
-      }
+        status: "PROCESSED",
+        updatedAt: { gte: startDate, lte: endDate },
+      },
     });
 
     // Aggregate
     let totalRevenue = 0;
     let totalTax = 0;
     let totalPlatformFees = 0;
-    
+
     for (const tx of transactions) {
       totalRevenue += tx.amount;
       totalTax += tx.taxAmount;
@@ -65,11 +69,11 @@ export class FinancialClosingEngine {
       totalTax,
       totalPlatformFees,
       totalRefunds,
-      netRevenue: totalRevenue - totalRefunds - totalTax
+      netRevenue: totalRevenue - totalRefunds - totalTax,
     };
 
     // Note: In a production system, this would be written to an immutable `FinancialClosingReport` table.
-    
+
     return report;
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Search, X, Loader2 } from "lucide-react";
-import { CommandRegistry, Command } from "../registry/CommandRegistry";
+import { CommandRegistry, CommandManifest } from "../registry/CommandRegistry";
 import { useAdmin } from "../context/AdminContext";
 import { useRouter } from "next/navigation";
 import { NavigationRegistry } from "../registry/NavigationRegistry";

@@ -1,4 +1,4 @@
-import { CompetitionGovernanceCertificationService } from '../services/CompetitionGovernanceCertificationService';
+import { CompetitionGovernanceCertificationService } from "../services/CompetitionGovernanceCertificationService";
 
 async function certify() {
   const service = new CompetitionGovernanceCertificationService();
@@ -6,9 +6,9 @@ async function certify() {
 
   console.log(`\nCompetition Governance Certification Result:`);
   console.log(`Score: ${result.score}%`);
-  
+
   for (const [check, passed] of Object.entries(result.checks)) {
-    console.log(`${passed ? '✓' : '✗'} ${check}`);
+    console.log(`${passed ? "✓" : "✗"} ${check}`);
   }
 
   if (result.isCertified) {

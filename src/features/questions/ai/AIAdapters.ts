@@ -6,17 +6,25 @@ export interface QuestionEmbedding {
 }
 
 export class SemanticSearchAdapter {
-  public async search(query: string): Promise<string[]> { return []; }
+  public async search(query: string): Promise<string[]> {
+    return [];
+  }
 }
 
 export class SimilarityIndexAdapter {
-  public async findSimilar(questionVersionId: string): Promise<string[]> { return []; }
+  public async findSimilar(questionVersionId: string): Promise<string[]> {
+    return [];
+  }
 }
 
 export class AIRecommendationProvider {
-  public async generateRecommendations(questionVersionId: string): Promise<string[]> { return []; }
+  public async generateRecommendations(questionVersionId: string): Promise<string[]> {
+    return [];
+  }
 }
 
 export class AIReviewProvider {
-  public async automatedReview(questionVersionId: string): Promise<any> { return {}; }
+  public async automatedReview(questionVersionId: string): Promise<any> {
+    return {};
+  }
 }

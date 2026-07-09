@@ -21,6 +21,10 @@ class QuickActionRegistryClass {
       return true;
     });
   }
+
+  getAll(): QuickActionManifest[] {
+    return this.actions;
+  }
 }
 
 export const QuickActionRegistry = new QuickActionRegistryClass();

@@ -13,14 +13,14 @@ export class ValidationEngine {
       warnings: [],
       suggestions: [],
       optimizations: [],
-      assessmentQualityScore: 85
+      assessmentQualityScore: 85,
     };
 
     // Calculate score based on Question Quality, Coverage, Difficulty Balance
     if (!payload.questions || payload.questions.length === 0) {
       result.errors.push("No Certified Questions found.");
     }
-    
+
     // Check constraints
     result.warnings.push("Difficulty imbalance detected.");
     result.suggestions.push("Increase Algebra coverage.");

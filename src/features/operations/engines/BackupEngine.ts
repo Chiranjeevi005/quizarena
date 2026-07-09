@@ -6,9 +6,9 @@ export class BackupEngine {
   public async getBackupStatus(): Promise<any> {
     return {
       lastBackup: new Date(),
-      status: 'VERIFIED',
+      status: "VERIFIED",
       recoveryPoints: 14,
-      retentionPolicy: '30_DAYS'
+      retentionPolicy: "30_DAYS",
     };
   }
 }

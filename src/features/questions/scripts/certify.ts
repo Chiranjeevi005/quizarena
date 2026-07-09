@@ -1,5 +1,9 @@
 export class QuestionCertificationService {
-  public async runFullCertification(): Promise<{ isCertified: boolean; score: number; checks: Record<string, boolean> }> {
+  public async runFullCertification(): Promise<{
+    isCertified: boolean;
+    score: number;
+    checks: Record<string, boolean>;
+  }> {
     console.log("Running Question Intelligence & Content Governance Certification...\n");
 
     const checks = {
@@ -22,7 +26,7 @@ export class QuestionCertificationService {
       operationsHooks: true,
       identityIntegration: true,
       revenueAwareness: true,
-      governanceAwareness: true
+      governanceAwareness: true,
     };
 
     const passedCount = Object.values(checks).filter(Boolean).length;
@@ -32,7 +36,7 @@ export class QuestionCertificationService {
     return {
       isCertified: score === 100,
       score,
-      checks
+      checks,
     };
   }
 }
@@ -42,10 +46,10 @@ async function certify() {
   const result = await service.runFullCertification();
 
   console.log(`Question Platform Certification Benchmarks:\n`);
-  
+
   for (const [check, passed] of Object.entries(result.checks)) {
     const formattedCheck = check.charAt(0).toUpperCase() + check.slice(1);
-    console.log(`${formattedCheck.padEnd(25, ' ')} ${passed ? 'PASS' : 'FAIL'}`);
+    console.log(`${formattedCheck.padEnd(25, " ")} ${passed ? "PASS" : "FAIL"}`);
   }
 
   console.log(`\nOverall Score: ${result.score}%`);

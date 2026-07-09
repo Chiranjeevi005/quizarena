@@ -1,11 +1,18 @@
-import { User, UserRole, PaymentOrder, PaymentOrderStatus, Coupon, CouponState, CompetitionPricingPolicy } from '../../../generated/prisma';
+import {
+  User,
+  UserRole,
+  PaymentOrder,
+  PaymentOrderStatus,
+  Coupon,
+  CouponState,
+  CompetitionPricingPolicy,
+} from "../../../generated/prisma";
 
 export interface PolicyContext {
   user: User;
 }
 
 export class RevenuePolicyEngine {
-  
   /**
    * Determine if the user has overarching revenue operations permission
    */
@@ -18,12 +25,15 @@ export class RevenuePolicyEngine {
    */
   public canRefund(context: PolicyContext, order: PaymentOrder): boolean {
     if (!this.hasRevenueOpsAccess(context)) return false;
-    
+
     // Only CAPTURED or PARTIALLY_REFUNDED orders can be refunded
-    if (order.status !== PaymentOrderStatus.CAPTURED && order.status !== PaymentOrderStatus.PARTIALLY_REFUNDED) {
+    if (
+      order.status !== PaymentOrderStatus.CAPTURED &&
+      order.status !== PaymentOrderStatus.PARTIALLY_REFUNDED
+    ) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -32,7 +42,7 @@ export class RevenuePolicyEngine {
    */
   public canCapture(context: PolicyContext, order: PaymentOrder): boolean {
     if (!this.hasRevenueOpsAccess(context)) return false;
-    
+
     // Only AUTHORIZED orders can be manually captured
     return order.status === PaymentOrderStatus.AUTHORIZED;
   }
@@ -42,10 +52,10 @@ export class RevenuePolicyEngine {
    */
   public canEditPricing(context: PolicyContext, policy: CompetitionPricingPolicy): boolean {
     if (!this.hasRevenueOpsAccess(context)) return false;
-    
+
     // Can only edit if no active registrations exist, otherwise must create new version
     // (This is a simplified check, full check would need to query registrations)
-    return true; 
+    return true;
   }
 
   /**
@@ -53,7 +63,7 @@ export class RevenuePolicyEngine {
    */
   public canDeleteCoupon(context: PolicyContext, coupon: Coupon): boolean {
     if (!this.hasRevenueOpsAccess(context)) return false;
-    
+
     // Cannot delete coupons that have been heavily used, only disable them
     return coupon.state === CouponState.DRAFT || coupon.currentUsage === 0;
   }

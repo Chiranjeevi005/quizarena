@@ -1,8 +1,8 @@
-export type BlueprintState = 'DRAFT' | 'APPROVED' | 'CERTIFIED' | 'ACTIVE';
+export type BlueprintState = "DRAFT" | "APPROVED" | "CERTIFIED" | "ACTIVE";
 
 export interface BlueprintRule {
   topic: string;
-  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  difficulty: "EASY" | "MEDIUM" | "HARD";
   count: number;
 }
 

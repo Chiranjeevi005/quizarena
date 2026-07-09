@@ -1,7 +1,11 @@
-export type DependencyType = 'PARENT' | 'CHILD' | 'BUNDLE' | 'COMPOSITE' | 'SEQUENCE';
+export type DependencyType = "PARENT" | "CHILD" | "BUNDLE" | "COMPOSITE" | "SEQUENCE";
 
 export class QuestionDependencyEngine {
-  public async linkQuestions(parentId: string, childIds: string[], type: DependencyType): Promise<void> {
+  public async linkQuestions(
+    parentId: string,
+    childIds: string[],
+    type: DependencyType
+  ): Promise<void> {
     // Links questions together
   }
 

@@ -1,8 +1,8 @@
 export const ApiSchemas = {
   ReportRequest: {
-    type: 'object',
+    type: "object",
     properties: {
-      reportId: { type: 'string' }
-    }
-  }
+      reportId: { type: "string" },
+    },
+  },
 };

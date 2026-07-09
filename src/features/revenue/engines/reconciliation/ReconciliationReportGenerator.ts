@@ -5,8 +5,8 @@ export class ReconciliationReportGenerator {
     const report = await this.db.paymentReconciliationReport.create({
       data: {
         totalChecked,
-        status: 'IN_PROGRESS'
-      }
+        status: "IN_PROGRESS",
+      },
     });
     return report.id;
   }
@@ -19,8 +19,8 @@ export class ReconciliationReportGenerator {
         razorpayStatus: snapshot.razorpayStatus,
         databaseStatus: snapshot.databaseStatus,
         resolved: snapshot.resolved,
-        resolutionAction: snapshot.resolutionAction
-      }
+        resolutionAction: snapshot.resolutionAction,
+      },
     });
   }
 
@@ -28,9 +28,9 @@ export class ReconciliationReportGenerator {
     await this.db.paymentReconciliationReport.update({
       where: { id: reportId },
       data: {
-        status: 'COMPLETED',
-        mismatchesFound: mismatchesFixed // or total mismatches
-      }
+        status: "COMPLETED",
+        mismatchesFound: mismatchesFixed, // or total mismatches
+      },
     });
   }
 }

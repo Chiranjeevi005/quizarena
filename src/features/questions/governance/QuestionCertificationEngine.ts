@@ -1,4 +1,4 @@
-export type CertificationState = 'NOT_CERTIFIED' | 'CERTIFIED' | 'EXPIRED' | 'REVOKED';
+export type CertificationState = "NOT_CERTIFIED" | "CERTIFIED" | "EXPIRED" | "REVOKED";
 
 export class QuestionCertificationEngine {
   public async certify(questionVersionId: string, reviewerId: string): Promise<void> {

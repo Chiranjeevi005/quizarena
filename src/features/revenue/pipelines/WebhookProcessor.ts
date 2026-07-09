@@ -1,8 +1,8 @@
-import { PrismaClient, PaymentOrderStatus, RegistrationState } from '../../../generated/prisma';
+import { PrismaClient, PaymentOrderStatus, RegistrationState } from "../../../generated/prisma";
 
 const prisma = new PrismaClient();
-import { RegistrationEngine } from '../engines/RegistrationEngine';
-import { CouponEngine } from '../engines/CouponEngine';
+import { RegistrationEngine } from "../engines/RegistrationEngine";
+import { CouponEngine } from "../engines/CouponEngine";
 
 export class WebhookProcessor {
   private registrationEngine = new RegistrationEngine();
@@ -19,19 +19,19 @@ export class WebhookProcessor {
     const webhookEvent = await prisma.webhookEvent.upsert({
       where: { eventId },
       update: { retries: { increment: 1 } },
-      create: { eventId, eventType, payload, status: 'PROCESSING' }
+      create: { eventId, eventType, payload, status: "PROCESSING" },
     });
 
     try {
       // 2. Route by Event Type
       switch (eventType) {
-        case 'payment.captured':
+        case "payment.captured":
           await this.handlePaymentCaptured(payload);
           break;
-        case 'payment.failed':
+        case "payment.failed":
           await this.handlePaymentFailed(payload);
           break;
-        case 'refund.processed':
+        case "refund.processed":
           await this.handleRefundProcessed(payload);
           break;
         default:
@@ -41,33 +41,32 @@ export class WebhookProcessor {
       // 3. Mark Processed
       await prisma.webhookEvent.update({
         where: { id: webhookEvent.id },
-        data: { processed: true, processedAt: new Date(), status: 'SUCCESS' }
+        data: { processed: true, processedAt: new Date(), status: "SUCCESS" },
       });
-
     } catch (error: any) {
       console.error(`Error processing webhook ${eventId}:`, error);
-      
+
       // Update WebhookEvent to FAILED
       await prisma.webhookEvent.update({
         where: { id: webhookEvent.id },
-        data: { status: 'FAILED', error: error.message }
+        data: { status: "FAILED", error: error.message },
       });
 
       // Push to Dead Letter Queue for Retry/Repair
       await prisma.webhookDeadLetterQueue.upsert({
         where: { eventId },
         update: {
-          status: 'FAILED',
+          status: "FAILED",
           failureReason: error.message,
-          retryCount: { increment: 1 }
+          retryCount: { increment: 1 },
         },
         create: {
           eventId,
           eventType,
           payload,
           failureReason: error.message,
-          status: 'FAILED'
-        }
+          status: "FAILED",
+        },
       });
 
       throw error;
@@ -83,10 +82,11 @@ export class WebhookProcessor {
 
     const paymentOrder = await prisma.paymentOrder.findUnique({
       where: { razorpayOrderId },
-      include: { registration: true, coupon: true }
+      include: { registration: true, coupon: true },
     });
 
-    if (!paymentOrder) throw new Error(`PaymentOrder not found for Razorpay Order: ${razorpayOrderId}`);
+    if (!paymentOrder)
+      throw new Error(`PaymentOrder not found for Razorpay Order: ${razorpayOrderId}`);
 
     // Update Attempt
     await prisma.paymentAttempt.upsert({
@@ -100,13 +100,13 @@ export class WebhookProcessor {
         currency,
         ipAddress: paymentEntity.notes?.ip,
         userAgent: paymentEntity.notes?.userAgent,
-      }
+      },
     });
 
     // Update Order Status
     await prisma.paymentOrder.update({
       where: { id: paymentOrder.id },
-      data: { status: PaymentOrderStatus.CAPTURED }
+      data: { status: PaymentOrderStatus.CAPTURED },
     });
 
     // Immutable Ledger Entry
@@ -117,8 +117,8 @@ export class WebhookProcessor {
         currency,
         taxAmount: paymentEntity.tax || 0,
         platformFee: paymentEntity.fee || 0,
-        netAmount: amount - ((paymentEntity.fee || 0) + (paymentEntity.tax || 0)) / 100
-      }
+        netAmount: amount - ((paymentEntity.fee || 0) + (paymentEntity.tax || 0)) / 100,
+      },
     });
 
     // Consume Coupon
@@ -132,10 +132,10 @@ export class WebhookProcessor {
     // Audit Log
     await prisma.revenueAuditLog.create({
       data: {
-        action: 'PAYMENT_CAPTURED_AND_ENROLLED',
+        action: "PAYMENT_CAPTURED_AND_ENROLLED",
         targetId: revenueTx.id,
-        metadata: { paymentOrderId: paymentOrder.id, amount, razorpayPaymentId }
-      }
+        metadata: { paymentOrderId: paymentOrder.id, amount, razorpayPaymentId },
+      },
     });
   }
 
@@ -146,10 +146,11 @@ export class WebhookProcessor {
     const errorReason = paymentEntity.error_description;
 
     const paymentOrder = await prisma.paymentOrder.findUnique({
-      where: { razorpayOrderId }
+      where: { razorpayOrderId },
     });
 
-    if (!paymentOrder) throw new Error(`PaymentOrder not found for Razorpay Order: ${razorpayOrderId}`);
+    if (!paymentOrder)
+      throw new Error(`PaymentOrder not found for Razorpay Order: ${razorpayOrderId}`);
 
     // Create Failed Attempt
     await prisma.paymentAttempt.create({
@@ -159,8 +160,8 @@ export class WebhookProcessor {
         status: PaymentOrderStatus.FAILED,
         amount: paymentEntity.amount / 100,
         currency: paymentEntity.currency,
-        errorReason
-      }
+        errorReason,
+      },
     });
 
     // Fallback logic for releasing coupon and resetting registration
@@ -173,7 +174,7 @@ export class WebhookProcessor {
 
     await prisma.refundRecord.update({
       where: { razorpayRefundId },
-      data: { status: 'PROCESSED' }
+      data: { status: "PROCESSED" },
     });
   }
 }

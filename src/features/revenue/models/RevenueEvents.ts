@@ -1,21 +1,21 @@
 /**
  * Revenue Domain Events
- * 
+ *
  * Strict event definitions for the Revenue lifecycle.
  * Emitted by the WebhookProcessor, Gateways, and Engines.
  */
 
 export enum RevenueEventType {
-  ORDER_CREATED = 'revenue.order.created',
-  COUPON_APPLIED = 'revenue.coupon.applied',
-  COUPON_RELEASED = 'revenue.coupon.released',
-  PAYMENT_AUTHORIZED = 'revenue.payment.authorized',
-  PAYMENT_CAPTURED = 'revenue.payment.captured',
-  PAYMENT_FAILED = 'revenue.payment.failed',
-  ENROLLMENT_COMPLETED = 'revenue.enrollment.completed',
-  REFUND_REQUESTED = 'revenue.refund.requested',
-  REFUND_COMPLETED = 'revenue.refund.completed',
-  SETTLEMENT_RECEIVED = 'revenue.settlement.received'
+  ORDER_CREATED = "revenue.order.created",
+  COUPON_APPLIED = "revenue.coupon.applied",
+  COUPON_RELEASED = "revenue.coupon.released",
+  PAYMENT_AUTHORIZED = "revenue.payment.authorized",
+  PAYMENT_CAPTURED = "revenue.payment.captured",
+  PAYMENT_FAILED = "revenue.payment.failed",
+  ENROLLMENT_COMPLETED = "revenue.enrollment.completed",
+  REFUND_REQUESTED = "revenue.refund.requested",
+  REFUND_COMPLETED = "revenue.refund.completed",
+  SETTLEMENT_RECEIVED = "revenue.settlement.received",
 }
 
 export interface OrderCreatedEvent {

@@ -1,4 +1,4 @@
-import { getRazorpayInstance } from './RazorpayConfig';
+import { getRazorpayInstance } from "./RazorpayConfig";
 
 export class RazorpayOrderService {
   public async createOrder(options: {
@@ -14,7 +14,7 @@ export class RazorpayOrderService {
         amount: options.amount,
         currency: options.currency,
         receipt: options.receipt,
-        notes: options.notes
+        notes: options.notes,
       });
 
       return {
@@ -22,11 +22,11 @@ export class RazorpayOrderService {
         amount: Number(order.amount),
         currency: order.currency,
         status: order.status,
-        receipt: order.receipt || ''
+        receipt: order.receipt || "",
       };
     } catch (error) {
-      console.error('Razorpay Order Creation Failed:', error);
-      throw new Error('Failed to create payment order in Razorpay');
+      console.error("Razorpay Order Creation Failed:", error);
+      throw new Error("Failed to create payment order in Razorpay");
     }
   }
 
