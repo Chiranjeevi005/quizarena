@@ -25,7 +25,14 @@ export function UserProfileMenu({
     >
       <div className="relative flex shrink-0 h-8 w-8 items-center justify-center rounded-full bg-gray-200 overflow-hidden">
         {avatarUrl ? (
-          <Image src={avatarUrl} alt={displayName} width={32} height={32} unoptimized className="h-full w-full object-cover" />
+          <Image
+            src={avatarUrl}
+            alt={displayName}
+            width={32}
+            height={32}
+            unoptimized
+            className="h-full w-full object-cover"
+          />
         ) : (
           <Icon name="User" className="w-4 h-4 text-gray-500" />
         )}
