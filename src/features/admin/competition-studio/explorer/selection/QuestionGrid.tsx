@@ -39,6 +39,7 @@ export const QuestionGrid: React.FC = () => {
     };
   }, [filters]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: questions.length,
     getScrollElement: () => parentRef.current,

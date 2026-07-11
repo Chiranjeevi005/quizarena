@@ -15,7 +15,8 @@ export type ComponentCategory =
   | "overlays"
   | "loading"
   | "layout"
-  | "header";
+  | "header"
+  | "breadcrumb";
 
 export interface ComponentDocumentation {
   description: string;
