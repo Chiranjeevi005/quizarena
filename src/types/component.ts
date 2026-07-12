@@ -16,7 +16,8 @@ export type ComponentCategory =
   | "loading"
   | "layout"
   | "header"
-  | "breadcrumb";
+  | "breadcrumb"
+  | "toolbar";
 
 export interface ComponentDocumentation {
   description: string;
