@@ -13,7 +13,7 @@ export class QuestionService {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
-    this.questionRepo = new QuestionRepository();
+    this.questionRepo = new QuestionRepository(this.prisma);
     this.revisionRepo = new QuestionRevisionRepository();
   }
 
@@ -26,12 +26,15 @@ export class QuestionService {
   ): Promise<QuestionResponseDTO> {
     return await this.prisma.$transaction(async (tx) => {
       // 1. Create the Aggregate Root
-      const question = await this.questionRepo.createQuestion(tx, {
-        bankId: input.bankId,
-        organizationId: input.organizationId || null,
-        type: input.type,
-        createdById: userId,
-      });
+      const question = await this.questionRepo.createQuestion(
+        {
+          bankId: input.bankId,
+          organizationId: input.organizationId || null,
+          type: input.type,
+          createdById: userId,
+        },
+        tx
+      );
 
       // 2. Create the Initial Draft Revision
       const revision = await this.revisionRepo.createRevision(tx, {

@@ -11,7 +11,7 @@ export class QuestionPublishingService {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
-    this.questionRepo = new QuestionRepository();
+    this.questionRepo = new QuestionRepository(this.prisma);
     this.revisionRepo = new QuestionRevisionRepository();
   }
 
@@ -46,7 +46,7 @@ export class QuestionPublishingService {
       });
 
       // 3. Update Aggregate Root Pointer
-      await this.questionRepo.updateActiveRevision(tx, questionId, revisionId);
+      await this.questionRepo.updateActiveRevision(questionId, revisionId, tx);
 
       // (Optional) Archive previously published revisions here
       await tx.questionRevision.updateMany({
