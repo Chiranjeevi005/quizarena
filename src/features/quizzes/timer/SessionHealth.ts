@@ -1,0 +1,8 @@
+export enum SessionHealth {
+  NORMAL = "NORMAL",
+  WARNING = "WARNING",
+  CRITICAL = "CRITICAL",
+  LOCKED = "LOCKED",
+  OFFLINE = "OFFLINE",
+  UNKNOWN = "UNKNOWN",
+}

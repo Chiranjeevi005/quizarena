@@ -1,0 +1,9 @@
+export enum QuizTimerState {
+  INITIALIZING = "INITIALIZING",
+  READY = "READY",
+  RUNNING = "RUNNING",
+  PAUSED = "PAUSED",
+  COMPLETED = "COMPLETED",
+  EXPIRED = "EXPIRED",
+  ERROR = "ERROR",
+}

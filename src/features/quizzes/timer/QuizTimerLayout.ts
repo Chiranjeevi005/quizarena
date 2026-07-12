@@ -1,0 +1,6 @@
+export enum QuizTimerLayout {
+  EMBEDDED = "EMBEDDED",
+  FLOATING = "FLOATING",
+  FULLSCREEN = "FULLSCREEN",
+  SIDEBAR = "SIDEBAR",
+}
