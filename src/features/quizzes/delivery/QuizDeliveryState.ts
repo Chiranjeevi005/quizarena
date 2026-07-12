@@ -1,0 +1,7 @@
+export enum QuizDeliveryState {
+  INITIALIZING = "INITIALIZING",
+  READY = "READY",
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+}

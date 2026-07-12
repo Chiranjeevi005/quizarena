@@ -4,3 +4,4 @@ export * from "./components";
 export * from "./session";
 export * from "./player";
 export * from "./navigation";
+export * from "./results";

@@ -1,0 +1,9 @@
+export enum QuizDeliveryStage {
+  READY = "READY",
+  INSTRUCTIONS = "INSTRUCTIONS",
+  ACTIVE = "ACTIVE",
+  PAUSED = "PAUSED",
+  REVIEW = "REVIEW",
+  SUBMITTING = "SUBMITTING",
+  RESULTS = "RESULTS",
+}

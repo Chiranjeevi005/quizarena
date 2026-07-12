@@ -1,0 +1,1 @@
+export type QuizResultsVariant = "STANDARD";
