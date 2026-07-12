@@ -26,7 +26,7 @@ export function DashboardGrid({ gridDefinition, children, className = "" }: Dash
   };
 
   return (
-    <div 
+    <div
       className={`w-full ${isEditMode ? "p-4 bg-white border border-gray-200 rounded-xl shadow-sm" : ""} ${className}`}
       style={style}
     >

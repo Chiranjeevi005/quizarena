@@ -45,15 +45,10 @@ export function DashboardBuilderToolbar({
             />
           </ToolbarGroup>
         )}
-        
+
         {mode === "EDIT" && (
           <ToolbarGroup id="edit-actions">
-            <ToolbarAction
-              id="add-widget"
-              label="Add Widget"
-              icon="Plus"
-              onClick={onAddWidget}
-            />
+            <ToolbarAction id="add-widget" label="Add Widget" icon="Plus" onClick={onAddWidget} />
             <ToolbarAction
               id="cancel-edit"
               label="Cancel"
@@ -76,12 +71,7 @@ export function DashboardBuilderToolbar({
 
         {mode === "LOCKED" && (
           <ToolbarGroup id="locked-actions">
-            <ToolbarAction
-              id="locked"
-              label="Locked"
-              icon="Lock"
-              disabled
-            />
+            <ToolbarAction id="locked" label="Locked" icon="Lock" disabled />
           </ToolbarGroup>
         )}
       </div>

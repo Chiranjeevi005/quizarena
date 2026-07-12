@@ -19,7 +19,8 @@ export type ComponentCategory =
   | "breadcrumb"
   | "toolbar"
   | "workspace-state"
-  | "dashboard-builder";
+  | "dashboard-builder"
+  | "question";
 
 export interface ComponentDocumentation {
   description: string;
