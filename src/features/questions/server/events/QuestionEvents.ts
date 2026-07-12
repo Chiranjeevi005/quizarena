@@ -74,3 +74,131 @@ export class QuestionUnlocked extends QuestionEvent {
     super("QuestionUnlocked", questionId, { userId });
   }
 }
+
+// --- Bulk & Pipeline Events ---
+
+export class ImportStarted implements DomainEvent {
+  public eventName = "ImportStarted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; source: string }
+  ) {}
+}
+
+export class ImportValidated implements DomainEvent {
+  public eventName = "ImportValidated";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; report: any }
+  ) {}
+}
+
+export class ImportPreviewGenerated implements DomainEvent {
+  public eventName = "ImportPreviewGenerated";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string }
+  ) {}
+}
+
+export class ImportCompleted implements DomainEvent {
+  public eventName = "ImportCompleted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; stats: any }
+  ) {}
+}
+
+export class ImportFailed implements DomainEvent {
+  public eventName = "ImportFailed";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; error: string }
+  ) {}
+}
+
+export class ImportCancelled implements DomainEvent {
+  public eventName = "ImportCancelled";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string }
+  ) {}
+}
+
+export class ExportStarted implements DomainEvent {
+  public eventName = "ExportStarted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; profile: string }
+  ) {}
+}
+
+export class ExportCompleted implements DomainEvent {
+  public eventName = "ExportCompleted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; url: string }
+  ) {}
+}
+
+export class ExportCancelled implements DomainEvent {
+  public eventName = "ExportCancelled";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string }
+  ) {}
+}
+
+export class BulkOperationStarted implements DomainEvent {
+  public eventName = "BulkOperationStarted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; operation: string }
+  ) {}
+}
+
+export class BulkOperationCompleted implements DomainEvent {
+  public eventName = "BulkOperationCompleted";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; operation: string; result: any }
+  ) {}
+}
+
+export class BulkOperationFailed implements DomainEvent {
+  public eventName = "BulkOperationFailed";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; operation: string; error: string }
+  ) {}
+}
+
+export class BulkOperationCancelled implements DomainEvent {
+  public eventName = "BulkOperationCancelled";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { jobId: string; operation: string }
+  ) {}
+}
+
+export class SearchIndexRefreshRequested implements DomainEvent {
+  public eventName = "SearchIndexRefreshRequested";
+  constructor(
+    public aggregateId: string,
+    public occurredOn: Date,
+    public payload: { targetType: string; targetIds: string[] }
+  ) {}
+}

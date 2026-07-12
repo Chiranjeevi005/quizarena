@@ -67,7 +67,8 @@ model User {
   tournamentLeaderboards    TournamentLeaderboard[]
   UserDifficultyPerformance UserDifficultyPerformance[]
   UserSubjectPerformance    UserSubjectPerformance[]
-  QuestionImportJob         QuestionImportJob[]
+  BackgroundJob             BackgroundJob[]
+  ImportSession             ImportSession[]
   savedFilters              SavedFilter[]
   searchAnalytics           SearchAnalytics[]
   QuestionAuditLog          QuestionAuditLog[]
@@ -659,7 +660,28 @@ model QuestionCodeCounter {
   @@map("question_code_counters")
 }
 
-enum ImportJobStatus {
+// ─── Batch Jobs & Import/Export Framework ─────────────────────
+
+enum JobType {
+  IMPORT
+  EXPORT
+  BULK_ARCHIVE
+  BULK_PUBLISH
+  BULK_RESTORE
+  BULK_DELETE
+  BULK_DUPLICATE
+}
+
+enum JobStage {
+  PARSING
+  VALIDATING
+  PREVIEW
+  IMPORTING
+  PUBLISHING
+  COMPLETED
+}
+
+enum JobStatus {
   QUEUED
   RUNNING
   COMPLETED
@@ -667,109 +689,162 @@ enum ImportJobStatus {
   CANCELLED
 }
 
-model QuestionImportJob {
-  id String @id @default(cuid())
+model BackgroundJob {
+  id       String    @id @default(cuid())
+  type     JobType
+  status   JobStatus @default(QUEUED)
+  stage    JobStage  @default(PARSING)
+  priority Int       @default(0)
+  progress Int       @default(0) // 0 to 100
 
-  uploadedById String
+  createdById    String
+  organizationId String?
 
-  fileName String
-  fileType String
-  fileSize Int    @default(0)
-
-  status ImportJobStatus @default(QUEUED)
-
-  // Stats
-  totalRows     Int @default(0)
-  validRows     Int @default(0)
-  invalidRows   Int @default(0)
-  warningRows   Int @default(0)
-  duplicateRows Int @default(0)
-
-  // Progress & Execution
-  progressPercentage Int     @default(0)
-  processedRows      Int     @default(0)
-  failureReason      String? @db.Text
-
-  // Health & Metrics
-  averageHealthScore      Int?
-  highestHealthScore      Int?
-  lowestHealthScore       Int?
-  questionsBelowThreshold Int?
-
-  startedAt   DateTime  @default(now())
+  startedAt   DateTime?
   completedAt DateTime?
-  durationMs  Int?
+  failedAt    DateTime?
+  cancelledAt DateTime?
 
-  errorReport Json?
+  retryCount Int @default(0)
+  maxRetries Int @default(3)
+
+  payloadJson Json?
+  resultJson  Json?
+
+  errorMessage String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  uploadedBy User          @relation(fields: [uploadedById], references: [id])
-  issues     ImportIssue[]
-  report     ImportReport?
+  createdBy User @relation(fields: [createdById], references: [id])
 
   @@index([status])
-  @@map("question_import_jobs")
+  @@index([type])
+  @@index([createdById])
+  @@map("background_jobs")
 }
 
-enum IssueSeverity {
+// ─── Import Architecture ──────────────────────────────────────
+
+enum ImportSourceType {
+  CSV
+  EXCEL
+  JSON
+  ZIP_PACKAGE
+  API
+}
+
+enum ConflictResolutionStrategy {
+  SKIP
+  REPLACE
+  MERGE_REVISION
+  CREATE_COPY
+}
+
+enum ExportProfileType {
+  AUTHORING
+  PUBLISHING
+  MIGRATION
+  ANALYTICS
+  BACKUP
+  PUBLIC_API
+}
+
+model ImportSession {
+  id             String  @id @default(cuid())
+  jobId          String? @unique
+  organizationId String?
+  createdById    String
+
+  sourceType       ImportSourceType
+  originalFile     String?
+  conflictStrategy ConflictResolutionStrategy @default(SKIP)
+
+  // Validation Statistics
+  totalRows       Int @default(0)
+  validRows       Int @default(0)
+  invalidRows     Int @default(0)
+  warningsCount   Int @default(0)
+  duplicatesCount Int @default(0)
+
+  // Execution Statistics
+  importedCount Int @default(0)
+  skippedCount  Int @default(0)
+  failedCount   Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy User           @relation(fields: [createdById], references: [id])
+  rows      ImportRow[]
+  results   ImportResult[]
+
+  @@index([createdById])
+  @@map("import_sessions")
+}
+
+enum ImportRowStatus {
+  PENDING
+  VALIDATED
   WARNING
   ERROR
+  IMPORTED
+  SKIPPED
+  FAILED
 }
 
-model ImportIssue {
-  id           String        @id @default(cuid())
-  importJobId  String
-  rowNumber    Int
-  severity     IssueSeverity
-  message      String        @db.Text
-  suggestedFix String?       @db.Text
+model ImportRow {
+  id        String @id @default(cuid())
+  sessionId String
+  rowNumber Int
+
+  status ImportRowStatus @default(PENDING)
+
+  rawPayload        Json
+  normalizedPayload Json?
+
+  validationErrors   Json?
+  validationWarnings Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session ImportSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([status])
+  @@map("import_rows")
+}
+
+model ImportResult {
+  id         String  @id @default(cuid())
+  sessionId  String
+  questionId String?
+
+  wasSuccessful Boolean
+  errorMessage  String? @db.Text
 
   createdAt DateTime @default(now())
 
-  job QuestionImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  session ImportSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  // Optional relation to question if successfully imported
+  // question     Question? @relation(fields: [questionId], references: [id])
 
-  @@index([importJobId])
-  @@map("import_issues")
+  @@index([sessionId])
+  @@map("import_results")
 }
 
-model ImportReport {
-  id    String @id @default(cuid())
-  jobId String @unique
+model ImportFingerprint {
+  id            String   @id @default(cuid())
+  checksum      String   @unique
+  hashAlgorithm String
+  uploadedById  String
+  uploadedAt    DateTime @default(now())
+  fileSize      Int
+  recordCount   Int
 
-  duplicatesPrevented     Int @default(0)
-  totalImported           Int @default(0)
-  averageHealthScore      Int @default(0)
-  highestHealthScore      Int @default(0)
-  lowestHealthScore       Int @default(0)
-  questionsBelowThreshold Int @default(0)
-  failedRows              Int @default(0)
-
-  job QuestionImportJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@map("import_reports")
-}
-
-model ImportAudit {
-  id            String @id @default(cuid())
-  jobId         String
-  performedById String
-
-  action   String
-  fileName String
-
-  rowsImported  Int @default(0)
-  warningsCount Int @default(0)
-  errorsCount   Int @default(0)
-
-  performedAt DateTime @default(now())
-
-  @@index([jobId])
-  @@index([performedById])
-  @@map("import_audits")
+  @@index([checksum])
+  @@map("import_fingerprints")
 }
 
 model ChallengeQuestion {
