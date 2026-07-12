@@ -1,0 +1,1 @@
+export type QuizBuilderLayout = "DEFAULT";

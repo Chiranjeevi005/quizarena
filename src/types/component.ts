@@ -20,7 +20,8 @@ export type ComponentCategory =
   | "toolbar"
   | "workspace-state"
   | "dashboard-builder"
-  | "question";
+  | "question"
+  | "quiz";
 
 export interface ComponentDocumentation {
   description: string;
