@@ -31,6 +31,7 @@ export interface ComponentMetadata {
   id: string;
   name: string;
   category: ComponentCategory;
+  subtype?: string;
   version: string;
   status: ComponentStatus;
   owner: string;

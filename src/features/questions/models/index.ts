@@ -8,4 +8,7 @@ export * from "./QuestionLanguage";
 export * from "./QuestionCategory";
 export * from "./QuestionTags";
 export * from "./QuestionType";
+export * from "./QuestionLayout";
+export * from "./QuestionDensity";
+export * from "./QuestionMediaType";
 export * from "./QuestionMetadata";
