@@ -1,4 +1,5 @@
 export * from "./core";
-export * from "./models";
 export * from "./providers";
+export * from "./models";
+export * from "./browser";
 export * from "./components";
