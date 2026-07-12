@@ -1,0 +1,8 @@
+export enum ReviewFilter {
+  ALL = "ALL",
+  ANSWERED = "ANSWERED",
+  UNANSWERED = "UNANSWERED",
+  FLAGGED = "FLAGGED",
+  BOOKMARKED = "BOOKMARKED",
+  VISITED = "VISITED",
+}

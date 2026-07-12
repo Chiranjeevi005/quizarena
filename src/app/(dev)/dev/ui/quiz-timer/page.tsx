@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import {
-  QuizTimerProvider,
   QuizTimerState,
   QuizTimerVariant,
   QuizTimerLayout,
@@ -12,6 +11,7 @@ import {
   QuizTimerWarningLevel,
   SessionHealth,
 } from "@/features/quizzes/timer";
+import { QuizTimerProvider } from "@/features/quizzes/providers";
 import {
   QuizTimer,
   DigitalTimer,

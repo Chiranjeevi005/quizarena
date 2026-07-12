@@ -3,3 +3,4 @@ export * from "./QuizSessionProvider";
 export * from "./QuestionPlayerProvider";
 export * from "./QuizNavigationProvider";
 export * from "./QuizTimerProvider";
+export * from "./QuizReviewProvider";
