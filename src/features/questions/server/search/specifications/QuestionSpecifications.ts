@@ -4,7 +4,8 @@ import {
   QuestionDifficulty,
   QuestionType,
   RevisionStatus,
-} from "@/features/questions/shared/enums/QuestionEnums";
+  QuestionStatus,
+} from "@/features/questions/shared/enums";
 
 // STATUS SPECIFICATIONS
 export class StatusSpecification extends Specification<Question> {
@@ -54,6 +55,51 @@ export class TopicSpecification extends Specification<Question> {
   }
   public toPrismaWhere(): Prisma.QuestionWhereInput {
     return { revisions: { some: { chapter: { topic: { name: this.topic } } } } };
+  }
+}
+
+// LIFECYCLE & AUTHORING SPECIFICATIONS
+export class QuestionStatusSpecification extends Specification<Question> {
+  constructor(private status: QuestionStatus) {
+    super();
+  }
+  public isSatisfiedBy(): boolean {
+    return true;
+  }
+  public toPrismaWhere(): Prisma.QuestionWhereInput {
+    return { status: this.status as any };
+  }
+}
+
+export class RevisionStatusSpecification extends Specification<Question> {
+  constructor(private status: RevisionStatus) {
+    super();
+  }
+  public isSatisfiedBy(): boolean {
+    return true;
+  }
+  public toPrismaWhere(): Prisma.QuestionWhereInput {
+    return { revisions: { some: { status: this.status as any } } };
+  }
+}
+
+export class HasDraftSpecification extends Specification<Question> {
+  public isSatisfiedBy(): boolean {
+    return true;
+  }
+  public toPrismaWhere(): Prisma.QuestionWhereInput {
+    return { revisions: { some: { status: RevisionStatus.DRAFT as any } } };
+  }
+}
+
+export class CurrentRevisionOnlySpecification extends Specification<Question> {
+  public isSatisfiedBy(): boolean {
+    return true;
+  }
+  public toPrismaWhere(): Prisma.QuestionWhereInput {
+    // Requires prisma to join against currentRevisionId
+    // Simplification for search: we only care about questions that HAVE a current revision
+    return { currentRevisionId: { not: null } };
   }
 }
 

@@ -1,21 +1,27 @@
 import { PrismaClient, Prisma } from "@/generated/prisma";
-type PrismaTransactionClient = Prisma.TransactionClient;
+import { BaseRepository } from "@/core/server/repositories/BaseRepository";
+import { TransactionClient } from "@/core/server/transactions/TransactionManager";
+import { RevisionStatus } from "@/features/questions/shared/enums";
 
-export class QuestionRevisionRepository {
+export class QuestionRevisionRepository extends BaseRepository {
+  constructor(prisma: PrismaClient) {
+    super(prisma);
+  }
+
   public async createRevision(
-    tx: PrismaTransactionClient,
-    data: Prisma.QuestionRevisionUncheckedCreateInput
+    data: Prisma.QuestionRevisionUncheckedCreateInput,
+    tx?: TransactionClient
   ) {
-    return tx.questionRevision.create({
+    return this.getClient(tx).questionRevision.create({
       data,
     });
   }
 
   public async getLatestRevisionNumber(
-    tx: PrismaTransactionClient,
-    questionId: string
+    questionId: string,
+    tx?: TransactionClient
   ): Promise<number> {
-    const latest = await tx.questionRevision.findFirst({
+    const latest = await this.getClient(tx).questionRevision.findFirst({
       where: { questionId },
       orderBy: { revisionNumber: "desc" },
       select: { revisionNumber: true },
@@ -24,13 +30,40 @@ export class QuestionRevisionRepository {
   }
 
   public async updateRevisionStatus(
-    tx: PrismaTransactionClient,
     revisionId: string,
-    status: any // RevisionStatus
+    status: RevisionStatus,
+    tx?: TransactionClient
   ) {
-    return tx.questionRevision.update({
+    return this.getClient(tx).questionRevision.update({
       where: { id: revisionId },
-      data: { status },
+      data: { status: status as any },
+    });
+  }
+
+  public async getActiveDraft(questionId: string, tx?: TransactionClient) {
+    return this.getClient(tx).questionRevision.findFirst({
+      where: {
+        questionId,
+        status: RevisionStatus.DRAFT,
+      },
+      include: {
+        statement: true,
+        explanation: true,
+        options: true,
+        chapter: true,
+      },
+    });
+  }
+
+  public async getRevision(revisionId: string, tx?: TransactionClient) {
+    return this.getClient(tx).questionRevision.findUnique({
+      where: { id: revisionId },
+      include: {
+        statement: true,
+        explanation: true,
+        options: true,
+        chapter: true,
+      },
     });
   }
 }

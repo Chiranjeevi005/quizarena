@@ -14,7 +14,7 @@ export class QuestionService {
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
     this.questionRepo = new QuestionRepository(this.prisma);
-    this.revisionRepo = new QuestionRevisionRepository();
+    this.revisionRepo = new QuestionRevisionRepository(this.prisma);
   }
 
   /**
@@ -37,32 +37,35 @@ export class QuestionService {
       );
 
       // 2. Create the Initial Draft Revision
-      const revision = await this.revisionRepo.createRevision(tx, {
-        questionId: question.id,
-        organizationId: input.organizationId || null,
-        revisionNumber: 1,
-        status: RevisionStatus.DRAFT,
-        difficulty: input.difficulty,
-        language: input.language,
-        chapterId: input.chapterId || null,
-        statement: {
-          create: { content: input.statement },
+      const revision = await this.revisionRepo.createRevision(
+        {
+          questionId: question.id,
+          organizationId: input.organizationId || null,
+          revisionNumber: 1,
+          status: RevisionStatus.DRAFT,
+          difficulty: input.difficulty,
+          language: input.language,
+          chapterId: input.chapterId || null,
+          statement: {
+            create: { content: input.statement },
+          },
+          explanation: input.explanation
+            ? {
+                create: { content: input.explanation },
+              }
+            : undefined,
+          options: input.options
+            ? {
+                create: input.options.map((o) => ({
+                  content: o.content,
+                  isCorrect: o.isCorrect,
+                  displayOrder: o.displayOrder,
+                })),
+              }
+            : undefined,
         },
-        explanation: input.explanation
-          ? {
-              create: { content: input.explanation },
-            }
-          : undefined,
-        options: input.options
-          ? {
-              create: input.options.map((o) => ({
-                content: o.content,
-                isCorrect: o.isCorrect,
-                displayOrder: o.displayOrder,
-              })),
-            }
-          : undefined,
-      });
+        tx as any
+      );
 
       // Fetch with relations to map to DTO
       const fullQuestion = await tx.question.findUniqueOrThrow({

@@ -3421,18 +3421,26 @@ enum QuestionLanguage {
 enum RevisionStatus {
   DRAFT
   IN_REVIEW
+  READY
   PUBLISHED
+  SUPERSEDED
   ARCHIVED
-  DEPRECATED
 }
 
 enum QuestionSourceType {
   MANUAL
-  AI
   IMPORT
-  COPY
-  MARKETPLACE
-  SYSTEM
+  AI
+  DUPLICATE
+  MIGRATION
+  API
+}
+
+enum QuestionStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+  LOCKED
 }
 
 enum AssetAssignmentType {
@@ -3477,11 +3485,12 @@ model QuestionTemplate {
 }
 
 model Question {
-  id                String       @id @default(cuid())
+  id                String         @id @default(cuid())
   organizationId    String? // Multi-tenant SaaS support
   bankId            String
   type              QuestionType
   currentRevisionId String? // Points to the active published QuestionRevision
+  status            QuestionStatus @default(ACTIVE)
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -3528,8 +3537,14 @@ model QuestionRevision {
   // Publishing Metadata
   publishedAt   DateTime?
   publishedById String?
+  reviewedAt    DateTime?
+  reviewedBy    String?
+  approvedAt    DateTime?
+  approvedBy    String?
   archivedAt    DateTime?
   archivedById  String?
+
+  revisionReason String? @db.Text
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

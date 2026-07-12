@@ -32,18 +32,26 @@ export enum QuestionLanguage {
 export enum RevisionStatus {
   DRAFT = "DRAFT",
   IN_REVIEW = "IN_REVIEW",
+  READY = "READY",
   PUBLISHED = "PUBLISHED",
+  SUPERSEDED = "SUPERSEDED",
   ARCHIVED = "ARCHIVED",
-  DEPRECATED = "DEPRECATED",
 }
 
 export enum QuestionSourceType {
   MANUAL = "MANUAL",
-  AI = "AI",
   IMPORT = "IMPORT",
-  COPY = "COPY",
-  MARKETPLACE = "MARKETPLACE",
-  SYSTEM = "SYSTEM",
+  AI = "AI",
+  DUPLICATE = "DUPLICATE",
+  MIGRATION = "MIGRATION",
+  API = "API",
+}
+
+export enum QuestionStatus {
+  ACTIVE = "ACTIVE",
+  ARCHIVED = "ARCHIVED",
+  DELETED = "DELETED",
+  LOCKED = "LOCKED",
 }
 
 export enum AssetAssignmentType {

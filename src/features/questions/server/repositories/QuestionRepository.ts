@@ -24,6 +24,31 @@ export class QuestionRepository extends BaseRepository {
     });
   }
 
+  public async updateQuestionStatus(
+    questionId: string,
+    status: any, // QuestionStatus
+    tx?: TransactionClient
+  ) {
+    return this.getClient(tx).question.update({
+      where: { id: questionId },
+      data: { status },
+    });
+  }
+
+  public async archiveQuestion(questionId: string, tx?: TransactionClient) {
+    return this.getClient(tx).question.update({
+      where: { id: questionId },
+      data: { status: "ARCHIVED" as any },
+    });
+  }
+
+  public async restoreQuestion(questionId: string, tx?: TransactionClient) {
+    return this.getClient(tx).question.update({
+      where: { id: questionId },
+      data: { status: "ACTIVE" as any },
+    });
+  }
+
   public async softDeleteQuestion(questionId: string, tx?: TransactionClient) {
     return this.getClient(tx).question.update({
       where: { id: questionId },
