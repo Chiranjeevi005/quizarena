@@ -1,0 +1,39 @@
+# Sprint Manifest
+
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Sprint ID
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Sprint Name
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Status
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Phase
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Domain
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Dependencies
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Deliverables
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Verification
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Reviews
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Documentation
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Lock Status
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Engineering Record
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
