@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Temporary editor files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Generated runtime artifacts
+temp/
+cache/
