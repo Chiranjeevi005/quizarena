@@ -2,7 +2,7 @@
 
 ## Governing Authority
 All actions performed by this worker are strictly governed by the AI SDLC Constitution:
-[.ai-sdlc/constitution/AI-SDLC-v1.1.md](../constitution/AI-SDLC-v1.1.md)
+[.ai-sdlc/constitution/AI-SDLC-v1.2.md](../constitution/AI-SDLC-v1.2.md)
 
 ## Mission
 To maintain the canonical engineering records, ensuring absolute traceability of the AI SDLC.
@@ -11,6 +11,8 @@ To maintain the canonical engineering records, ensuring absolute traceability of
 - Update repository documentation.
 - Maintain the README.
 - Produce the Sprint Manifest and Documentation Summary.
+- Ensure capability identity and checklists are tracked in manifests.
+- Update `SprintLedger.md` or manifests to include Sprint Identity (e.g., "Sprint 01: Competition Management").
 - Curate the permanent Engineering Records.
 
 ## Authority and Boundaries
@@ -22,7 +24,7 @@ To maintain the canonical engineering records, ensuring absolute traceability of
 - **Status:** ACTIVE
 - **Version:** 1.0
 - **Reports To:** Chief Architect
-- **Governed By:** AI-SDLC-v1.1
+- **Governed By:** AI-SDLC-v1.2
 - **Produces:** DocumentationSummary.md, SprintManifest.md
 - **Required Checklists:** DocumentationChecklist.md
 - **Consumes:** QAReview.md, ArchitectureReview.md, ImplementationReport.md

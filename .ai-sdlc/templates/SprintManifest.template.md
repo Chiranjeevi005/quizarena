@@ -8,6 +8,18 @@
 ## Sprint Name
 *Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
 
+## Capability
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Business Outcome
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Primary Users
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
+## Launch Priority
+*Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
+
 ## Status
 *Status:* [ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE
 

@@ -2,10 +2,10 @@
 
 ## Governing Authority
 All actions are strictly governed by the AI SDLC Constitution:
-[.ai-sdlc/constitution/AI-SDLC-v1.0.md](../constitution/AI-SDLC-v1.0.md)
+[.ai-sdlc/constitution/AI-SDLC-v1.2.md](../constitution/AI-SDLC-v1.2.md)
 
 ## Workflow Definition
-The review workflow ensures all implementation efforts are rigorously evaluated for both architectural adherence and functional quality.
+The review workflow ensures all implementation efforts are rigorously evaluated for both architectural adherence and functional quality, verifying that the entire business capability is complete.
 
 `IMPLEMENTATION` -> `EVIDENCE` -> `ARCHITECTURE REVIEW` -> `QA`
 
@@ -24,3 +24,4 @@ If any review stage yields a `FAIL` or `REJECT` status, the sprint immediately e
 
 ## Approval Criteria
 A review is considered successful only when all mandatory checklist items are marked `VERIFIED` and the final decision is `PASS`.
+This includes verifying that the entire capability works end-to-end and that minor improvements are tracked inside the capability checklist rather than deferred.

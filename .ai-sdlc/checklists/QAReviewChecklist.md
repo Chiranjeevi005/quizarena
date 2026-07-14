@@ -1,7 +1,7 @@
 # QA Review Checklist
 
 ## Governance
-[.ai-sdlc/constitution/AI-SDLC-v1.0.md](../../constitution/AI-SDLC-v1.0.md)
+[.ai-sdlc/constitution/AI-SDLC-v1.2.md](../../constitution/AI-SDLC-v1.2.md)
 
 ### Checklist ID: QA-C001
 **References:** TEST-001
@@ -20,6 +20,20 @@
 ### Checklist ID: QA-C003
 **References:** TEST-003
 **Requirement:** Runtime verification confirms production readiness and functionality.
+**Verification:** `[ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE | [ ] FAILED`
+**Evidence:** ____________________
+**Reviewer Notes:** ____________________
+
+### Checklist ID: QA-C018
+**References:** ARCH-014
+**Requirement:** Entire capability demonstrable.
+**Verification:** `[ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE | [ ] FAILED`
+**Evidence:** ____________________
+**Reviewer Notes:** ____________________
+
+### Checklist ID: QA-C019
+**References:** ARCH-014
+**Requirement:** Capability satisfies Definition of Done.
 **Verification:** `[ ] VERIFIED | [ ] NOT VERIFIED | [ ] NOT APPLICABLE | [ ] FAILED`
 **Evidence:** ____________________
 **Reviewer Notes:** ____________________

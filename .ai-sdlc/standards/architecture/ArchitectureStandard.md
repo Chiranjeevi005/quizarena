@@ -2,7 +2,7 @@
 
 ## Governing Authority
 All actions are strictly governed by the AI SDLC Constitution:
-[.ai-sdlc/constitution/AI-SDLC-v1.0.md](../../constitution/AI-SDLC-v1.0.md)
+[.ai-sdlc/constitution/AI-SDLC-v1.2.md](../../constitution/AI-SDLC-v1.2.md)
 
 ## Rules
 
@@ -49,3 +49,14 @@ All actions are strictly governed by the AI SDLC Constitution:
 - **Bad:** Service depends directly on `PostgresUserRepository`.
 **Related Standards:** ARCH-003
 **Referenced Constitution Article:** Architecture Rules
+
+### Rule ID: ARCH-014
+**Category:** Architecture
+**Classification:** MANDATORY
+**Statement:** Engineering sprints shall deliver complete business capabilities. Technical implementation shall be organized around business capabilities rather than isolated technical features.
+**Rationale:** Business value is delivered through complete capabilities.
+**Examples:**
+- **Good:** Delivering the entire "Competition Management" flow including frontend, backend, and DB.
+- **Bad:** Developing only the database schema for multiple unrelated capabilities.
+**Related Standards:** ARCH-001, ARCH-004
+**Referenced Constitution Article:** Capability-Driven Delivery
