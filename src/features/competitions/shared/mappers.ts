@@ -1,5 +1,19 @@
-import { Competition } from '@/generated/prisma';
-import { CompetitionDTO } from '../types/dto';
+import {
+  Competition,
+  CompetitionConfig,
+  CompetitionEconomics,
+  CompetitionEligibility,
+  CompetitionSection,
+  CompetitionQuestion,
+} from "@/generated/prisma";
+import {
+  CompetitionDTO,
+  CompetitionConfigDTO,
+  CompetitionEconomicsDTO,
+  CompetitionEligibilityDTO,
+  CompetitionSectionDTO,
+  CompetitionQuestionDTO,
+} from "../types/dto";
 
 export function toCompetitionDTO(competition: Competition): CompetitionDTO {
   return {
@@ -20,5 +34,83 @@ export function toCompetitionDTO(competition: Competition): CompetitionDTO {
     endsAt: competition.endsAt,
     createdAt: competition.createdAt,
     updatedAt: competition.updatedAt,
+  };
+}
+
+// ─── Management Mappers ─────────────────────────────
+
+export function toCompetitionConfigDTO(
+  config: CompetitionConfig
+): CompetitionConfigDTO {
+  return {
+    id: config.id,
+    competitionId: config.competitionId,
+    negativeMarkingEnabled: config.negativeMarkingEnabled,
+    negativeMarkPerQuestion: config.negativeMarkPerQuestion,
+    passingMarks: config.passingMarks,
+    allowRetake: config.allowRetake,
+    randomizeQuestions: config.randomizeQuestions,
+    randomizeOptions: config.randomizeOptions,
+  };
+}
+
+export function toCompetitionEconomicsDTO(
+  economics: CompetitionEconomics
+): CompetitionEconomicsDTO {
+  return {
+    id: economics.id,
+    competitionId: economics.competitionId,
+    entryFee: economics.entryFee,
+    rewardPool: economics.rewardPool,
+    currency: economics.currency,
+  };
+}
+
+export function toCompetitionEligibilityDTO(
+  eligibility: CompetitionEligibility
+): CompetitionEligibilityDTO {
+  return {
+    id: eligibility.id,
+    competitionId: eligibility.competitionId,
+    maxParticipants: eligibility.maxParticipants,
+  };
+}
+
+export function toCompetitionSectionDTO(
+  section: CompetitionSection
+): CompetitionSectionDTO {
+  return {
+    id: section.id,
+    competitionId: section.competitionId,
+    title: section.title,
+    slug: section.slug,
+    description: section.description,
+    instructions: section.instructions,
+    displayOrder: section.displayOrder,
+    durationMinutes: section.durationMinutes,
+    totalQuestions: section.totalQuestions,
+    maximumMarks: section.maximumMarks,
+    passingMarks: section.passingMarks,
+    isMandatory: section.isMandatory,
+    allowNavigation: section.allowNavigation,
+  };
+}
+
+export function toCompetitionQuestionDTO(
+  question: CompetitionQuestion
+): CompetitionQuestionDTO {
+  return {
+    id: question.id,
+    competitionId: question.competitionId,
+    questionId: question.questionId,
+    sectionId: question.sectionId,
+    displayOrder: question.displayOrder,
+    sectionOrder: question.sectionOrder,
+    marks: question.marks,
+    negativeMarks: question.negativeMarks,
+    questionWeight: question.questionWeight,
+    isOptional: question.isOptional,
+    isBonus: question.isBonus,
+    isMandatory: question.isMandatory,
   };
 }

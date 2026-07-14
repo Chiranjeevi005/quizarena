@@ -50,3 +50,102 @@ export interface UpdateCompetitionDTO {
   startsAt?: Date;
   endsAt?: Date;
 }
+
+// ─── Management DTOs ────────────────────────────────
+
+export interface CompetitionConfigDTO {
+  id: string;
+  competitionId: string;
+  negativeMarkingEnabled: boolean;
+  negativeMarkPerQuestion: number;
+  passingMarks: number | null;
+  allowRetake: boolean;
+  randomizeQuestions: boolean;
+  randomizeOptions: boolean;
+}
+
+export interface UpdateCompetitionConfigDTO {
+  negativeMarkingEnabled?: boolean;
+  negativeMarkPerQuestion?: number;
+  passingMarks?: number | null;
+  allowRetake?: boolean;
+  randomizeQuestions?: boolean;
+  randomizeOptions?: boolean;
+}
+
+export interface CompetitionEconomicsDTO {
+  id: string;
+  competitionId: string;
+  entryFee: number;
+  rewardPool: number;
+  currency: string;
+}
+
+export interface UpdateCompetitionEconomicsDTO {
+  entryFee?: number;
+  rewardPool?: number;
+  currency?: string;
+}
+
+export interface CompetitionEligibilityDTO {
+  id: string;
+  competitionId: string;
+  maxParticipants: number | null;
+}
+
+export interface UpdateCompetitionEligibilityDTO {
+  maxParticipants?: number | null;
+}
+
+export interface CompetitionSectionDTO {
+  id: string;
+  competitionId: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  instructions: string | null;
+  displayOrder: number;
+  durationMinutes: number | null;
+  totalQuestions: number;
+  maximumMarks: number;
+  passingMarks: number | null;
+  isMandatory: boolean;
+  allowNavigation: boolean;
+}
+
+export interface CreateCompetitionSectionDTO {
+  title: string;
+  slug: string;
+  description?: string;
+  instructions?: string;
+  displayOrder?: number;
+  durationMinutes?: number;
+  passingMarks?: number;
+  isMandatory?: boolean;
+  allowNavigation?: boolean;
+}
+
+export interface CompetitionQuestionDTO {
+  id: string;
+  competitionId: string;
+  questionId: string;
+  sectionId: string | null;
+  displayOrder: number;
+  sectionOrder: number;
+  marks: number;
+  negativeMarks: number;
+  questionWeight: number;
+  isOptional: boolean;
+  isBonus: boolean;
+  isMandatory: boolean;
+}
+
+export interface AddCompetitionQuestionDTO {
+  questionId: string;
+  sectionId?: string;
+  displayOrder?: number;
+  marks?: number;
+  negativeMarks?: number;
+  isOptional?: boolean;
+  isBonus?: boolean;
+}
