@@ -100,61 +100,66 @@ export default function CompetitionDetail({ params }: { params: Promise<{ id: st
   }, [id]);
 
   useEffect(() => {
-    fetchCompetition();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchCompetition();
   }, [fetchCompetition]);
 
-  const fetchTabData = useCallback(async (tab: Tab) => {
-    if (tab === "overview") return;
-    try {
-      const res = await fetch(`/api/admin/competitions/${id}/${tab}`);
-      if (!res.ok) return;
-      const json = await res.json();
-      const data = json.data;
+  const fetchTabData = useCallback(
+    async (tab: Tab) => {
+      if (tab === "overview") return;
+      try {
+        const res = await fetch(`/api/admin/competitions/${id}/${tab}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const data = json.data;
 
-      if (tab === "config" && data) {
-        setConfig(data);
-        setConfigForm({
-          negativeMarkingEnabled: data.negativeMarkingEnabled ?? false,
-          negativeMarkPerQuestion: data.negativeMarkPerQuestion ?? 0,
-          passingMarks: data.passingMarks ?? 0,
-          allowRetake: data.allowRetake ?? false,
-          randomizeQuestions: data.randomizeQuestions ?? false,
-          randomizeOptions: data.randomizeOptions ?? false,
-        });
+        if (tab === "config" && data) {
+          setConfig(data);
+          setConfigForm({
+            negativeMarkingEnabled: data.negativeMarkingEnabled ?? false,
+            negativeMarkPerQuestion: data.negativeMarkPerQuestion ?? 0,
+            passingMarks: data.passingMarks ?? 0,
+            allowRetake: data.allowRetake ?? false,
+            randomizeQuestions: data.randomizeQuestions ?? false,
+            randomizeOptions: data.randomizeOptions ?? false,
+          });
+        }
+        if (tab === "economics" && data) {
+          setEconomics(data);
+          setEconomicsForm({
+            entryFee: data.entryFee ?? 0,
+            rewardPool: data.rewardPool ?? 0,
+            currency: data.currency ?? "INR",
+          });
+        }
+        if (tab === "eligibility" && data) {
+          setEligibility(data);
+          setEligibilityForm({
+            maxParticipants: data.maxParticipants ?? 0,
+          });
+        }
+        if (tab === "sections") setSections(Array.isArray(data) ? data : []);
+        if (tab === "questions") setQuestions(Array.isArray(data) ? data : []);
+        if (tab === "lifecycle" && data) setLifecycleInfo(data);
+        if (tab === "schedule" && data) {
+          setSchedule(data);
+          setScheduleForm({
+            publishAt: data.publishAt ? new Date(data.publishAt).toISOString().slice(0, 16) : "",
+            expiresAt: data.expiresAt ? new Date(data.expiresAt).toISOString().slice(0, 16) : "",
+            timezone: data.timezone || "Asia/Kolkata",
+          });
+        }
+        if (tab === "audit") setAuditLog(Array.isArray(data) ? data : []);
+      } catch {
+        /* silent */
       }
-      if (tab === "economics" && data) {
-        setEconomics(data);
-        setEconomicsForm({
-          entryFee: data.entryFee ?? 0,
-          rewardPool: data.rewardPool ?? 0,
-          currency: data.currency ?? "INR",
-        });
-      }
-      if (tab === "eligibility" && data) {
-        setEligibility(data);
-        setEligibilityForm({
-          maxParticipants: data.maxParticipants ?? 0,
-        });
-      }
-      if (tab === "sections") setSections(Array.isArray(data) ? data : []);
-      if (tab === "questions") setQuestions(Array.isArray(data) ? data : []);
-      if (tab === "lifecycle" && data) setLifecycleInfo(data);
-      if (tab === "schedule" && data) {
-        setSchedule(data);
-        setScheduleForm({
-          publishAt: data.publishAt ? new Date(data.publishAt).toISOString().slice(0, 16) : "",
-          expiresAt: data.expiresAt ? new Date(data.expiresAt).toISOString().slice(0, 16) : "",
-          timezone: data.timezone || "Asia/Kolkata",
-        });
-      }
-      if (tab === "audit") setAuditLog(Array.isArray(data) ? data : []);
-    } catch {
-      /* silent */
-    }
-  }, [id]);
+    },
+    [id]
+  );
 
   useEffect(() => {
-    fetchTabData(activeTab);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchTabData(activeTab);
   }, [activeTab, fetchTabData]);
 
   // ─── Handlers ────────────────────────────────────

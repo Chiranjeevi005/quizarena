@@ -4,7 +4,7 @@ import { verifyRazorpaySignature } from "../providers/razorpay.provider";
 import { PaymentOrderStatus, RegistrationState } from "@/generated/prisma";
 
 export class WebhookService {
-  async handleRazorpayWebhook(payload: any, signature: string) {
+  async handleRazorpayWebhook(payload: any, signature: string, rawBody: string) {
     const eventType = payload.event;
 
     if (eventType === "payment.captured") {
@@ -13,16 +13,11 @@ export class WebhookService {
       const paymentId = paymentEntity.id;
 
       // 1. Verify Signature
-      // In webhook context, the payload itself is signed using the webhook secret, not the key secret
-      // This requires the raw body, but assuming standard flow here for the example logic:
-      // Actually, standard Razorpay webhooks use crypto.createHmac('sha256', WEBHOOK_SECRET).update(rawBody).digest('hex')
-      // Let's implement that directly here.
-
       const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
 
       const expectedSignature = crypto
         .createHmac("sha256", webhookSecret)
-        .update(JSON.stringify(payload)) // Note: Needs exact raw body in production
+        .update(rawBody)
         .digest("hex");
 
       if (expectedSignature !== signature) {

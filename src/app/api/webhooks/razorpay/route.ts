@@ -8,10 +8,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing signature" }, { status: 400 });
     }
 
-    const body = await req.json();
+    const rawBody = await req.text();
+    let body;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
 
     // Process webhook
-    await webhookService.handleRazorpayWebhook(body, signature);
+    await webhookService.handleRazorpayWebhook(body, signature, rawBody);
 
     return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error: any) {

@@ -2,6 +2,13 @@
 
 import { useEffect, useState, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function LearnerCompetitionDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -37,7 +44,8 @@ export default function LearnerCompetitionDetail({ params }: { params: Promise<{
   }, [id]);
 
   useEffect(() => {
-    fetchDetails();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchDetails();
   }, [fetchDetails]);
 
   const handleEnroll = async () => {
@@ -57,8 +65,39 @@ export default function LearnerCompetitionDetail({ params }: { params: Promise<{
         fetchDetails();
       } else if (data.status === "PAYMENT_PENDING") {
         setEnrollmentStatus("PAYMENT_PENDING");
-        // In a real flow, redirect to Razorpay or payment page
-        alert(`Redirecting to payment for Order: ${data.orderId}`);
+
+        if (!window.Razorpay) {
+          setError("Payment system failed to load.");
+          setEnrollmentStatus(null);
+          return;
+        }
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "dummy_key",
+          amount: data.amount,
+          currency: data.currency,
+          name: "QuizArena",
+          description: `Entry fee for competition`,
+          order_id: data.orderId,
+          handler: function (response: any) {
+            // Payment success callback
+            // Typically webhooks handle the final state change, but we can poll or just fetch Details.
+            alert("Payment successful! Waiting for confirmation...");
+            setTimeout(() => {
+              fetchDetails();
+            }, 2000);
+          },
+          theme: {
+            color: "#10b981",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (response: any) {
+          setError(response.error.description || "Payment failed");
+          setEnrollmentStatus(null);
+        });
+        rzp.open();
       }
     } catch (err: any) {
       setError(err.message);
@@ -78,6 +117,7 @@ export default function LearnerCompetitionDetail({ params }: { params: Promise<{
 
   return (
     <div style={{ maxWidth: "800px", margin: "40px auto", fontFamily: "sans-serif" }}>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <header
         style={{ borderBottom: "2px solid #eee", paddingBottom: "20px", marginBottom: "20px" }}
       >
