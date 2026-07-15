@@ -18,6 +18,8 @@ import { getIntelligenceDashboardMetrics } from "@/features/admin/services/quest
 
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Question Intelligence | QuizArena",
   description: "Operational intelligence dashboard for question performance monitoring",

@@ -128,9 +128,10 @@ export async function getIntelligenceDashboardMetrics(): Promise<IntelligenceDas
       SELECT COUNT(*) as count
       FROM question_usage_stats qus
       JOIN questions q ON qus."questionId" = q.id
+      JOIN question_revisions qr ON q."currentRevisionId" = qr.id
       WHERE qus."timesAttempted" >= ${MIN_ATTEMPTS}
         AND qus."actualDifficulty" IS NOT NULL
-        AND qus."actualDifficulty"::text != q.difficulty::text
+        AND qus."actualDifficulty"::text != qr.difficulty::text
     `;
     actualDriftCount = Number(driftResults[0]?.count ?? 0);
   } catch {
@@ -243,9 +244,10 @@ export async function getQuestionsByIntelligenceFilter(
           SELECT qus."questionId"
           FROM question_usage_stats qus
           JOIN questions q ON qus."questionId" = q.id
+          JOIN question_revisions qr ON q."currentRevisionId" = qr.id
           WHERE qus."timesAttempted" >= ${MIN_ATTEMPTS}
             AND qus."actualDifficulty" IS NOT NULL
-            AND qus."actualDifficulty"::text != q.difficulty::text
+            AND qus."actualDifficulty"::text != qr.difficulty::text
           ORDER BY qus."timesAttempted" DESC
           LIMIT ${limit} OFFSET ${skip}
         `;
@@ -253,9 +255,10 @@ export async function getQuestionsByIntelligenceFilter(
           SELECT COUNT(*) as count
           FROM question_usage_stats qus
           JOIN questions q ON qus."questionId" = q.id
+          JOIN question_revisions qr ON q."currentRevisionId" = qr.id
           WHERE qus."timesAttempted" >= ${MIN_ATTEMPTS}
             AND qus."actualDifficulty" IS NOT NULL
-            AND qus."actualDifficulty"::text != q.difficulty::text
+            AND qus."actualDifficulty"::text != qr.difficulty::text
         `;
         return {
           questionIds: driftIds.map((r) => r.questionId),
@@ -296,9 +299,10 @@ export async function getAllQuestionIdsByIntelligenceFilter(filter: string): Pro
         SELECT qus."questionId"
         FROM question_usage_stats qus
         JOIN questions q ON qus."questionId" = q.id
+        JOIN question_revisions qr ON q."currentRevisionId" = qr.id
         WHERE qus."timesAttempted" >= ${MIN_ATTEMPTS}
           AND qus."actualDifficulty" IS NOT NULL
-          AND qus."actualDifficulty"::text != q.difficulty::text
+          AND qus."actualDifficulty"::text != qr.difficulty::text
       `;
       return driftIds.map((r) => r.questionId);
     } catch {

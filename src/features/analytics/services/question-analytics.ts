@@ -50,10 +50,12 @@ export async function detectWeakQuestions() {
         question: {
           select: {
             id: true,
-            questionCode: true,
-            difficulty: true,
             status: true,
-            category: true,
+            revisions: {
+              where: { status: "PUBLISHED" },
+              take: 1,
+              select: { difficulty: true },
+            },
           },
         },
       },
@@ -117,17 +119,26 @@ export async function getDifficultyInsights() {
       where: {
         totalAttempts: { gte: 10 },
         OR: [
-          { question: { difficulty: "BEGINNER" }, accuracyRate: { lt: 50 } }, // Performing like hard
-          { question: { difficulty: "HARDCORE" }, accuracyRate: { gt: 70 } }, // Performing like easy
+          {
+            question: { revisions: { some: { status: "PUBLISHED", difficulty: "EASY" } } },
+            accuracyRate: { lt: 50 },
+          }, // Performing like hard
+          {
+            question: { revisions: { some: { status: "PUBLISHED", difficulty: "HARD" } } },
+            accuracyRate: { gt: 70 },
+          }, // Performing like easy
         ],
       },
       include: {
         question: {
           select: {
             id: true,
-            questionCode: true,
-            difficulty: true,
             status: true,
+            revisions: {
+              where: { status: "PUBLISHED" },
+              take: 1,
+              select: { difficulty: true },
+            },
           },
         },
       },
@@ -153,9 +164,12 @@ export async function getQuestionUsageAnalytics() {
         question: {
           select: {
             id: true,
-            questionCode: true,
-            difficulty: true,
-            category: true,
+            status: true,
+            revisions: {
+              where: { status: "PUBLISHED" },
+              take: 1,
+              select: { difficulty: true },
+            },
           },
         },
       },
