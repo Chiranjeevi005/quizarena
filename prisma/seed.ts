@@ -33,6 +33,24 @@ async function main() {
   const adminUser = users.find((u) => u.role === "ADMIN")!;
   const candidateUser = users.find((u) => u.role === "USER")!;
 
+  // 1.5 Create Beta Cohort (10 Mock Users)
+  console.log("Generating Beta Cohort of 10 users...");
+  const betaTesters = await Promise.all(
+    Array.from({ length: 10 }).map((_, i) =>
+      prisma.user.upsert({
+        where: { email: `beta${i + 1}@quizarena.com` },
+        update: {},
+        create: {
+          email: `beta${i + 1}@quizarena.com`,
+          password,
+          name: `Beta Tester ${i + 1}`,
+          role: "USER" as any,
+          onboardingCompleted: true,
+        },
+      })
+    )
+  );
+
   // 2. Setup Taxonomy
   console.log("Setting up taxonomy...");
   const subject = await prisma.subject.upsert({
@@ -142,55 +160,70 @@ async function main() {
     comps.push(comp);
   }
 
-  // 6. Generate Leaderboard & Results for Ended Competition
-  console.log("Generating Leaderboard & Certificates for Ended Competition...");
+  // 6. Generate Leaderboard & Results for Ended Competition (Beta Cohort)
+  console.log("Generating Leaderboard & Certificates for Beta Cohort...");
   const endedComp = comps[0];
 
-  const attempt = await prisma.attempt.create({
-    data: {
-      userId: candidateUser.id,
-      challengeId: endedComp.id,
-      status: "EVALUATED",
-      score: 85,
-      totalAnswered: 10,
-      correctAnswers: 9,
-      wrongAnswers: 1,
-      timeTakenInSeconds: 1200,
-      startedAt: new Date(),
-      submittedAt: new Date(),
-    },
-  });
+  await Promise.all(
+    betaTesters.map(async (tester, index) => {
+      // Randomized score based on beta tester index to create varied leaderboard
+      const score = Math.max(0, 100 - index * 5); // 100, 95, 90, ...
+      const correctAnswers = Math.floor(score / 10);
+      const wrongAnswers = 10 - correctAnswers;
+      const timeTaken = 1200 + index * 60; // Slightly slower times
 
-  await prisma.leaderboardEntry.create({
-    data: {
-      challengeId: endedComp.id,
-      userId: candidateUser.id,
-      attemptId: attempt.id,
-      score: 85,
-      rank: 1,
-      accuracy: 90.0,
-      timeTakenInSeconds: 1200,
-    },
-  });
+      // Create Attempt
+      const attempt = await prisma.attempt.create({
+        data: {
+          userId: tester.id,
+          challengeId: endedComp.id,
+          status: "EVALUATED",
+          score,
+          totalAnswered: 10,
+          correctAnswers,
+          wrongAnswers,
+          timeTakenInSeconds: timeTaken,
+          startedAt: new Date(Date.now() - 3600000), // 1 hour ago
+          submittedAt: new Date(),
+        },
+      });
 
-  await prisma.certificateSnapshot.create({
-    data: {
-      userId: candidateUser.id,
-      competitionId: endedComp.id,
-      certificateType: "WINNER",
-      certificateVersion: "1.0",
-      issueDate: new Date(),
-      verificationToken: randomUUID(),
-      participantName: candidateUser.name || "Demo Candidate",
-      competitionName: endedComp.title,
-      competitionVersion: "1.0",
-      rank: 1,
-      score: 85,
-      completionDate: new Date(),
-      qrPayload: "dummy-payload",
-      brandAssetsVersion: "1.0",
-    },
-  });
+      // Create Leaderboard Entry
+      await prisma.leaderboardEntry.create({
+        data: {
+          challengeId: endedComp.id,
+          userId: tester.id,
+          attemptId: attempt.id,
+          score,
+          rank: index + 1,
+          accuracy: correctAnswers * 10,
+          timeTakenInSeconds: timeTaken,
+        },
+      });
+
+      // Create Certificate for Top 3
+      if (index < 3) {
+        await prisma.certificateSnapshot.create({
+          data: {
+            userId: tester.id,
+            competitionId: endedComp.id,
+            certificateType: "WINNER",
+            certificateVersion: "1.0",
+            issueDate: new Date(),
+            verificationToken: randomUUID(),
+            participantName: tester.name || "Beta Tester",
+            competitionName: endedComp.title,
+            competitionVersion: "1.0",
+            rank: index + 1,
+            score,
+            completionDate: new Date(),
+            qrPayload: `beta-payload-${tester.id}`,
+            brandAssetsVersion: "1.0",
+          },
+        });
+      }
+    })
+  );
 
   console.log("Robust seed completed successfully!");
 }
