@@ -453,28 +453,59 @@ Implementation shall produce:
 
 ## Feature Deliverables
 
-Generate this checklist directly from the approved QA-007-FXX Feature Artifact.
+Generate this table directly from the approved QA-007-FXX Feature Artifact.
+
+| ID | Deliverable | Status |
+|----|-------------|--------|
+| FR-XXX | Example Functional Requirement | ☐ |
+| AC-XXX | Example Acceptance Criterion | ☐ |
 
 Every Functional Requirement (FR) and every Acceptance Criterion (AC) shall appear as an individual deliverable.
 
 No approved requirement may be omitted.
 
-The feature shall not be marked Complete until every deliverable is verified.
-
 # Definition of Done
 
-The implementation is complete only when:
+The feature may only be marked COMPLETE when ALL of the following conditions are satisfied.
 
-- Functional requirements implemented.
-- Business rules satisfied.
-- Architecture compliance verified.
-- Tests pass.
-- Build succeeds.
-- No TypeScript errors.
-- No ESLint errors.
-- Documentation updated.
-- Verification completed.
-- User approval received.
+## Engineering
+
+- [ ] Build passes
+- [ ] TypeScript passes
+- [ ] ESLint passes
+- [ ] Local verification completed
+
+## Functional
+
+- [ ] Every Functional Requirement (FR) implemented
+- [ ] Every Acceptance Criterion (AC) implemented
+- [ ] All Feature Deliverables completed
+
+## Documentation
+
+- [ ] Implementation Plan updated
+- [ ] Observation created
+- [ ] Feature Completion Report created
+- [ ] Deployment Report created (if deployed)
+
+## Product
+
+- [ ] Manual UI review completed
+- [ ] User approval received
+
+Only after every item is complete may the feature status be changed to COMPLETE.
+
+---
+
+# Feature Completion Rule
+
+A feature shall not be considered COMPLETE until every Functional Requirement (FR) and Acceptance Criterion (AC) defined in the approved QA-007-FXX Feature Artifact has been implemented or explicitly justified as out of scope.
+
+The implementation shall not stop after the first working version.
+
+The objective is feature completion, verification, and production readiness—not merely successful code generation.
+
+If any approved requirement remains incomplete, the feature status shall remain "In Progress."
 
 ---
 

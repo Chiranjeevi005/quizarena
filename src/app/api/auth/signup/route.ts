@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { signupRateLimiter } from "@/lib/rate-limiter";
+import { sendVerificationEmail } from "@/lib/emails/mailer";
+import crypto from "crypto";
 
 /**
  * Validate email format
@@ -72,6 +74,29 @@ export async function POST(request: NextRequest) {
           onboardingCompleted: false,
         },
       });
+
+      // 6. Generate Verification Token and Send Email
+      const token = crypto.randomBytes(32).toString("hex");
+      
+      await prisma.verificationToken.create({
+        data: {
+          identifier: normalizedEmail,
+          token,
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        },
+      });
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3004";
+      const verifyLink = `${appUrl}/verify-email?token=${token}&email=${encodeURIComponent(normalizedEmail)}`;
+
+      if (process.env.NODE_ENV === "development") {
+        console.log("----------------------------------------");
+        console.log("EMAIL VERIFICATION LINK (Dev Mode):");
+        console.log(verifyLink);
+        console.log("----------------------------------------");
+      }
+
+      await sendVerificationEmail(normalizedEmail, verifyLink);
 
       return NextResponse.json(
         {

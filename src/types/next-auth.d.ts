@@ -13,6 +13,7 @@ declare module "next-auth" {
       examCategory?: ExamCategory | null;
       preparationLevel?: PreparationLevel | null;
       username?: string | null;
+      emailVerified?: Date | null;
     } & DefaultSession["user"];
   }
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
     examCategory?: ExamCategory | null;
     preparationLevel?: PreparationLevel | null;
     username?: string | null;
+    emailVerified?: Date | null;
   }
 
   interface JWT {
@@ -31,5 +33,6 @@ declare module "next-auth" {
     examCategory?: ExamCategory | null;
     preparationLevel?: PreparationLevel | null;
     username?: string | null;
+    emailVerified?: Date | null;
   }
 }

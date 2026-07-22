@@ -83,6 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             examCategory: typedUser.examCategory as ExamCategory | null,
             preparationLevel: typedUser.preparationLevel as PreparationLevel | null,
             username: typedUser.username,
+            emailVerified: typedUser.emailVerified,
           };
         } catch (error) {
           console.error("Credentials authorization error:", error);

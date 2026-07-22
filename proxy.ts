@@ -21,7 +21,7 @@ const { auth } = NextAuth(authConfig);
  * - Deny-by-default security
  */
 
-const PUBLIC_ROUTES = ["/", "/about", "/contact", "/login", "/register", "/forgot-password"];
+const PUBLIC_ROUTES = ["/", "/about", "/contact", "/login", "/register", "/forgot-password", "/verify-email"];
 
 const AUTH_ONLY_ROUTES = ["/login", "/register"];
 
@@ -158,6 +158,7 @@ export async function proxy(request: NextRequest) {
 
   const session = await auth();
   const isAuthenticated = !!session?.user;
+  const isEmailVerified = !!session?.user?.emailVerified;
   const isOnboardingCompleted = session?.user?.onboardingCompleted ?? false;
   const userRole = toRole(session?.user?.role ?? "USER");
 
@@ -175,8 +176,18 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isAuthOnlyRoute(pathname)) {
+    if (!isEmailVerified) {
+      return NextResponse.redirect(new URL("/verify-email", request.url));
+    }
     const redirectUrl = getSafeRedirectUrl(request, ROUTES.PROTECTED.DASHBOARD);
     return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
+
+  if (!isEmailVerified && isProtectedRoute(pathname)) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Email verification required" }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL("/verify-email", request.url));
   }
 
   const isOnboardingRoute = pathname.startsWith(ROUTES.ONBOARDING.ROOT);

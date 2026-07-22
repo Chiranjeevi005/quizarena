@@ -112,6 +112,7 @@ export const authConfig = {
           | null
           | undefined;
         session.user.username = token.username as string | null | undefined;
+        session.user.emailVerified = (token.emailVerified as Date | null) ?? null;
       }
       return session;
     },
@@ -123,6 +124,7 @@ export const authConfig = {
         token.examCategory = user.examCategory;
         token.preparationLevel = user.preparationLevel;
         token.username = user.username;
+        token.emailVerified = user.emailVerified;
       }
 
       // Handle session update
