@@ -1,37 +1,9 @@
 import type { NextAuthConfig } from "next-auth";
 import type { ExamCategory, PreparationLevel } from "@/types/next-auth";
 import type { UserRole } from "@/features/rbac/constants/role-types";
-import Google from "next-auth/providers/google";
 
 export const authConfig = {
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-      checks: ["pkce"], // Fixes OperationProcessingError: response parameter "iss" missing
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          role: "USER",
-          onboardingCompleted: false,
-          examCategory: null,
-          preparationLevel: null,
-          username: null,
-        };
-      },
-    }),
-  ],
+  providers: [],
   pages: {
     signIn: "/login",
     error: "/register", // Redirect auth errors (like Google OAuth cancel/config errors) to register instead of the default /api/auth/error page
@@ -63,16 +35,22 @@ export const authConfig = {
         return true;
       }
 
+      const getDashboardUrl = (role?: string) => {
+        if (role === "SUPER_ADMIN") return "/super-admin";
+        if (role === "ADMIN") return "/admin";
+        return "/dashboard";
+      };
+
       if (isLandingPage) {
         if (isLoggedIn) {
-          return Response.redirect(new URL("/dashboard", nextUrl));
+          return Response.redirect(new URL(getDashboardUrl(auth.user?.role), nextUrl));
         }
         return true;
       }
 
       if (isAuthPage) {
         if (isLoggedIn) {
-          return Response.redirect(new URL("/dashboard", nextUrl));
+          return Response.redirect(new URL(getDashboardUrl(auth.user?.role), nextUrl));
         }
         return true;
       }
@@ -83,7 +61,7 @@ export const authConfig = {
         }
         const userOnboardingCompleted = auth.user?.onboardingCompleted ?? false;
         if (userOnboardingCompleted) {
-          return Response.redirect(new URL("/dashboard", nextUrl));
+          return Response.redirect(new URL(getDashboardUrl(auth.user?.role), nextUrl));
         }
         return true;
       }

@@ -103,7 +103,14 @@ function LoginForm() {
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
-    await signIn("google", { callbackUrl });
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(callbackUrl)}`,
+      },
+    });
   };
 
   return (

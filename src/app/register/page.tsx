@@ -192,7 +192,14 @@ function RegisterForm() {
     setGoogleLoading(true);
     setErrors((prev) => ({ ...prev, general: undefined }));
     try {
-      await signIn("google", { callbackUrl: ROUTES.PROTECTED.DASHBOARD });
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(ROUTES.PROTECTED.DASHBOARD)}`,
+        },
+      });
     } catch {
       setErrors({ general: "Google Authentication failed. Please try again." });
       setGoogleLoading(false);

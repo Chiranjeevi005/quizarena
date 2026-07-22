@@ -91,6 +91,104 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       },
     }),
+    Credentials({
+      id: "supabase_broker",
+      name: "Supabase Broker",
+      credentials: {
+        access_token: { label: "Access Token", type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.access_token) return null;
+        const access_token = credentials.access_token as string;
+
+        try {
+          const { createClient } = await import("@/lib/supabase/server");
+          const supabase = await createClient();
+          
+          const { data: { user }, error } = await supabase.auth.getUser(access_token);
+          
+          if (error || !user || !user.email) {
+            console.error("Supabase token verification failed:", error);
+            return null;
+          }
+
+          const email = user.email.toLowerCase().trim();
+          
+          let dbUser = await prisma.user.findUnique({
+            where: { email },
+          });
+
+          if (!dbUser) {
+            dbUser = await prisma.user.create({
+              data: {
+                email,
+                name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+                image: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+                emailVerified: new Date(),
+                role: "USER",
+                accountState: "ACTIVE",
+                onboardingCompleted: false,
+              },
+            });
+          } else {
+             const updateData: any = {};
+             if (!dbUser.name && (user.user_metadata?.full_name || user.user_metadata?.name)) {
+                updateData.name = user.user_metadata?.full_name || user.user_metadata?.name;
+             }
+             if (!dbUser.image && (user.user_metadata?.avatar_url || user.user_metadata?.picture)) {
+                updateData.image = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+             }
+             if (!dbUser.emailVerified) {
+                updateData.emailVerified = new Date();
+             }
+             
+             if (Object.keys(updateData).length > 0) {
+               dbUser = await prisma.user.update({
+                 where: { id: dbUser.id },
+                 data: updateData
+               });
+             }
+          }
+
+          const existingAccount = await prisma.account.findUnique({
+             where: {
+               provider_providerAccountId: {
+                 provider: "google",
+                 providerAccountId: user.id
+               }
+             }
+          });
+          
+          if (!existingAccount) {
+            await prisma.account.create({
+               data: {
+                 userId: dbUser.id,
+                 type: "oauth",
+                 provider: "google",
+                 providerAccountId: user.id
+               }
+            });
+          }
+
+          const typedUser = dbUser as PrismaUser;
+          return {
+            id: typedUser.id,
+            email: typedUser.email,
+            name: typedUser.name,
+            image: typedUser.image,
+            role: typedUser.role,
+            onboardingCompleted: typedUser.onboardingCompleted,
+            examCategory: typedUser.examCategory as ExamCategory | null,
+            preparationLevel: typedUser.preparationLevel as PreparationLevel | null,
+            username: typedUser.username,
+            emailVerified: typedUser.emailVerified,
+          };
+        } catch (dbError) {
+          console.error("Database error in supabase_broker:", dbError);
+          return null;
+        }
+      }
+    }),
   ],
   session: {
     strategy: "jwt",
