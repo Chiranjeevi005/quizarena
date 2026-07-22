@@ -14,8 +14,8 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Blockers** | 10 |
-| **Open P0** | 4 |
+| **Total Blockers** | 11 |
+| **Open P0** | 5 |
 | **Open P1** | 3 |
 | **Open P2** | 3 |
 | **Closed** | 0 |
@@ -46,6 +46,19 @@
 * **Current Status:** Open
 * **Owner:** Engineering Team
 * **Verification Criteria:** Successful Vercel deployment without Prisma initialization errors.
+* **Resolution Notes:** N/A
+* **Date Opened:** 2026-07-22
+* **Date Closed:** N/A
+
+#### [AUTH-P0-002] SES Domain Identity Unverified
+* **Title:** SES Domain Identity Unverified
+* **Priority:** P0
+* **Category:** Infrastructure
+* **Description:** Production emails cannot be sent via Amazon SES because the domain `quizarena.pro` is not a verified identity in the AWS account.
+* **Root Cause:** AWS SES requires domain verification for production email dispatch.
+* **Current Status:** Open
+* **Owner:** Engineering Team
+* **Verification Criteria:** `quizarena.pro` is listed as a verified identity in Amazon SES, enabling emails to be sent from `auth@quizarena.pro`.
 * **Resolution Notes:** N/A
 * **Date Opened:** 2026-07-22
 * **Date Closed:** N/A
@@ -183,3 +196,11 @@
 2. If a related blocker exists, reference the Blocker ID in the plan.
 3. When implementation finishes, update the blocker status here.
 4. A blocker may **only** be closed after Verification Criteria have been successfully met.
+
+### One Active P0 Blocker Rule
+* Only one P0 blocker is actively being implemented at any given time.
+* Other issues are documented but not worked on simultaneously unless they directly block the current P0.
+
+### Provider Abstraction Rule
+* **Do not replace stable abstractions during release stabilization unless the abstraction itself is the root cause.** 
+* Replace providers behind the abstraction whenever possible (e.g., keep Nodemailer, swap transport to SES). This significantly reduces release risk.
